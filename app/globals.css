@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 10%;
+    --primary: 351 66% 33%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 33 51% 67%;
+    --secondary-foreground: 240 10% 10%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
+    --accent: 240 5% 96%;
+    --accent-foreground: 240 10% 10%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 351 66% 33%;
+    --radius: 1rem;
+  }
+
+  .dark {
+    --background: 240 10% 10%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 13%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 13%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 351 66% 33%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 33 51% 67%;
+    --secondary-foreground: 240 10% 10%;
+    --muted: 240 4% 20%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 240 4% 20%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 4% 20%;
+    --input: 240 4% 20%;
+    --ring: 351 66% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Glass effect for navigation */
+.glass-nav {
+  backdrop-filter: blur(12px);
+  background-color: rgba(255, 255, 255, 0.75);
+}
+
+.dark .glass-nav {
+  background-color: rgba(26, 26, 49, 0.75);
+}
+
+/* Card styles */
+.branch-card {
+  @apply rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300;
+}
+
+/* Print styles */
+@media print {
+  @page {
+    margin: 1.5cm;
+  }
+
+  body {
+    @apply bg-white text-black;
+    font-family: Georgia, 'Times New Roman', serif;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-header {
+    display: block !important;
+  }
+
+  h1, h2, h3 {
+    font-family: Georgia, 'Times New Roman', serif;
+    page-break-after: avoid;
+  }
+
+  .checklist-item {
+    page-break-inside: avoid;
+  }
+
+  .page-break-before {
+    page-break-before: always;
+  }
+
+  /* Add page URL and date to footer */
+  @page {
+    @bottom-right {
+      content: "Page " counter(page);
+    }
+  }
+
+  .print-footer::after {
+    content: "Printed on " attr(data-print-date) " | " attr(data-print-url);
+    display: block;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #ccc;
+    font-size: 0.75rem;
+    color: #666;
+  }
+}
+
+/* Accessible focus states */
+*:focus-visible {
+  @apply outline-2 outline-offset-2 outline-primary;
+}
+
+/* Smooth transitions */
+.transition-all-smooth {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+

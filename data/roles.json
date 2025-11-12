@@ -1,0 +1,1068 @@
+[
+  {
+    "roleId": "manager",
+    "name": "Branch Manager",
+    "description": "Responsible for overall branch operations, team management, and meeting business targets.",
+    "responsibilities": [
+      "Oversee daily operations and ensure compliance with company standards",
+      "Manage staff scheduling, training, and performance evaluations",
+      "Monitor KPIs including sales targets, waste percentages, and hygiene scores",
+      "Handle customer complaints and escalations",
+      "Ensure inventory management and ordering processes",
+      "Conduct daily briefings and team meetings",
+      "Maintain relationships with school administration",
+      "Financial reconciliation and reporting"
+    ],
+    "dailyFlow": {
+      "morning": [
+        {
+          "time": "6:30 AM",
+          "action": "Arrive and open branch",
+          "owner": "Manager",
+          "hint": "Check security log and alarm system"
+        },
+        {
+          "time": "6:45 AM",
+          "action": "Receive and verify deliveries",
+          "owner": "Manager + Kitchen Staff",
+          "hint": "Check against purchase order, verify quality and temperature"
+        },
+        {
+          "time": "7:00 AM",
+          "action": "Team briefing",
+          "owner": "Manager",
+          "hint": "Review daily specials, stock issues, and assign tasks"
+        },
+        {
+          "time": "7:15 AM",
+          "action": "Cash float verification",
+          "owner": "Manager",
+          "hint": "Count and sign off on till float with counter staff"
+        }
+      ],
+      "preLunch": [
+        {
+          "time": "9:00 AM",
+          "action": "Walk-through inspection",
+          "owner": "Manager",
+          "hint": "Check all stations, cleanliness, and food safety compliance"
+        },
+        {
+          "time": "10:00 AM",
+          "action": "Review morning sales and adjust prep",
+          "owner": "Manager",
+          "hint": "Compare to forecast, communicate with kitchen"
+        }
+      ],
+      "service": [
+        {
+          "time": "11:30 AM - 1:30 PM",
+          "action": "Monitor service quality",
+          "owner": "Manager",
+          "hint": "Floor presence, customer interaction, resolve issues"
+        },
+        {
+          "time": "12:00 PM",
+          "action": "Peak service check",
+          "owner": "Manager",
+          "hint": "Ensure adequate staffing, speed of service, stock levels"
+        }
+      ],
+      "postLunch": [
+        {
+          "time": "1:45 PM",
+          "action": "Sales analysis and reporting",
+          "owner": "Manager",
+          "hint": "Update daily sales sheet, compare to target"
+        },
+        {
+          "time": "2:00 PM",
+          "action": "Staff performance feedback",
+          "owner": "Manager",
+          "hint": "Quick one-on-ones on today's service"
+        }
+      ],
+      "closeout": [
+        {
+          "time": "2:30 PM",
+          "action": "Cash reconciliation",
+          "owner": "Manager",
+          "hint": "Count tills, match receipts, complete daily banking"
+        },
+        {
+          "time": "2:45 PM",
+          "action": "Review closing checklist completion",
+          "owner": "Manager",
+          "hint": "Verify all stations closed properly, sign off"
+        },
+        {
+          "time": "3:00 PM",
+          "action": "Secure branch and depart",
+          "owner": "Manager",
+          "hint": "Set alarm, lock all doors, complete security log"
+        }
+      ]
+    },
+    "checklists": {
+      "opening": [
+        {
+          "id": "mgr-open-1",
+          "task": "Unlock and disarm security system",
+          "critical": true
+        },
+        {
+          "id": "mgr-open-2",
+          "task": "Verify all refrigeration units at correct temperature (0-4°C)",
+          "critical": true
+        },
+        {
+          "id": "mgr-open-3",
+          "task": "Check staff attendance and adjust assignments if needed",
+          "critical": false
+        },
+        {
+          "id": "mgr-open-4",
+          "task": "Review delivery schedule for today",
+          "critical": false
+        },
+        {
+          "id": "mgr-open-5",
+          "task": "Count and verify cash float (AED 500)",
+          "critical": true
+        },
+        {
+          "id": "mgr-open-6",
+          "task": "Check POS system is operational",
+          "critical": true
+        },
+        {
+          "id": "mgr-open-7",
+          "task": "Review previous day's incident log",
+          "critical": false
+        },
+        {
+          "id": "mgr-open-8",
+          "task": "Conduct brief team huddle (5 mins)",
+          "critical": false
+        }
+      ],
+      "service": [
+        {
+          "id": "mgr-svc-1",
+          "task": "Monitor queue times (target: <5 minutes)",
+          "critical": true
+        },
+        {
+          "id": "mgr-svc-2",
+          "task": "Check food presentation standards at counter",
+          "critical": true
+        },
+        {
+          "id": "mgr-svc-3",
+          "task": "Interact with minimum 10 customers for feedback",
+          "critical": false
+        },
+        {
+          "id": "mgr-svc-4",
+          "task": "Verify staff are following hygiene protocols",
+          "critical": true
+        },
+        {
+          "id": "mgr-svc-5",
+          "task": "Check stock levels and communicate needs to kitchen",
+          "critical": true
+        },
+        {
+          "id": "mgr-svc-6",
+          "task": "Document any customer complaints in log",
+          "critical": true
+        },
+        {
+          "id": "mgr-svc-7",
+          "task": "Monitor staff breaks schedule",
+          "critical": false
+        }
+      ],
+      "closing": [
+        {
+          "id": "mgr-close-1",
+          "task": "Complete cash reconciliation and variance report",
+          "critical": true
+        },
+        {
+          "id": "mgr-close-2",
+          "task": "Review and sign off waste log",
+          "critical": true
+        },
+        {
+          "id": "mgr-close-3",
+          "task": "Verify all cleaning logs completed and signed",
+          "critical": true
+        },
+        {
+          "id": "mgr-close-4",
+          "task": "Check all equipment turned off except refrigeration",
+          "critical": true
+        },
+        {
+          "id": "mgr-close-5",
+          "task": "Update daily sales report and send to head office",
+          "critical": true
+        },
+        {
+          "id": "mgr-close-6",
+          "task": "Lock all cash in safe",
+          "critical": true
+        },
+        {
+          "id": "mgr-close-7",
+          "task": "Complete incident log (if any incidents occurred)",
+          "critical": true
+        },
+        {
+          "id": "mgr-close-8",
+          "task": "Set alarm and secure all entry points",
+          "critical": true
+        },
+        {
+          "id": "mgr-close-9",
+          "task": "Send end-of-day WhatsApp to ops manager",
+          "critical": false
+        }
+      ]
+    },
+    "dos": [
+      "Lead by example with uniform and hygiene standards",
+      "Communicate clearly and respectfully with all staff",
+      "Address issues immediately and document properly",
+      "Celebrate team successes and individual achievements",
+      "Maintain visible presence during peak service times"
+    ],
+    "donts": [
+      "Never compromise on food safety standards",
+      "Don't ignore customer complaints or feedback",
+      "Avoid favoritism among team members",
+      "Don't skip daily cash reconciliation",
+      "Never leave branch unattended during operating hours"
+    ]
+  },
+  {
+    "roleId": "supervisor",
+    "name": "Operations Supervisor",
+    "description": "Supports branch manager in daily operations, coordinates between kitchen and counter teams.",
+    "responsibilities": [
+      "Supervise food preparation and service standards",
+      "Coordinate between kitchen and counter staff",
+      "Conduct quality checks throughout the day",
+      "Monitor food safety and hygiene compliance",
+      "Assist with inventory management",
+      "Handle customer service during peak times",
+      "Train new staff members",
+      "Cover manager duties when required"
+    ],
+    "dailyFlow": {
+      "morning": [
+        {
+          "time": "7:00 AM",
+          "action": "Support delivery receiving",
+          "owner": "Supervisor",
+          "hint": "Check temperatures, verify quantities, organize storage"
+        },
+        {
+          "time": "7:30 AM",
+          "action": "Kitchen prep supervision",
+          "owner": "Supervisor",
+          "hint": "Monitor food prep sequence, check portion sizes"
+        }
+      ],
+      "preLunch": [
+        {
+          "time": "9:30 AM",
+          "action": "Quality inspection round",
+          "owner": "Supervisor",
+          "hint": "Check all food displays, temperatures, labeling"
+        },
+        {
+          "time": "10:30 AM",
+          "action": "Pre-service briefing with counter staff",
+          "owner": "Supervisor",
+          "hint": "Review specials, stock availability, assign positions"
+        }
+      ],
+      "service": [
+        {
+          "time": "11:30 AM - 1:30 PM",
+          "action": "Floor supervision and support",
+          "owner": "Supervisor",
+          "hint": "Float between kitchen and counter, resolve bottlenecks"
+        }
+      ],
+      "postLunch": [
+        {
+          "time": "1:45 PM",
+          "action": "Stock check and ordering prep",
+          "owner": "Supervisor",
+          "hint": "Count inventory, prepare order list for manager"
+        }
+      ],
+      "closeout": [
+        {
+          "time": "2:30 PM",
+          "action": "Supervise closing procedures",
+          "owner": "Supervisor",
+          "hint": "Ensure all checklists completed correctly"
+        }
+      ]
+    },
+    "checklists": {
+      "opening": [
+        {
+          "id": "sup-open-1",
+          "task": "Verify all food items properly labeled with prep date",
+          "critical": true
+        },
+        {
+          "id": "sup-open-2",
+          "task": "Check kitchen equipment is clean and operational",
+          "critical": true
+        },
+        {
+          "id": "sup-open-3",
+          "task": "Review today's prep list with kitchen staff",
+          "critical": false
+        },
+        {
+          "id": "sup-open-4",
+          "task": "Ensure adequate stock of packaging materials",
+          "critical": false
+        },
+        {
+          "id": "sup-open-5",
+          "task": "Verify allergen information displayed correctly",
+          "critical": true
+        },
+        {
+          "id": "sup-open-6",
+          "task": "Check all staff have clean uniforms and name tags",
+          "critical": false
+        }
+      ],
+      "service": [
+        {
+          "id": "sup-svc-1",
+          "task": "Monitor food temperatures every 30 minutes",
+          "critical": true
+        },
+        {
+          "id": "sup-svc-2",
+          "task": "Ensure FIFO (First In, First Out) being followed",
+          "critical": true
+        },
+        {
+          "id": "sup-svc-3",
+          "task": "Check portion control compliance",
+          "critical": true
+        },
+        {
+          "id": "sup-svc-4",
+          "task": "Verify staff handwashing between tasks",
+          "critical": true
+        },
+        {
+          "id": "sup-svc-5",
+          "task": "Maintain cleanliness of service areas",
+          "critical": true
+        },
+        {
+          "id": "sup-svc-6",
+          "task": "Communicate stock shortages to manager immediately",
+          "critical": true
+        },
+        {
+          "id": "sup-svc-7",
+          "task": "Assist with queue management during rush",
+          "critical": false
+        }
+      ],
+      "closing": [
+        {
+          "id": "sup-close-1",
+          "task": "Supervise proper food storage procedures",
+          "critical": true
+        },
+        {
+          "id": "sup-close-2",
+          "task": "Verify waste log is accurate and complete",
+          "critical": true
+        },
+        {
+          "id": "sup-close-3",
+          "task": "Check all food items are covered and dated",
+          "critical": true
+        },
+        {
+          "id": "sup-close-4",
+          "task": "Ensure cleaning schedule followed by all staff",
+          "critical": true
+        },
+        {
+          "id": "sup-close-5",
+          "task": "Review next day's prep requirements",
+          "critical": false
+        },
+        {
+          "id": "sup-close-6",
+          "task": "Sign off on all department closing checklists",
+          "critical": true
+        }
+      ]
+    },
+    "dos": [
+      "Maintain consistent quality standards across all shifts",
+      "Provide constructive feedback to team members",
+      "Act quickly on food safety concerns",
+      "Document all quality issues and resolutions",
+      "Support staff development through on-job training"
+    ],
+    "donts": [
+      "Don't overlook small hygiene violations",
+      "Never rush food safety procedures",
+      "Avoid being stationed in one area only",
+      "Don't ignore equipment maintenance needs",
+      "Never serve food that doesn't meet standards"
+    ]
+  },
+  {
+    "roleId": "kitchen",
+    "name": "Kitchen Staff",
+    "description": "Responsible for food preparation, cooking, and maintaining kitchen hygiene standards.",
+    "responsibilities": [
+      "Prepare food items according to standardized recipes",
+      "Maintain cleanliness and organization of kitchen",
+      "Follow food safety and HACCP guidelines",
+      "Monitor cooking temperatures and times",
+      "Manage food storage and labeling",
+      "Minimize food waste through proper portioning",
+      "Assist with inventory counts",
+      "Report equipment issues immediately"
+    ],
+    "dailyFlow": {
+      "morning": [
+        {
+          "time": "7:00 AM",
+          "action": "Kitchen opening and equipment check",
+          "owner": "Kitchen Staff",
+          "hint": "Turn on equipment, check temperatures, organize stations"
+        },
+        {
+          "time": "7:30 AM",
+          "action": "Food prep begins",
+          "owner": "Kitchen Staff",
+          "hint": "Follow daily prep list, label everything with date/time"
+        }
+      ],
+      "preLunch": [
+        {
+          "time": "9:00 AM",
+          "action": "Main meal preparation",
+          "owner": "Kitchen Staff",
+          "hint": "Cook hot meals, prepare salads, portion snacks"
+        },
+        {
+          "time": "10:30 AM",
+          "action": "Final prep and quality check",
+          "owner": "Kitchen Staff",
+          "hint": "Complete all items, get supervisor approval"
+        }
+      ],
+      "service": [
+        {
+          "time": "11:00 AM - 1:30 PM",
+          "action": "Service support and replenishment",
+          "owner": "Kitchen Staff",
+          "hint": "Monitor stock at counter, prepare additional items as needed"
+        }
+      ],
+      "postLunch": [
+        {
+          "time": "1:30 PM",
+          "action": "Deep cleaning and waste management",
+          "owner": "Kitchen Staff",
+          "hint": "Log waste, clean all surfaces and equipment"
+        }
+      ],
+      "closeout": [
+        {
+          "time": "2:30 PM",
+          "action": "Final kitchen close and storage",
+          "owner": "Kitchen Staff",
+          "hint": "Store food properly, turn off equipment, final clean"
+        }
+      ]
+    },
+    "checklists": {
+      "opening": [
+        {
+          "id": "kit-open-1",
+          "task": "Wash hands thoroughly and put on clean uniform",
+          "critical": true
+        },
+        {
+          "id": "kit-open-2",
+          "task": "Check all refrigerators at 0-4°C, freezers at -18°C",
+          "critical": true
+        },
+        {
+          "id": "kit-open-3",
+          "task": "Verify delivery items for quality and temperature",
+          "critical": true
+        },
+        {
+          "id": "kit-open-4",
+          "task": "Store delivery items properly with date labels",
+          "critical": true
+        },
+        {
+          "id": "kit-open-5",
+          "task": "Check expiry dates on all ingredients",
+          "critical": true
+        },
+        {
+          "id": "kit-open-6",
+          "task": "Set up work stations with required tools and ingredients",
+          "critical": false
+        },
+        {
+          "id": "kit-open-7",
+          "task": "Update allergen information board",
+          "critical": true
+        },
+        {
+          "id": "kit-open-8",
+          "task": "Get supervisor sign-off on opening checklist by 10:00 AM",
+          "critical": true
+        }
+      ],
+      "service": [
+        {
+          "id": "kit-svc-1",
+          "task": "Check food temperatures every 30 minutes (log)",
+          "critical": true
+        },
+        {
+          "id": "kit-svc-2",
+          "task": "Follow proper handwashing between tasks",
+          "critical": true
+        },
+        {
+          "id": "kit-svc-3",
+          "task": "Use color-coded cutting boards correctly",
+          "critical": true
+        },
+        {
+          "id": "kit-svc-4",
+          "task": "Label all prepared items with date and time",
+          "critical": true
+        },
+        {
+          "id": "kit-svc-5",
+          "task": "Maintain clean-as-you-go practice",
+          "critical": true
+        },
+        {
+          "id": "kit-svc-6",
+          "task": "Follow portion control guidelines",
+          "critical": true
+        },
+        {
+          "id": "kit-svc-7",
+          "task": "Keep raw and cooked foods separated",
+          "critical": true
+        },
+        {
+          "id": "kit-svc-8",
+          "task": "Monitor and replenish counter stock levels",
+          "critical": false
+        }
+      ],
+      "closing": [
+        {
+          "id": "kit-close-1",
+          "task": "Complete waste log with photos",
+          "critical": true
+        },
+        {
+          "id": "kit-close-2",
+          "task": "Store all food items properly labeled and covered",
+          "critical": true
+        },
+        {
+          "id": "kit-close-3",
+          "task": "Clean and sanitize all work surfaces",
+          "critical": true
+        },
+        {
+          "id": "kit-close-4",
+          "task": "Clean cooking equipment and appliances",
+          "critical": true
+        },
+        {
+          "id": "kit-close-5",
+          "task": "Sweep and mop kitchen floors",
+          "critical": true
+        },
+        {
+          "id": "kit-close-6",
+          "task": "Empty and clean all trash bins",
+          "critical": true
+        },
+        {
+          "id": "kit-close-7",
+          "task": "Turn off all equipment except refrigeration",
+          "critical": true
+        },
+        {
+          "id": "kit-close-8",
+          "task": "Complete cleaning log with supervisor signature",
+          "critical": true
+        },
+        {
+          "id": "kit-close-9",
+          "task": "Organize prep list for next day",
+          "critical": false
+        }
+      ]
+    },
+    "dos": [
+      "Always taste food before service to ensure quality",
+      "Follow recipes exactly for consistency",
+      "Inform supervisor of any equipment issues immediately",
+      "Use proper knife techniques to avoid injury",
+      "Rotate stock using FIFO method",
+      "Keep work area organized and clean"
+    ],
+    "donts": [
+      "Never work with food if feeling unwell",
+      "Don't reuse gloves between different tasks",
+      "Avoid cross-contamination of allergens",
+      "Don't leave food at room temperature > 2 hours",
+      "Never taste food with cooking utensils",
+      "Don't skip temperature checks"
+    ]
+  },
+  {
+    "roleId": "counter",
+    "name": "Counter Staff",
+    "description": "Front-line customer service, food display management, and point-of-sale operations.",
+    "responsibilities": [
+      "Provide excellent customer service",
+      "Operate POS system accurately",
+      "Maintain attractive food displays",
+      "Follow food safety protocols at service counter",
+      "Handle cash and card transactions",
+      "Answer customer questions about menu items",
+      "Maintain cleanliness of service area",
+      "Report customer feedback to supervisor"
+    ],
+    "dailyFlow": {
+      "morning": [
+        {
+          "time": "7:30 AM",
+          "action": "Counter setup and display prep",
+          "owner": "Counter Staff",
+          "hint": "Set up display units, test POS, organize packaging"
+        },
+        {
+          "time": "8:00 AM",
+          "action": "Stock counter from kitchen",
+          "owner": "Counter Staff",
+          "hint": "Follow planogram, check temperatures, arrange attractively"
+        }
+      ],
+      "preLunch": [
+        {
+          "time": "10:00 AM",
+          "action": "Pre-service preparation",
+          "owner": "Counter Staff",
+          "hint": "Count cash float, refresh displays, clean glass"
+        }
+      ],
+      "service": [
+        {
+          "time": "11:00 AM - 1:30 PM",
+          "action": "Active customer service",
+          "owner": "Counter Staff",
+          "hint": "Serve customers, maintain displays, keep area clean"
+        }
+      ],
+      "postLunch": [
+        {
+          "time": "1:30 PM",
+          "action": "Post-service cleanup",
+          "owner": "Counter Staff",
+          "hint": "Clean displays, wipe surfaces, organize stock"
+        }
+      ],
+      "closeout": [
+        {
+          "time": "2:30 PM",
+          "action": "Counter close and cash reconciliation",
+          "owner": "Counter Staff",
+          "hint": "Count cash, complete Z-report, clean thoroughly"
+        }
+      ]
+    },
+    "checklists": {
+      "opening": [
+        {
+          "id": "cnt-open-1",
+          "task": "Wash hands and wear clean uniform with name tag",
+          "critical": true
+        },
+        {
+          "id": "cnt-open-2",
+          "task": "Clean and sanitize all counter surfaces",
+          "critical": true
+        },
+        {
+          "id": "cnt-open-3",
+          "task": "Set up display following planogram",
+          "critical": false
+        },
+        {
+          "id": "cnt-open-4",
+          "task": "Check all display units at correct temperature",
+          "critical": true
+        },
+        {
+          "id": "cnt-open-5",
+          "task": "Test POS system with test transaction",
+          "critical": true
+        },
+        {
+          "id": "cnt-open-6",
+          "task": "Count and verify cash float with manager (AED 500)",
+          "critical": true
+        },
+        {
+          "id": "cnt-open-7",
+          "task": "Stock packaging materials and utensils",
+          "critical": false
+        },
+        {
+          "id": "cnt-open-8",
+          "task": "Display allergen information and menu boards",
+          "critical": true
+        },
+        {
+          "id": "cnt-open-9",
+          "task": "Review today's specials and prices",
+          "critical": false
+        }
+      ],
+      "service": [
+        {
+          "id": "cnt-svc-1",
+          "task": "Greet every customer with a smile",
+          "critical": false
+        },
+        {
+          "id": "cnt-svc-2",
+          "task": "Use tongs/gloves for all food handling",
+          "critical": true
+        },
+        {
+          "id": "cnt-svc-3",
+          "task": "Follow portion control guidelines",
+          "critical": true
+        },
+        {
+          "id": "cnt-svc-4",
+          "task": "Verify allergen requests carefully",
+          "critical": true
+        },
+        {
+          "id": "cnt-svc-5",
+          "task": "Keep work area clean and organized",
+          "critical": true
+        },
+        {
+          "id": "cnt-svc-6",
+          "task": "Rotate display items using FIFO",
+          "critical": true
+        },
+        {
+          "id": "cnt-svc-7",
+          "task": "Communicate stock needs to kitchen",
+          "critical": false
+        },
+        {
+          "id": "cnt-svc-8",
+          "task": "Handle cash accurately and provide receipts",
+          "critical": true
+        }
+      ],
+      "closing": [
+        {
+          "id": "cnt-close-1",
+          "task": "Complete Z-report on POS system",
+          "critical": true
+        },
+        {
+          "id": "cnt-close-2",
+          "task": "Count cash and complete reconciliation form",
+          "critical": true
+        },
+        {
+          "id": "cnt-close-3",
+          "task": "Return leftover food to kitchen with waste log",
+          "critical": true
+        },
+        {
+          "id": "cnt-close-4",
+          "task": "Clean all display cases inside and out",
+          "critical": true
+        },
+        {
+          "id": "cnt-close-5",
+          "task": "Wipe down counter, POS, and customer areas",
+          "critical": true
+        },
+        {
+          "id": "cnt-close-6",
+          "task": "Restock packaging for next day",
+          "critical": false
+        },
+        {
+          "id": "cnt-close-7",
+          "task": "Take photo of clean counter area",
+          "critical": false
+        },
+        {
+          "id": "cnt-close-8",
+          "task": "Get manager sign-off on closing checklist",
+          "critical": true
+        }
+      ]
+    },
+    "dos": [
+      "Always acknowledge customers immediately",
+      "Upsell specials and combo deals politely",
+      "Keep displays looking fresh and appetizing",
+      "Handle customer complaints professionally",
+      "Maintain positive attitude during rush periods",
+      "Thank every customer"
+    ],
+    "donts": [
+      "Never handle food and cash without washing hands",
+      "Don't engage in personal conversations during service",
+      "Avoid showing frustration with difficult customers",
+      "Don't leave cash drawer open unattended",
+      "Never serve food past hold times",
+      "Don't give unauthorized discounts"
+    ]
+  },
+  {
+    "roleId": "cleaner",
+    "name": "Cleaning Staff",
+    "description": "Maintains hygiene standards throughout the branch, including dining area, restrooms, and back-of-house.",
+    "responsibilities": [
+      "Maintain cleanliness of dining and service areas",
+      "Clean and sanitize restrooms regularly",
+      "Manage waste disposal and recycling",
+      "Mop and sanitize floors throughout the day",
+      "Clean windows and glass surfaces",
+      "Restock cleaning supplies and restroom items",
+      "Support deep cleaning schedules",
+      "Report maintenance issues immediately"
+    ],
+    "dailyFlow": {
+      "morning": [
+        {
+          "time": "7:00 AM",
+          "action": "Initial cleaning round",
+          "owner": "Cleaner",
+          "hint": "Dining area, restrooms, entrance - ready for students"
+        },
+        {
+          "time": "8:00 AM",
+          "action": "Restock restrooms and supplies",
+          "owner": "Cleaner",
+          "hint": "Check soap, paper towels, toilet paper"
+        }
+      ],
+      "preLunch": [
+        {
+          "time": "9:00 AM",
+          "action": "Mid-morning maintenance clean",
+          "owner": "Cleaner",
+          "hint": "Touch-up high traffic areas, empty bins"
+        }
+      ],
+      "service": [
+        {
+          "time": "11:00 AM - 1:30 PM",
+          "action": "Continuous dining area maintenance",
+          "owner": "Cleaner",
+          "hint": "Clear tables, mop spills, manage waste, clean restrooms every 30 mins"
+        }
+      ],
+      "postLunch": [
+        {
+          "time": "1:30 PM",
+          "action": "Post-service deep clean",
+          "owner": "Cleaner",
+          "hint": "Thorough cleaning of all areas"
+        }
+      ],
+      "closeout": [
+        {
+          "time": "2:30 PM",
+          "action": "Final cleaning and waste removal",
+          "owner": "Cleaner",
+          "hint": "Deep clean, take out trash, mop all floors"
+        }
+      ]
+    },
+    "checklists": {
+      "opening": [
+        {
+          "id": "cln-open-1",
+          "task": "Sweep and mop dining area floors",
+          "critical": true
+        },
+        {
+          "id": "cln-open-2",
+          "task": "Clean and sanitize all tables and chairs",
+          "critical": true
+        },
+        {
+          "id": "cln-open-3",
+          "task": "Clean restrooms completely (toilets, sinks, mirrors)",
+          "critical": true
+        },
+        {
+          "id": "cln-open-4",
+          "task": "Restock restroom supplies (soap, paper, sanitizer)",
+          "critical": true
+        },
+        {
+          "id": "cln-open-5",
+          "task": "Empty and line all waste bins",
+          "critical": true
+        },
+        {
+          "id": "cln-open-6",
+          "task": "Clean entrance doors and glass",
+          "critical": false
+        },
+        {
+          "id": "cln-open-7",
+          "task": "Prepare cleaning station with supplies",
+          "critical": false
+        }
+      ],
+      "service": [
+        {
+          "id": "cln-svc-1",
+          "task": "Clear and clean tables immediately after use",
+          "critical": true
+        },
+        {
+          "id": "cln-svc-2",
+          "task": "Check restrooms every 30 minutes",
+          "critical": true
+        },
+        {
+          "id": "cln-svc-3",
+          "task": "Mop spills immediately",
+          "critical": true
+        },
+        {
+          "id": "cln-svc-4",
+          "task": "Empty waste bins when 3/4 full",
+          "critical": true
+        },
+        {
+          "id": "cln-svc-5",
+          "task": "Maintain clean walking paths (no obstacles)",
+          "critical": true
+        },
+        {
+          "id": "cln-svc-6",
+          "task": "Wipe food service counter glass regularly",
+          "critical": false
+        },
+        {
+          "id": "cln-svc-7",
+          "task": "Sanitize door handles and high-touch surfaces",
+          "critical": true
+        }
+      ],
+      "closing": [
+        {
+          "id": "cln-close-1",
+          "task": "Deep clean all dining tables and chairs",
+          "critical": true
+        },
+        {
+          "id": "cln-close-2",
+          "task": "Thoroughly mop all floor areas",
+          "critical": true
+        },
+        {
+          "id": "cln-close-3",
+          "task": "Complete restroom deep clean and restock",
+          "critical": true
+        },
+        {
+          "id": "cln-close-4",
+          "task": "Remove all trash to external bins",
+          "critical": true
+        },
+        {
+          "id": "cln-close-5",
+          "task": "Clean and organize cleaning storage area",
+          "critical": false
+        },
+        {
+          "id": "cln-close-6",
+          "task": "Sanitize all high-touch surfaces",
+          "critical": true
+        },
+        {
+          "id": "cln-close-7",
+          "task": "Take photos of clean dining area and restrooms",
+          "critical": false
+        },
+        {
+          "id": "cln-close-8",
+          "task": "Complete cleaning log and get supervisor sign-off",
+          "critical": true
+        },
+        {
+          "id": "cln-close-9",
+          "task": "Prepare cleaning checklist for next day",
+          "critical": false
+        }
+      ]
+    },
+    "dos": [
+      "Use proper dilution ratios for cleaning chemicals",
+      "Wear appropriate PPE (gloves, appropriate footwear)",
+      "Place wet floor signs when mopping",
+      "Report maintenance issues immediately",
+      "Smile and greet students and staff",
+      "Keep cleaning cart organized and stocked"
+    ],
+    "donts": [
+      "Never mix different cleaning chemicals",
+      "Don't leave cleaning supplies unattended",
+      "Avoid cleaning during peak rush if possible",
+      "Don't use worn out or dirty cleaning cloths",
+      "Never block emergency exits with equipment",
+      "Don't skip hand sanitizing between areas"
+    ]
+  }
+]
+

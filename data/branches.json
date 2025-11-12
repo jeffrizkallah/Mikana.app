@@ -1,0 +1,526 @@
+[
+  {
+    "id": "1",
+    "slug": "isc-soufouh",
+    "name": "ISC Soufouh",
+    "school": "International School of Creative Science - Soufouh",
+    "location": "Dubai",
+    "manager": "Ahmed Al-Rashid",
+    "contacts": [
+      {
+        "name": "Ahmed Al-Rashid",
+        "role": "Branch Manager",
+        "phone": "+971 50 123 4567",
+        "email": "ahmed.rashid@mikana.ae"
+      },
+      {
+        "name": "Sarah Johnson",
+        "role": "Operations Supervisor",
+        "phone": "+971 50 234 5678",
+        "email": "sarah.johnson@mikana.ae"
+      }
+    ],
+    "operatingHours": "Sunday - Thursday: 7:00 AM - 3:00 PM",
+    "deliverySchedule": [
+      {
+        "day": "Sunday",
+        "time": "6:30 AM",
+        "items": "Fresh produce, dairy, bakery"
+      },
+      {
+        "day": "Tuesday",
+        "time": "6:30 AM",
+        "items": "Dry goods, frozen items"
+      },
+      {
+        "day": "Thursday",
+        "time": "6:30 AM",
+        "items": "Fresh produce, bakery"
+      }
+    ],
+    "kpis": {
+      "salesTarget": "AED 45,000/week",
+      "wastePct": "2.5%",
+      "hygieneScore": "95"
+    },
+    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "media": {
+      "photos": [
+        "https://picsum.photos/seed/soufouh1/800/600",
+        "https://picsum.photos/seed/soufouh2/800/600",
+        "https://picsum.photos/seed/soufouh3/800/600"
+      ],
+      "videos": []
+    }
+  },
+  {
+    "id": "2",
+    "slug": "isc-dip",
+    "name": "ISC DIP",
+    "school": "International School of Creative Science - Dubai Investment Park",
+    "location": "Dubai",
+    "manager": "Fatima Hassan",
+    "contacts": [
+      {
+        "name": "Fatima Hassan",
+        "role": "Branch Manager",
+        "phone": "+971 50 345 6789",
+        "email": "fatima.hassan@mikana.ae"
+      }
+    ],
+    "operatingHours": "Sunday - Thursday: 7:00 AM - 3:00 PM",
+    "deliverySchedule": [
+      {
+        "day": "Monday",
+        "time": "7:00 AM",
+        "items": "Fresh produce, dairy, bakery"
+      },
+      {
+        "day": "Wednesday",
+        "time": "7:00 AM",
+        "items": "Dry goods, frozen items"
+      }
+    ],
+    "kpis": {
+      "salesTarget": "AED 38,000/week",
+      "wastePct": "3.1%",
+      "hygieneScore": "92"
+    },
+    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "media": {
+      "photos": [
+        "https://picsum.photos/seed/dip1/800/600",
+        "https://picsum.photos/seed/dip2/800/600"
+      ],
+      "videos": []
+    }
+  },
+  {
+    "id": "3",
+    "slug": "isc-sharja",
+    "name": "ISC Sharjah",
+    "school": "International School of Creative Science - Sharjah",
+    "location": "Sharjah",
+    "manager": "Mohammed Ali",
+    "contacts": [
+      {
+        "name": "Mohammed Ali",
+        "role": "Branch Manager",
+        "phone": "+971 50 456 7890",
+        "email": "mohammed.ali@mikana.ae"
+      }
+    ],
+    "operatingHours": "Sunday - Thursday: 7:00 AM - 3:00 PM",
+    "deliverySchedule": [
+      {
+        "day": "Sunday",
+        "time": "7:00 AM",
+        "items": "Fresh produce, dairy, bakery"
+      },
+      {
+        "day": "Wednesday",
+        "time": "7:00 AM",
+        "items": "All supplies"
+      }
+    ],
+    "kpis": {
+      "salesTarget": "AED 42,000/week",
+      "wastePct": "2.8%",
+      "hygieneScore": "94"
+    },
+    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "media": {
+      "photos": [
+        "https://picsum.photos/seed/sharjah1/800/600",
+        "https://picsum.photos/seed/sharjah2/800/600"
+      ],
+      "videos": []
+    }
+  },
+  {
+    "id": "4",
+    "slug": "isc-rak",
+    "name": "ISC RAK",
+    "school": "International School of Creative Science - Ras Al Khaimah",
+    "location": "Ras Al Khaimah",
+    "manager": "Layla Ahmed",
+    "contacts": [
+      {
+        "name": "Layla Ahmed",
+        "role": "Branch Manager",
+        "phone": "+971 50 567 8901",
+        "email": "layla.ahmed@mikana.ae"
+      }
+    ],
+    "operatingHours": "Sunday - Thursday: 7:00 AM - 3:00 PM",
+    "deliverySchedule": [
+      {
+        "day": "Monday",
+        "time": "8:00 AM",
+        "items": "Fresh produce, dairy"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00 AM",
+        "items": "Dry goods, frozen items"
+      }
+    ],
+    "kpis": {
+      "salesTarget": "AED 32,000/week",
+      "wastePct": "3.5%",
+      "hygieneScore": "91"
+    },
+    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "media": {
+      "photos": [
+        "https://picsum.photos/seed/rak1/800/600"
+      ],
+      "videos": []
+    }
+  },
+  {
+    "id": "5",
+    "slug": "isc-aljada",
+    "name": "ISC Aljada",
+    "school": "International School of Creative Science - Aljada",
+    "location": "Sharjah",
+    "manager": "Hassan Ibrahim",
+    "contacts": [
+      {
+        "name": "Hassan Ibrahim",
+        "role": "Branch Manager",
+        "phone": "+971 50 678 9012",
+        "email": "hassan.ibrahim@mikana.ae"
+      }
+    ],
+    "operatingHours": "Sunday - Thursday: 7:00 AM - 3:00 PM",
+    "deliverySchedule": [
+      {
+        "day": "Sunday",
+        "time": "7:00 AM",
+        "items": "Fresh produce, dairy, bakery"
+      },
+      {
+        "day": "Tuesday",
+        "time": "7:00 AM",
+        "items": "Dry goods"
+      }
+    ],
+    "kpis": {
+      "salesTarget": "AED 40,000/week",
+      "wastePct": "2.9%",
+      "hygieneScore": "93"
+    },
+    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "media": {
+      "photos": [
+        "https://picsum.photos/seed/aljada1/800/600",
+        "https://picsum.photos/seed/aljada2/800/600"
+      ],
+      "videos": []
+    }
+  },
+  {
+    "id": "6",
+    "slug": "isc-ajman",
+    "name": "ISC Ajman",
+    "school": "International School of Creative Science - Ajman",
+    "location": "Ajman",
+    "manager": "Noor Al-Mansoori",
+    "contacts": [
+      {
+        "name": "Noor Al-Mansoori",
+        "role": "Branch Manager",
+        "phone": "+971 50 789 0123",
+        "email": "noor.mansoori@mikana.ae"
+      }
+    ],
+    "operatingHours": "Sunday - Thursday: 7:00 AM - 3:00 PM",
+    "deliverySchedule": [
+      {
+        "day": "Monday",
+        "time": "7:30 AM",
+        "items": "Fresh produce, dairy, bakery"
+      },
+      {
+        "day": "Thursday",
+        "time": "7:30 AM",
+        "items": "All supplies"
+      }
+    ],
+    "kpis": {
+      "salesTarget": "AED 35,000/week",
+      "wastePct": "3.2%",
+      "hygieneScore": "92"
+    },
+    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "media": {
+      "photos": [
+        "https://picsum.photos/seed/ajman1/800/600"
+      ],
+      "videos": []
+    }
+  },
+  {
+    "id": "7",
+    "slug": "isc-ueq",
+    "name": "ISC UEQ",
+    "school": "International School of Creative Science - Umm Al Quwain",
+    "location": "Umm Al Quwain",
+    "manager": "Khalid Saeed",
+    "contacts": [
+      {
+        "name": "Khalid Saeed",
+        "role": "Branch Manager",
+        "phone": "+971 50 890 1234",
+        "email": "khalid.saeed@mikana.ae"
+      }
+    ],
+    "operatingHours": "Sunday - Thursday: 7:00 AM - 3:00 PM",
+    "deliverySchedule": [
+      {
+        "day": "Tuesday",
+        "time": "8:00 AM",
+        "items": "Fresh produce, dairy"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00 AM",
+        "items": "Dry goods, frozen items"
+      }
+    ],
+    "kpis": {
+      "salesTarget": "AED 28,000/week",
+      "wastePct": "3.8%",
+      "hygieneScore": "90"
+    },
+    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "media": {
+      "photos": [
+        "https://picsum.photos/seed/ueq1/800/600"
+      ],
+      "videos": []
+    }
+  },
+  {
+    "id": "8",
+    "slug": "ck",
+    "name": "CK",
+    "school": "Clarion School - Knowledge Park",
+    "location": "Dubai",
+    "manager": "Amira Youssef",
+    "contacts": [
+      {
+        "name": "Amira Youssef",
+        "role": "Branch Manager",
+        "phone": "+971 50 901 2345",
+        "email": "amira.youssef@mikana.ae"
+      }
+    ],
+    "operatingHours": "Sunday - Thursday: 7:00 AM - 3:00 PM",
+    "deliverySchedule": [
+      {
+        "day": "Sunday",
+        "time": "6:30 AM",
+        "items": "Fresh produce, dairy, bakery"
+      },
+      {
+        "day": "Wednesday",
+        "time": "6:30 AM",
+        "items": "Dry goods, frozen items"
+      }
+    ],
+    "kpis": {
+      "salesTarget": "AED 50,000/week",
+      "wastePct": "2.2%",
+      "hygieneScore": "96"
+    },
+    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "media": {
+      "photos": [
+        "https://picsum.photos/seed/ck1/800/600",
+        "https://picsum.photos/seed/ck2/800/600",
+        "https://picsum.photos/seed/ck3/800/600"
+      ],
+      "videos": []
+    }
+  },
+  {
+    "id": "9",
+    "slug": "sabis-yas",
+    "name": "Sabis YAS",
+    "school": "SABIS International School - Yas Island",
+    "location": "Abu Dhabi",
+    "manager": "Omar Khalil",
+    "contacts": [
+      {
+        "name": "Omar Khalil",
+        "role": "Branch Manager",
+        "phone": "+971 50 012 3456",
+        "email": "omar.khalil@mikana.ae"
+      }
+    ],
+    "operatingHours": "Sunday - Thursday: 7:00 AM - 3:00 PM",
+    "deliverySchedule": [
+      {
+        "day": "Sunday",
+        "time": "7:00 AM",
+        "items": "Fresh produce, dairy, bakery"
+      },
+      {
+        "day": "Tuesday",
+        "time": "7:00 AM",
+        "items": "Dry goods"
+      },
+      {
+        "day": "Thursday",
+        "time": "7:00 AM",
+        "items": "Fresh produce, bakery"
+      }
+    ],
+    "kpis": {
+      "salesTarget": "AED 48,000/week",
+      "wastePct": "2.4%",
+      "hygieneScore": "95"
+    },
+    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "media": {
+      "photos": [
+        "https://picsum.photos/seed/yas1/800/600",
+        "https://picsum.photos/seed/yas2/800/600"
+      ],
+      "videos": []
+    }
+  },
+  {
+    "id": "10",
+    "slug": "isc-khalifa",
+    "name": "ISC Khalifa",
+    "school": "International School of Creative Science - Khalifa City",
+    "location": "Abu Dhabi",
+    "manager": "Maryam Al-Zaabi",
+    "contacts": [
+      {
+        "name": "Maryam Al-Zaabi",
+        "role": "Branch Manager",
+        "phone": "+971 50 123 4560",
+        "email": "maryam.zaabi@mikana.ae"
+      }
+    ],
+    "operatingHours": "Sunday - Thursday: 7:00 AM - 3:00 PM",
+    "deliverySchedule": [
+      {
+        "day": "Monday",
+        "time": "7:00 AM",
+        "items": "Fresh produce, dairy, bakery"
+      },
+      {
+        "day": "Wednesday",
+        "time": "7:00 AM",
+        "items": "All supplies"
+      }
+    ],
+    "kpis": {
+      "salesTarget": "AED 44,000/week",
+      "wastePct": "2.6%",
+      "hygieneScore": "94"
+    },
+    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "media": {
+      "photos": [
+        "https://picsum.photos/seed/khalifa1/800/600",
+        "https://picsum.photos/seed/khalifa2/800/600"
+      ],
+      "videos": []
+    }
+  },
+  {
+    "id": "11",
+    "slug": "isc-ain",
+    "name": "ISC Ain",
+    "school": "International School of Creative Science - Al Ain",
+    "location": "Al Ain",
+    "manager": "Rashid Al-Dhaheri",
+    "contacts": [
+      {
+        "name": "Rashid Al-Dhaheri",
+        "role": "Branch Manager",
+        "phone": "+971 50 234 5670",
+        "email": "rashid.dhaheri@mikana.ae"
+      }
+    ],
+    "operatingHours": "Sunday - Thursday: 7:00 AM - 3:00 PM",
+    "deliverySchedule": [
+      {
+        "day": "Sunday",
+        "time": "8:00 AM",
+        "items": "Fresh produce, dairy, bakery"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00 AM",
+        "items": "Dry goods, frozen items"
+      }
+    ],
+    "kpis": {
+      "salesTarget": "AED 36,000/week",
+      "wastePct": "3.0%",
+      "hygieneScore": "93"
+    },
+    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "media": {
+      "photos": [
+        "https://picsum.photos/seed/ain1/800/600"
+      ],
+      "videos": []
+    }
+  },
+  {
+    "id": "12",
+    "slug": "bateen",
+    "name": "Bateen",
+    "school": "Al Bateen Secondary School",
+    "location": "Abu Dhabi",
+    "manager": "Aisha Al-Mazrouei",
+    "contacts": [
+      {
+        "name": "Aisha Al-Mazrouei",
+        "role": "Branch Manager",
+        "phone": "+971 50 345 6701",
+        "email": "aisha.mazrouei@mikana.ae"
+      }
+    ],
+    "operatingHours": "Sunday - Thursday: 7:00 AM - 3:00 PM",
+    "deliverySchedule": [
+      {
+        "day": "Sunday",
+        "time": "7:00 AM",
+        "items": "Fresh produce, dairy, bakery"
+      },
+      {
+        "day": "Tuesday",
+        "time": "7:00 AM",
+        "items": "Dry goods"
+      },
+      {
+        "day": "Thursday",
+        "time": "7:00 AM",
+        "items": "Fresh produce, bakery"
+      }
+    ],
+    "kpis": {
+      "salesTarget": "AED 46,000/week",
+      "wastePct": "2.3%",
+      "hygieneScore": "96"
+    },
+    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "media": {
+      "photos": [
+        "https://picsum.photos/seed/bateen1/800/600",
+        "https://picsum.photos/seed/bateen2/800/600"
+      ],
+      "videos": []
+    }
+  }
+]
+
