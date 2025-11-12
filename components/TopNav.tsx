@@ -2,10 +2,16 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Moon, Sun } from 'lucide-react'
+import { Moon, Sun, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
-export function TopNav() {
+interface TopNavProps {
+  onSearch?: (query: string) => void
+  searchQuery?: string
+}
+
+export function TopNav({ onSearch, searchQuery }: TopNavProps) {
   const [isDark, setIsDark] = useState(false)
 
   const toggleTheme = () => {
@@ -26,6 +32,20 @@ export function TopNav() {
               </span>
             </div>
           </Link>
+
+          {/* Search Bar (only on home page) */}
+          {onSearch && (
+            <div className="flex-1 max-w-md mx-4 relative hidden sm:block">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search branches..."
+                value={searchQuery || ''}
+                onChange={(e) => onSearch(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          )}
 
           {/* Actions */}
           <div className="flex items-center gap-2">
