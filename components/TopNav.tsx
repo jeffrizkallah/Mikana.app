@@ -2,29 +2,15 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Search, Moon, Sun } from 'lucide-react'
-import { Input } from '@/components/ui/input'
+import { Moon, Sun } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-interface TopNavProps {
-  onSearch?: (query: string) => void
-  searchQuery?: string
-}
-
-export function TopNav({ onSearch, searchQuery = '' }: TopNavProps) {
+export function TopNav() {
   const [isDark, setIsDark] = useState(false)
-  const [query, setQuery] = useState(searchQuery)
 
   const toggleTheme = () => {
     setIsDark(!isDark)
     document.documentElement.classList.toggle('dark')
-  }
-
-  const handleSearch = (value: string) => {
-    setQuery(value)
-    if (onSearch) {
-      onSearch(value)
-    }
   }
 
   return (
@@ -40,20 +26,6 @@ export function TopNav({ onSearch, searchQuery = '' }: TopNavProps) {
               </span>
             </div>
           </Link>
-
-          {/* Search */}
-          <div className="flex-1 max-w-md">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search branches..."
-                value={query}
-                onChange={e => handleSearch(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </div>
 
           {/* Actions */}
           <div className="flex items-center gap-2">

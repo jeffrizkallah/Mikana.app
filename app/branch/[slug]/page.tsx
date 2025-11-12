@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { MapPin, Phone, Mail, Clock, Calendar } from 'lucide-react'
+import { MapPin, Phone, Mail, Clock } from 'lucide-react'
 import { TopNav } from '@/components/TopNav'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
@@ -144,29 +144,6 @@ export default function BranchPage({ params, searchParams }: BranchPageProps) {
                           {contact.email}
                         </a>
                       </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Delivery Schedule */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
-                Delivery Schedule
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {branch.deliverySchedule.map((delivery, index) => (
-                  <div key={index} className="flex items-start gap-4 pb-3 border-b last:border-b-0">
-                    <div className="w-24 font-semibold">{delivery.day}</div>
-                    <div className="flex-1">
-                      <div className="font-medium">{delivery.time}</div>
-                      <div className="text-sm text-muted-foreground">{delivery.items}</div>
                     </div>
                   </div>
                 ))}

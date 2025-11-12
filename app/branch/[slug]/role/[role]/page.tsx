@@ -54,25 +54,24 @@ export default function RolePage({ params, searchParams }: RolePageProps) {
 
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <h1 className="text-4xl font-bold mb-2">{role.name}</h1>
-              <p className="text-lg text-muted-foreground">{branch.name}</p>
-            </div>
-            {!isPrintMode && (
-              <div className="flex gap-2">
-                <Link href={`/branch/${branch.slug}/role/${params.role}?print=1`} target="_blank">
-                  <Button variant="outline">Print View</Button>
-                </Link>
-                <a href={`mailto:operations@mikana.ae?subject=Issue Report: ${branch.name} - ${role.name}`}>
-                  <Button variant="outline">
-                    <Mail className="h-4 w-4 mr-2" />
-                    Report Issue
-                  </Button>
-                </a>
-              </div>
-            )}
+          <div className="mb-4">
+            <h1 className="text-4xl font-bold mb-2">{role.name}</h1>
+            <p className="text-lg text-muted-foreground">{branch.name}</p>
           </div>
+
+          {!isPrintMode && (
+            <div className="flex justify-end gap-2 mb-4">
+              <Link href={`/branch/${branch.slug}/role/${params.role}?print=1`} target="_blank">
+                <Button variant="outline">Print View</Button>
+              </Link>
+              <a href={`mailto:operations@mikana.ae?subject=Issue Report: ${branch.name} - ${role.name}`}>
+                <Button variant="outline">
+                  <Mail className="h-4 w-4 mr-2" />
+                  Report Issue
+                </Button>
+              </a>
+            </div>
+          )}
 
           <Card>
             <CardHeader>
@@ -102,7 +101,7 @@ export default function RolePage({ params, searchParams }: RolePageProps) {
         </Card>
 
         {/* Daily Timeline */}
-        <Card className="mb-8">
+        <Card id="timeline" className="mb-8 scroll-mt-20">
           <CardHeader>
             <CardTitle>Daily Flow</CardTitle>
           </CardHeader>
@@ -112,7 +111,7 @@ export default function RolePage({ params, searchParams }: RolePageProps) {
         </Card>
 
         {/* Checklists */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div id="checklists" className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 scroll-mt-20">
           <Card className="page-break-before">
             <CardHeader>
               <CardTitle>Opening Checklist</CardTitle>

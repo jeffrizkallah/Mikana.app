@@ -32,11 +32,6 @@ export function BranchCard({ branch }: BranchCardProps) {
         {/* KPIs */}
         <div className="flex flex-wrap gap-2">
           <KPIBadge label="Waste" value={branch.kpis.wastePct} type="waste" />
-          <KPIBadge 
-            label="Hygiene" 
-            value={branch.kpis.hygieneScore} 
-            type="hygiene" 
-          />
         </div>
 
         {/* Action Button */}

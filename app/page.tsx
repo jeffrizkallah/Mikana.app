@@ -5,7 +5,6 @@ import { TopNav } from '@/components/TopNav'
 import { BranchCard } from '@/components/BranchCard'
 import { Footer } from '@/components/Footer'
 import { loadBranches, filterBranches, getUniqueLocations } from '@/lib/data'
-import { Filter } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 
 export default function HomePage() {
@@ -42,7 +41,6 @@ export default function HomePage() {
           
           {/* Location Filter */}
           <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-muted-foreground" />
             <select
               value={selectedLocation}
               onChange={e => setSelectedLocation(e.target.value)}
