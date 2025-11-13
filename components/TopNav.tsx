@@ -33,6 +33,16 @@ export function TopNav({ onSearch, searchQuery }: TopNavProps) {
             </div>
           </Link>
 
+          {/* Navigation Links */}
+          <div className="hidden md:flex items-center gap-4">
+            <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">
+              Branches
+            </Link>
+            <Link href="/dispatch" className="text-sm font-medium hover:text-primary transition-colors">
+              Dispatch
+            </Link>
+          </div>
+
           {/* Search Bar (only on home page) */}
           {onSearch && (
             <div className="flex-1 max-w-md mx-4 relative hidden sm:block">

@@ -1,6 +1,7 @@
 import branchesData from '@/data/branches.json'
 import rolesData from '@/data/roles.json'
 import recipesData from '@/data/recipes.json'
+import dispatchesData from '@/data/dispatches.json'
 
 export interface Contact {
   name: string
@@ -131,6 +132,36 @@ export interface Recipe {
   troubleshooting: TroubleshootingItem[]
   allergens: string[]
   storageInstructions: string
+}
+
+export interface DispatchItem {
+  id: string
+  name: string
+  orderedQty: number
+  unit: string
+  receivedQty: number | null
+  checked: boolean
+  notes: string
+  issue: 'missing' | 'damaged' | 'partial' | null
+}
+
+export interface BranchDispatch {
+  branchSlug: string
+  branchName: string
+  status: 'pending' | 'receiving' | 'completed'
+  items: DispatchItem[]
+  receivedBy: string | null
+  receivedAt: string | null
+  completedAt: string | null
+  overallNotes: string
+}
+
+export interface Dispatch {
+  id: string
+  createdDate: string
+  deliveryDate: string
+  createdBy: string
+  branchDispatches: BranchDispatch[]
 }
 
 /**
@@ -362,5 +393,79 @@ export function getUniqueCategories(): string[] {
   const recipes = loadRecipes()
   const categories = recipes.map(r => r.category)
   return Array.from(new Set(categories)).sort()
+}
+
+/**
+ * Load all dispatches
+ */
+export function loadDispatches(): Dispatch[] {
+  return dispatchesData as Dispatch[]
+}
+
+/**
+ * Get a single dispatch by ID
+ */
+export function getDispatch(id: string): Dispatch | undefined {
+  const dispatches = loadDispatches()
+  return dispatches.find(dispatch => dispatch.id === id)
+}
+
+/**
+ * Get dispatches for a specific branch
+ */
+export function getDispatchesForBranch(branchSlug: string): BranchDispatch[] {
+  const dispatches = loadDispatches()
+  const branchDispatches: BranchDispatch[] = []
+  
+  dispatches.forEach(dispatch => {
+    const branchDispatch = dispatch.branchDispatches.find(
+      bd => bd.branchSlug === branchSlug
+    )
+    if (branchDispatch) {
+      branchDispatches.push({
+        ...branchDispatch,
+        // Add parent dispatch info for context
+        id: dispatch.id,
+        deliveryDate: dispatch.deliveryDate,
+        createdDate: dispatch.createdDate,
+      } as any)
+    }
+  })
+  
+  return branchDispatches
+}
+
+/**
+ * Get pending dispatches for a branch
+ */
+export function getPendingDispatchesForBranch(branchSlug: string): BranchDispatch[] {
+  return getDispatchesForBranch(branchSlug).filter(
+    d => d.status === 'pending' || d.status === 'receiving'
+  )
+}
+
+/**
+ * Get completed dispatches for a branch
+ */
+export function getCompletedDispatchesForBranch(branchSlug: string): BranchDispatch[] {
+  return getDispatchesForBranch(branchSlug).filter(d => d.status === 'completed')
+}
+
+/**
+ * Get dispatch statistics
+ */
+export function getDispatchStats() {
+  const dispatches = loadDispatches()
+  const allBranchDispatches = dispatches.flatMap(d => d.branchDispatches)
+  
+  return {
+    total: allBranchDispatches.length,
+    pending: allBranchDispatches.filter(bd => bd.status === 'pending').length,
+    receiving: allBranchDispatches.filter(bd => bd.status === 'receiving').length,
+    completed: allBranchDispatches.filter(bd => bd.status === 'completed').length,
+    withIssues: allBranchDispatches.filter(bd => 
+      bd.items.some(item => item.issue !== null)
+    ).length,
+  }
 }
 

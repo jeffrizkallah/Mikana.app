@@ -8,6 +8,7 @@ import { PrintHeader } from '@/components/PrintHeader'
 import { KPIBadge } from '@/components/KPIBadge'
 import { RoleTabs } from '@/components/RoleTabs'
 import { RecipeSelector } from '@/components/RecipeSelector'
+import { BranchDispatches } from '@/components/BranchDispatches'
 import { loadBranch, loadBranches, loadRoles } from '@/lib/data'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -148,6 +149,13 @@ export default function BranchPage({ params, searchParams }: BranchPageProps) {
               </div>
             </CardContent>
           </Card>
+
+          {/* Dispatches Section */}
+          {!isPrintMode && (
+            <div className="mb-6">
+              <BranchDispatches branchSlug={branch.slug} />
+            </div>
+          )}
         </div>
 
         {/* Roles Section */}

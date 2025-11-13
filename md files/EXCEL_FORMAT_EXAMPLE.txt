@@ -1,0 +1,157 @@
+EXAMPLE: What to Copy from Excel
+=====================================
+
+When you open your SharePoint Excel file, select and copy everything from the Recipe column to the last branch column, including the header row.
+
+EXAMPLE FORMAT:
+---------------
+
+Row 1 (Branch names):
+137 Items... | Mon | Tue | Wed | Thu | Fri | | Soufouh | | | | | | DIP | | | | | | Sharja | ...
+
+Row 2 (Date columns):
+Rec. Ref | Recipe | Cost | Total | 24 Nov | 25 Nov | 26 Nov | 27 Nov | 28 Nov | Adj Unit | Total | 24 Nov | 25 Nov | ...
+
+Row 3+ (Item data):
+8 | Apple Sauce 1 Kg | 6.64 | 1.6 | 0.0 | 1.6 | 0.0 | 0.0 | 0.0 | Kg | 0.2 | 0.0 | 0.2 | ...
+30 | Beef Burger 1 KG | 37.72 | 2.2 | 0.6 | 0.6 | 0.6 | 0.6 | 0.0 | Kg | 0.0 | 0.0 | 0.0 | ...
+
+KEY POINTS:
+-----------
+
+1. **Two Header Rows** - First row has branch names, second row has dates
+2. **Tab-Separated** - Excel columns are separated by tabs (automatic when you copy)
+3. **Branch Names** - Should match exactly: Soufouh, DIP, Sharja, AlJada, Ajman, UEQ, RAK, YAS, Ruwais, CA, Ain, Khalifa
+4. **Date Format** - Dates like: "24 Nov", "25 Nov", "26 Nov" (with space between day and month)
+5. **Recipe Name** - Item names are in Column B (second column)
+6. **Unit** - Unit type (Kg, Unit, Liter, etc.) is in Column I (Adj Unit column)
+7. **Quantities** - Numbers only (decimals are fine: 0.6, 1.4, 1,950.0 with commas)
+8. **Empty Cells** - Zeros or empty cells mean item not needed for that branch
+
+HOW TO COPY FROM EXCEL:
+-----------------------
+
+Step 1: Open your SharePoint Excel file
+
+Step 2: Click on cell A1 (top-left corner with "137 Items...")
+
+Step 3: Scroll right to the last branch column (Khalifa or last visible branch)
+
+Step 4: Hold Shift and click on the last cell in the last row
+        (This selects everything in between)
+
+Step 5: Make sure BOTH header rows are selected:
+        - Row 1: Branch names (Soufouh, DIP, Sharja, etc.)
+        - Row 2: Date columns (24 Nov, 25 Nov, etc.)
+
+Step 6: Press Ctrl+C to copy
+
+Step 7: Go to the dispatch upload page: http://localhost:3000/dispatch/upload
+
+Step 8: Click in the big textarea
+
+Step 9: Press Ctrl+V to paste
+
+Step 10: Click "Parse Data"
+
+WHAT THE SYSTEM DOES:
+---------------------
+
+1. Reads the first header row to find branch names (Soufouh, DIP, Sharja, etc.)
+2. Reads the second header row to detect date columns (24 Nov, 25 Nov, etc.)
+3. For each branch, finds the 5-7 date columns that follow
+4. For each item row (starting from row 3):
+   - Reads recipe name from Column B
+   - Reads unit from Column I (Adj Unit)
+   - Finds quantities under each branch's date columns
+   - Skips items with zero or empty quantities
+5. Groups items by branch and date
+6. Shows you a preview with branch count and item totals
+7. Creates digital dispatches for each branch when you confirm
+
+TROUBLESHOOTING:
+----------------
+
+Problem: "No date columns found"
+Solution: Make sure your SECOND row has dates like "24 Nov", "25 Nov" (with space)
+
+Problem: "No items found"
+Solution: Check that you copied both header rows AND data rows (at least 3 rows total)
+
+Problem: Branch not showing
+Solution: Make sure branch name in FIRST row matches exactly (case-sensitive):
+          Soufouh, DIP, Sharja, AlJada, Ajman, UEQ, RAK, YAS, Ruwais, CA, Ain, Khalifa
+
+Problem: Wrong quantities
+Solution: Check that:
+          - Date columns are in the second row
+          - Dates are directly under their branch name columns
+          - Recipe names are in Column B
+          - Adj Unit is in Column I
+
+EXAMPLE OF WHAT YOU'LL PASTE:
+------------------------------
+
+Your pasted data should look like this in the textarea:
+
+```
+Recipe Name	Soufouh	24-Nov	25-Nov	DIP	24-Nov	25-Nov	Sharja	24-Nov
+Beef Burger 1 KG	0.6	0.6	0.0	0.8	0.0	0.8	1.2	1.2
+Beef Shawarma 1 KG	1.4	1.4	0.0	2.1	0.0	2.1	1.8	1.8
+Chicken Fajitas 1 KG	0.5	0.5	0.0	0.8	0.0	0.8	0.9	0.9
+```
+
+Notice:
+- First column = Item names
+- Branch names appear in headers
+- Dates appear after each branch name
+- Quantities are numbers (can be decimal)
+- Everything is separated by tabs (looks like lots of space)
+
+AFTER PARSING:
+--------------
+
+After you click "Parse Data", the system will show:
+- "Found X branches"
+- "Available dates: 24-Nov, 25-Nov, 26-Nov"
+- Date selection buttons
+
+Then you:
+1. Click the date you want (e.g., "24-Nov")
+2. Click "Generate Dispatch Preview"
+3. Review the items per branch
+4. Click "Create Digital Dispatches"
+5. Done! ✅
+
+TIPS:
+-----
+
+1. **Check Preview**: Always review the preview before creating
+2. **One Date at a Time**: Create dispatches for one delivery date at a time
+3. **Save Original**: Keep your Excel file, this doesn't modify it
+4. **Test First**: Try with one row to make sure format is correct
+5. **Ask for Help**: If something doesn't work, check this guide
+
+BRANCH NAME MAPPING:
+--------------------
+
+Excel Name → System Name (Branch Slug)
+- Soufouh → ISC Soufouh (isc-soufouh)
+- DIP → ISC DIP (isc-dip)
+- Sharja → ISC Sharjah (isc-sharja)
+- AlJada → ISC Aljada (isc-aljada)
+- Ajman → ISC Ajman (isc-ajman)
+- UEQ → ISC UEQ (isc-ueq)
+- RAK → ISC RAK (isc-rak)
+- YAS → Sabis YAS (sabis-yas)
+- Ruwais → Ruwais (ruwais)
+- CA → CK - Central Kitchen (ck)
+- Ain → ISC Ain (isc-ain)
+- Khalifa → ISC Khalifa (isc-khalifa)
+
+All 12 branches are supported! They should work automatically if Excel names match exactly.
+
+=====================================
+Need Help? Check DISPATCH_GUIDE.md
+=====================================
+
