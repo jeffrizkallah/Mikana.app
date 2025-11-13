@@ -5,6 +5,9 @@ const nextConfig = {
     domains: ['picsum.photos', 'images.unsplash.com'],
   },
   transpilePackages: ['lucide-react'],
+  experimental: {
+    optimizePackageImports: ['lucide-react'],
+  },
 }
 
 module.exports = nextConfig
