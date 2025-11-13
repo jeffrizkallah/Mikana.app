@@ -1,0 +1,769 @@
+[
+  {
+    "recipeId": "chicken-shawarma-wrap",
+    "name": "Chicken Shawarma Wrap",
+    "category": "Main Course",
+    "daysAvailable": ["Sunday", "Tuesday", "Thursday"],
+    "prepTime": "60 minutes",
+    "cookTime": "45 minutes",
+    "servings": "50 portions",
+    "ingredients": [
+      {
+        "item": "Chicken breast (marinated)",
+        "quantity": "5 kg",
+        "notes": "Pre-marinated from supplier, check expiry date"
+      },
+      {
+        "item": "Pita bread",
+        "quantity": "50 pieces",
+        "notes": "Keep at room temperature, wrapped"
+      },
+      {
+        "item": "Garlic sauce",
+        "quantity": "500 ml",
+        "notes": "Store refrigerated until service"
+      },
+      {
+        "item": "Fresh tomatoes (diced)",
+        "quantity": "1 kg",
+        "notes": "Wash thoroughly before dicing"
+      },
+      {
+        "item": "Lettuce (shredded)",
+        "quantity": "500 g",
+        "notes": "Wash and keep in ice water until use"
+      },
+      {
+        "item": "Pickles",
+        "quantity": "300 g",
+        "notes": "Sliced, drained"
+      }
+    ],
+    "preparation": [
+      {
+        "step": 1,
+        "instruction": "Preheat the shawarma grill to 180°C",
+        "time": "10 minutes",
+        "critical": true,
+        "hint": "Check temperature with digital thermometer"
+      },
+      {
+        "step": 2,
+        "instruction": "Remove marinated chicken from refrigerator 15 minutes before cooking",
+        "time": "15 minutes",
+        "critical": false,
+        "hint": "This ensures even cooking"
+      },
+      {
+        "step": 3,
+        "instruction": "Arrange chicken pieces tightly on vertical spit",
+        "time": "15 minutes",
+        "critical": true,
+        "hint": "Ensure secure fit to prevent falling during rotation"
+      },
+      {
+        "step": 4,
+        "instruction": "Cook chicken for 45-60 minutes, rotating continuously",
+        "time": "60 minutes",
+        "critical": true,
+        "hint": "Internal temperature must reach 75°C minimum"
+      },
+      {
+        "step": 5,
+        "instruction": "Check internal temperature with probe thermometer",
+        "time": "2 minutes",
+        "critical": true,
+        "hint": "Test multiple spots, record temperature"
+      },
+      {
+        "step": 6,
+        "instruction": "Slice chicken thinly using electric slicer",
+        "time": "5 minutes",
+        "critical": false,
+        "hint": "Slice against the grain for tender pieces"
+      },
+      {
+        "step": 7,
+        "instruction": "Transfer sliced chicken to preheated holding tray",
+        "time": "3 minutes",
+        "critical": true,
+        "hint": "Maintain temperature above 65°C"
+      }
+    ],
+    "presentation": {
+      "description": "Present the shawarma wrap attractively for student appeal",
+      "instructions": [
+        {
+          "step": "Arrange sliced chicken in stainless steel serving tray",
+          "notes": "Keep under heat lamp, maintain 65°C+"
+        },
+        {
+          "step": "Display fresh vegetables in separate compartments",
+          "notes": "Keep vegetables on ice to maintain freshness"
+        },
+        {
+          "step": "Place sauces in squeeze bottles with labels",
+          "notes": "Garlic sauce, tahini, and hot sauce options"
+        },
+        {
+          "step": "Garnish with fresh parsley and lemon wedges",
+          "notes": "Refresh garnish every hour"
+        }
+      ],
+      "photos": [
+        "https://picsum.photos/seed/shawarma-prep/800/600",
+        "https://picsum.photos/seed/shawarma-display/800/600",
+        "https://picsum.photos/seed/shawarma-plated/800/600"
+      ]
+    },
+    "sops": {
+      "foodSafetyAndHygiene": [
+        "Wash hands thoroughly before and after handling raw chicken",
+        "Use separate cutting boards and utensils for raw chicken",
+        "Cook chicken to internal temperature of 75°C minimum",
+        "Keep cold foods below 5°C and hot foods above 65°C",
+        "Discard any chicken that has been in danger zone (5-65°C) for more than 2 hours"
+      ],
+      "cookingStandards": [
+        "Preheat equipment to specified temperatures before use",
+        "Monitor cooking temperature continuously",
+        "Use calibrated thermometers for temperature checks",
+        "Follow FIFO (First In, First Out) for ingredient usage",
+        "Maintain consistent portion sizes using measuring tools"
+      ],
+      "storageAndHolding": [
+        "Store raw chicken at 0-4°C in designated refrigerator",
+        "Keep cooked chicken at 65°C+ in holding equipment",
+        "Cover all stored items and label with date/time",
+        "Use cooked chicken within 4 hours of preparation",
+        "Discard any leftovers at end of service"
+      ],
+      "qualityStandards": [
+        "Chicken should be moist and tender, not dry",
+        "Meat should have even browning and char marks",
+        "No pink color in the center of meat",
+        "Vegetables must be fresh and crisp",
+        "Pita bread should be warm and soft, not hard or stale"
+      ]
+    },
+    "troubleshooting": [
+      {
+        "problem": "Chicken is dry and tough",
+        "solutions": [
+          "Reduce cooking time by 5-10 minutes",
+          "Check marinade application - should be well-coated",
+          "Ensure grill temperature is not too high (max 180°C)",
+          "Slice chicken immediately after cooking to retain moisture"
+        ]
+      },
+      {
+        "problem": "Chicken is undercooked (pink inside)",
+        "solutions": [
+          "Continue cooking until internal temp reaches 75°C",
+          "Check grill heating elements are working properly",
+          "Ensure chicken pieces are not too thick on spit",
+          "Never serve undercooked chicken - safety priority"
+        ]
+      },
+      {
+        "problem": "Garlic sauce is too thin/runny",
+        "solutions": [
+          "Add 1 tablespoon of cornstarch mixed with cold water",
+          "Refrigerate for 30 minutes to thicken",
+          "Add 2 tablespoons of Greek yogurt for thickness",
+          "Contact supplier if consistently thin"
+        ]
+      },
+      {
+        "problem": "Wraps falling apart during assembly",
+        "solutions": [
+          "Warm pita bread slightly before assembly",
+          "Don't overfill - use portion control",
+          "Ensure vegetables are well-drained, not wet",
+          "Wrap tightly and secure with wrapper if needed"
+        ]
+      }
+    ],
+    "allergens": ["Wheat (gluten in pita)", "Dairy (garlic sauce)", "Sesame (tahini)"],
+    "storageInstructions": "Store leftover cooked chicken in sealed container at 4°C. Label with date and time. Use within 24 hours or discard."
+  },
+  {
+    "recipeId": "vegetable-samosas",
+    "name": "Vegetable Samosas",
+    "category": "Appetizer",
+    "daysAvailable": ["Sunday", "Monday", "Wednesday"],
+    "prepTime": "45 minutes",
+    "cookTime": "20 minutes",
+    "servings": "60 pieces",
+    "ingredients": [
+      {
+        "item": "Frozen samosa pastry",
+        "quantity": "60 pieces",
+        "notes": "Thaw for 30 minutes before use"
+      },
+      {
+        "item": "Potatoes (boiled and diced)",
+        "quantity": "2 kg",
+        "notes": "Dice into 1cm cubes"
+      },
+      {
+        "item": "Green peas (cooked)",
+        "quantity": "500 g",
+        "notes": "Frozen peas, cooked until tender"
+      },
+      {
+        "item": "Onions (diced)",
+        "quantity": "300 g",
+        "notes": "Finely diced"
+      },
+      {
+        "item": "Samosa spice mix",
+        "quantity": "50 g",
+        "notes": "Pre-mixed from supplier"
+      },
+      {
+        "item": "Vegetable oil for frying",
+        "quantity": "2 liters",
+        "notes": "Fresh oil, change after 3 batches"
+      }
+    ],
+    "preparation": [
+      {
+        "step": 1,
+        "instruction": "Heat oil in deep fryer to 175°C",
+        "time": "15 minutes",
+        "critical": true,
+        "hint": "Use thermometer to verify temperature"
+      },
+      {
+        "step": 2,
+        "instruction": "Remove samosa pastry from freezer, thaw at room temperature",
+        "time": "30 minutes",
+        "critical": false,
+        "hint": "Keep covered to prevent drying"
+      },
+      {
+        "step": 3,
+        "instruction": "Sauté onions in pan until translucent",
+        "time": "5 minutes",
+        "critical": false,
+        "hint": "Medium heat, don't burn"
+      },
+      {
+        "step": 4,
+        "instruction": "Add potatoes, peas, and spice mix, cook for 5 minutes",
+        "time": "5 minutes",
+        "critical": false,
+        "hint": "Mix well to coat evenly with spices"
+      },
+      {
+        "step": 5,
+        "instruction": "Let filling cool completely before assembly",
+        "time": "20 minutes",
+        "critical": true,
+        "hint": "Hot filling will make pastry soggy"
+      },
+      {
+        "step": 6,
+        "instruction": "Fill each pastry with 2 tablespoons of filling, seal edges with water",
+        "time": "30 minutes",
+        "critical": false,
+        "hint": "Ensure tight seal to prevent opening during frying"
+      },
+      {
+        "step": 7,
+        "instruction": "Fry samosas in batches of 10 for 4-5 minutes until golden",
+        "time": "25 minutes",
+        "critical": true,
+        "hint": "Don't overcrowd fryer, maintain 175°C"
+      },
+      {
+        "step": 8,
+        "instruction": "Drain on paper towels, transfer to holding tray",
+        "time": "5 minutes",
+        "critical": false,
+        "hint": "Keep warm at 65°C until service"
+      }
+    ],
+    "presentation": {
+      "description": "Display samosas attractively with dipping sauces",
+      "instructions": [
+        {
+          "step": "Arrange samosas standing upright in serving basket",
+          "notes": "Line with parchment paper for presentation"
+        },
+        {
+          "step": "Place mint chutney and tamarind sauce in small bowls",
+          "notes": "Replenish sauces regularly"
+        },
+        {
+          "step": "Garnish with fresh cilantro sprigs",
+          "notes": "Change garnish if wilted"
+        }
+      ],
+      "photos": [
+        "https://picsum.photos/seed/samosa-prep/800/600",
+        "https://picsum.photos/seed/samosa-display/800/600",
+        "https://picsum.photos/seed/samosa-plated/800/600"
+      ]
+    },
+    "sops": {
+      "foodSafetyAndHygiene": [
+        "Wash hands before handling food",
+        "Use clean utensils for assembly",
+        "Keep filling refrigerated until ready to use",
+        "Monitor oil temperature to prevent bacterial growth",
+        "Change frying oil when it darkens or smokes"
+      ],
+      "cookingStandards": [
+        "Maintain oil temperature at 175°C ±5°C",
+        "Fry until golden brown on all sides",
+        "Drain excess oil properly",
+        "Ensure even cooking - no pale spots",
+        "Use timer to ensure consistent cooking time"
+      ],
+      "storageAndHolding": [
+        "Store raw filled samosas refrigerated for up to 24 hours",
+        "Keep fried samosas at 65°C+ in holding cabinet",
+        "Use within 2 hours of frying for best quality",
+        "Do not refrigerate and reheat - prepare fresh daily"
+      ],
+      "qualityStandards": [
+        "Pastry should be crispy and golden, not pale or burnt",
+        "Filling should be hot (65°C+) and well-seasoned",
+        "No oil pooling - should be well-drained",
+        "Shape should be uniform and intact",
+        "Filling should not leak from seams"
+      ]
+    },
+    "troubleshooting": [
+      {
+        "problem": "Samosas are pale and soggy",
+        "solutions": [
+          "Increase oil temperature to 180°C",
+          "Fry for additional 1-2 minutes",
+          "Ensure filling is completely cooled before assembly",
+          "Check oil quality - may need changing"
+        ]
+      },
+      {
+        "problem": "Samosas burst open during frying",
+        "solutions": [
+          "Seal edges better with water paste",
+          "Don't overfill - use 2 tablespoons maximum",
+          "Lower oil temperature to 170°C",
+          "Ensure pastry is properly thawed"
+        ]
+      },
+      {
+        "problem": "Filling is too dry",
+        "solutions": [
+          "Add 2 tablespoons of water to mixture",
+          "Include more cooked peas for moisture",
+          "Don't overcook potato mixture",
+          "Add 1 tablespoon of butter for richness"
+        ]
+      },
+      {
+        "problem": "Oil is smoking",
+        "solutions": [
+          "Reduce temperature immediately to 170°C",
+          "Oil may be old - strain and check quality",
+          "Never leave fryer unattended",
+          "Change oil if consistently smoking"
+        ]
+      }
+    ],
+    "allergens": ["Wheat (gluten in pastry)"],
+    "storageInstructions": "Fried samosas cannot be stored. Prepare fresh for each service. Raw filled samosas can be refrigerated for 24 hours in covered container."
+  },
+  {
+    "recipeId": "fresh-fruit-salad",
+    "name": "Fresh Fruit Salad",
+    "category": "Dessert",
+    "daysAvailable": ["Monday", "Tuesday", "Wednesday", "Thursday", "Sunday"],
+    "prepTime": "30 minutes",
+    "cookTime": "0 minutes",
+    "servings": "40 portions",
+    "ingredients": [
+      {
+        "item": "Watermelon",
+        "quantity": "2 kg",
+        "notes": "Cut into 2cm cubes"
+      },
+      {
+        "item": "Cantaloupe melon",
+        "quantity": "1.5 kg",
+        "notes": "Cut into 2cm cubes"
+      },
+      {
+        "item": "Green grapes",
+        "quantity": "500 g",
+        "notes": "Wash thoroughly, halved"
+      },
+      {
+        "item": "Strawberries",
+        "quantity": "500 g",
+        "notes": "Wash, hulled, quartered"
+      },
+      {
+        "item": "Pineapple chunks",
+        "quantity": "500 g",
+        "notes": "Fresh or canned (drained)"
+      },
+      {
+        "item": "Fresh mint leaves",
+        "quantity": "20 g",
+        "notes": "For garnish"
+      },
+      {
+        "item": "Lemon juice",
+        "quantity": "50 ml",
+        "notes": "Fresh squeezed"
+      }
+    ],
+    "preparation": [
+      {
+        "step": 1,
+        "instruction": "Wash all fresh fruits thoroughly under running water",
+        "time": "5 minutes",
+        "critical": true,
+        "hint": "Use fruit wash solution if available"
+      },
+      {
+        "step": 2,
+        "instruction": "Sanitize cutting board and knife",
+        "time": "2 minutes",
+        "critical": true,
+        "hint": "Use designated fruit-only equipment"
+      },
+      {
+        "step": 3,
+        "instruction": "Cut watermelon and cantaloupe into uniform 2cm cubes",
+        "time": "10 minutes",
+        "critical": false,
+        "hint": "Remove seeds and rind completely"
+      },
+      {
+        "step": 4,
+        "instruction": "Hull and quarter strawberries",
+        "time": "5 minutes",
+        "critical": false,
+        "hint": "Ensure all green parts removed"
+      },
+      {
+        "step": 5,
+        "instruction": "Halve grapes lengthwise",
+        "time": "5 minutes",
+        "critical": false,
+        "hint": "Makes them easier for students to eat"
+      },
+      {
+        "step": 6,
+        "instruction": "Combine all fruits in large bowl, drizzle with lemon juice",
+        "time": "3 minutes",
+        "critical": false,
+        "hint": "Lemon juice prevents browning"
+      },
+      {
+        "step": 7,
+        "instruction": "Gently mix and refrigerate immediately",
+        "time": "2 minutes",
+        "critical": true,
+        "hint": "Keep at 4°C until service, use within 4 hours"
+      }
+    ],
+    "presentation": {
+      "description": "Display fruit salad in an appealing, colorful manner",
+      "instructions": [
+        {
+          "step": "Use clear glass serving bowl to show vibrant colors",
+          "notes": "Keep bowl on ice bed to maintain temperature"
+        },
+        {
+          "step": "Garnish top with fresh mint leaves",
+          "notes": "Arrange mint artistically"
+        },
+        {
+          "step": "Place serving spoons in bowl",
+          "notes": "Use large spoons for easy portioning"
+        },
+        {
+          "step": "Provide small cups or bowls for individual servings",
+          "notes": "100g portions per student"
+        }
+      ],
+      "photos": [
+        "https://picsum.photos/seed/fruit-prep/800/600",
+        "https://picsum.photos/seed/fruit-display/800/600",
+        "https://picsum.photos/seed/fruit-bowl/800/600"
+      ]
+    },
+    "sops": {
+      "foodSafetyAndHygiene": [
+        "Wash all fruits thoroughly, even if peeling",
+        "Use sanitized equipment for fruit preparation",
+        "Keep fruits refrigerated at 4°C until service",
+        "Discard any fruit that has been at room temperature for >2 hours",
+        "Check for mold or spoilage before preparing"
+      ],
+      "cookingStandards": [
+        "Cut fruits into uniform 2cm pieces for consistency",
+        "Remove all seeds, pits, and inedible parts",
+        "Mix gently to avoid bruising",
+        "Apply lemon juice to prevent oxidation",
+        "Prepare no more than 4 hours before service"
+      ],
+      "storageAndHolding": [
+        "Store whole fruits in produce refrigerator at 4°C",
+        "Keep cut fruits covered and refrigerated",
+        "Use within 4 hours of cutting",
+        "Do not hold overnight - prepare fresh daily",
+        "Keep serving bowl on ice during service"
+      ],
+      "qualityStandards": [
+        "Fruits should be fresh, firm, and colorful",
+        "No brown or mushy pieces",
+        "Uniform cutting for professional appearance",
+        "Pleasant fresh fruit aroma",
+        "Cold temperature (4-8°C) when served"
+      ]
+    },
+    "troubleshooting": [
+      {
+        "problem": "Fruits are browning quickly",
+        "solutions": [
+          "Add more lemon juice (1-2 tablespoons)",
+          "Keep fruit salad covered in refrigerator",
+          "Prepare closer to service time",
+          "Ensure fruits were fresh to begin with"
+        ]
+      },
+      {
+        "problem": "Fruit salad is too watery",
+        "solutions": [
+          "Drain excess liquid before serving",
+          "Use less watermelon (high water content)",
+          "Ensure fruits are well-drained after washing",
+          "Serve with slotted spoon"
+        ]
+      },
+      {
+        "problem": "Students not taking fruit salad",
+        "solutions": [
+          "Make display more attractive with colorful presentation",
+          "Offer sample portions at counter",
+          "Add popular fruits like mango or berries",
+          "Provide small take-away containers"
+        ]
+      },
+      {
+        "problem": "Fruits are not ripe enough",
+        "solutions": [
+          "Check fruit ripeness before ordering",
+          "Store unripe fruits at room temp until ready",
+          "Use only ripe fruits for salad preparation",
+          "Contact supplier if consistently unripe"
+        ]
+      }
+    ],
+    "allergens": [],
+    "storageInstructions": "Prepared fruit salad must be used within 4 hours. Store covered at 4°C. Do not hold overnight. Whole fruits can be stored for 3-5 days in produce refrigerator."
+  },
+  {
+    "recipeId": "margherita-pizza",
+    "name": "Margherita Pizza",
+    "category": "Main Course",
+    "daysAvailable": ["Monday", "Wednesday", "Friday"],
+    "prepTime": "20 minutes",
+    "cookTime": "12 minutes",
+    "servings": "30 pizzas (8 slices each)",
+    "ingredients": [
+      {
+        "item": "Pizza dough balls",
+        "quantity": "30 pieces (250g each)",
+        "notes": "Pre-made from supplier, room temperature"
+      },
+      {
+        "item": "Pizza sauce (tomato)",
+        "quantity": "2 liters",
+        "notes": "Pre-seasoned, store refrigerated"
+      },
+      {
+        "item": "Mozzarella cheese (shredded)",
+        "quantity": "3 kg",
+        "notes": "Low-moisture mozzarella"
+      },
+      {
+        "item": "Fresh basil leaves",
+        "quantity": "100 g",
+        "notes": "Wash and pat dry"
+      },
+      {
+        "item": "Olive oil",
+        "quantity": "200 ml",
+        "notes": "Extra virgin for drizzling"
+      },
+      {
+        "item": "Flour for dusting",
+        "quantity": "500 g",
+        "notes": "Keep workstation dusted"
+      }
+    ],
+    "preparation": [
+      {
+        "step": 1,
+        "instruction": "Preheat pizza oven to 250°C",
+        "time": "20 minutes",
+        "critical": true,
+        "hint": "Oven must be fully preheated for proper cooking"
+      },
+      {
+        "step": 2,
+        "instruction": "Remove dough balls from refrigerator 1 hour before use",
+        "time": "60 minutes",
+        "critical": true,
+        "hint": "Room temperature dough is easier to stretch"
+      },
+      {
+        "step": 3,
+        "instruction": "Dust work surface with flour, stretch dough to 12-inch diameter",
+        "time": "2 minutes per pizza",
+        "critical": false,
+        "hint": "Use gentle stretching, don't tear dough"
+      },
+      {
+        "step": 4,
+        "instruction": "Spread 60ml of pizza sauce evenly, leave 1cm border",
+        "time": "1 minute per pizza",
+        "critical": false,
+        "hint": "Use ladle for consistent portioning"
+      },
+      {
+        "step": 5,
+        "instruction": "Sprinkle 100g mozzarella cheese evenly over sauce",
+        "time": "1 minute per pizza",
+        "critical": false,
+        "hint": "Don't overload - cheese will melt and spread"
+      },
+      {
+        "step": 6,
+        "instruction": "Bake pizza for 10-12 minutes until crust is golden and cheese bubbles",
+        "time": "12 minutes per pizza",
+        "critical": true,
+        "hint": "Rotate pizza halfway through for even cooking"
+      },
+      {
+        "step": 7,
+        "instruction": "Remove from oven, add fresh basil leaves, drizzle with olive oil",
+        "time": "1 minute per pizza",
+        "critical": false,
+        "hint": "Add basil after baking to keep it fresh and green"
+      },
+      {
+        "step": 8,
+        "instruction": "Cut into 8 slices using pizza cutter, serve immediately",
+        "time": "2 minutes per pizza",
+        "critical": false,
+        "hint": "Use rocking motion for clean cuts"
+      }
+    ],
+    "presentation": {
+      "description": "Display pizza slices attractively at serving counter",
+      "instructions": [
+        {
+          "step": "Place whole pizzas on wooden boards for display",
+          "notes": "Shows students the fresh preparation"
+        },
+        {
+          "step": "Cut pizzas into 8 equal slices",
+          "notes": "Use pizza wheel for clean cuts"
+        },
+        {
+          "step": "Arrange slices on serving tray under heat lamp",
+          "notes": "Keep at 65°C+ for food safety"
+        },
+        {
+          "step": "Provide serving tongs and plates",
+          "notes": "One slice per student, can return for seconds"
+        }
+      ],
+      "photos": [
+        "https://picsum.photos/seed/pizza-prep/800/600",
+        "https://picsum.photos/seed/pizza-oven/800/600",
+        "https://picsum.photos/seed/pizza-display/800/600"
+      ]
+    },
+    "sops": {
+      "foodSafetyAndHygiene": [
+        "Wash hands thoroughly before handling dough",
+        "Use clean work surface for each batch",
+        "Store cheese refrigerated until use",
+        "Keep cooked pizza at 65°C+ or discard within 2 hours",
+        "Never reuse dropped dough or toppings"
+      ],
+      "cookingStandards": [
+        "Maintain oven temperature at 250°C consistently",
+        "Ensure even stretching - no thick spots",
+        "Consistent sauce and cheese portions",
+        "Bake until cheese is bubbly and crust is golden",
+        "Rotate pizza halfway through baking"
+      ],
+      "storageAndHolding": [
+        "Store dough balls in refrigerator, remove 1 hour before use",
+        "Keep sauce and cheese refrigerated at 4°C",
+        "Hold baked pizza at 65°C+ for maximum 2 hours",
+        "Discard unbaked stretched dough after 30 minutes",
+        "Do not refrigerate and reheat - prepare fresh"
+      ],
+      "qualityStandards": [
+        "Crust should be golden brown with slight char",
+        "Cheese should be melted and slightly browned",
+        "Even distribution of sauce and toppings",
+        "Fresh basil should be vibrant green, not wilted",
+        "Pizza should be hot when served (65°C+)"
+      ]
+    },
+    "troubleshooting": [
+      {
+        "problem": "Dough is tearing when stretching",
+        "solutions": [
+          "Ensure dough is at room temperature",
+          "Let dough rest for 5 minutes if resistant",
+          "Use gentle stretching motion, not pulling",
+          "Dough may be over-proofed - check freshness"
+        ]
+      },
+      {
+        "problem": "Pizza is soggy in the middle",
+        "solutions": [
+          "Use less sauce - 60ml maximum",
+          "Increase oven temperature to 260°C",
+          "Ensure oven is fully preheated",
+          "Don't overload with toppings"
+        ]
+      },
+      {
+        "problem": "Crust is burnt but cheese isn't melted",
+        "solutions": [
+          "Lower oven temperature to 230°C",
+          "Position pizza on middle rack",
+          "Use low-moisture mozzarella (melts better)",
+          "Check oven calibration"
+        ]
+      },
+      {
+        "problem": "Cheese is sliding off pizza",
+        "solutions": [
+          "Ensure cheese is shredded, not sliced",
+          "Don't over-sauce - leave proper border",
+          "Use low-moisture mozzarella",
+          "Let pizza cool for 1-2 minutes before cutting"
+        ]
+      }
+    ],
+    "allergens": ["Wheat (gluten in dough)", "Dairy (cheese)"],
+    "storageInstructions": "Baked pizza should be served immediately or held at 65°C+ for maximum 2 hours. Do not store cooked pizza overnight. Unused dough can be frozen for up to 1 month."
+  }
+]
+

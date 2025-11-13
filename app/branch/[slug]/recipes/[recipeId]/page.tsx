@@ -1,0 +1,148 @@
+import { notFound } from 'next/navigation'
+import Link from 'next/link'
+import { 
+  Clock, 
+  Users, 
+  ChefHat, 
+  AlertTriangle
+} from 'lucide-react'
+import { TopNav } from '@/components/TopNav'
+import { Footer } from '@/components/Footer'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
+import { PrintHeader } from '@/components/PrintHeader'
+import { RecipeTabs } from '@/components/RecipeTabs'
+import { loadBranch, getRecipe, loadRecipes, loadBranches } from '@/lib/data'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+
+interface RecipePageProps {
+  params: {
+    slug: string
+    recipeId: string
+  }
+  searchParams: {
+    print?: string
+  }
+}
+
+export default function RecipePage({ params, searchParams }: RecipePageProps) {
+  const branch = loadBranch(params.slug)
+  const recipe = getRecipe(params.recipeId)
+
+  if (!branch || !recipe) {
+    notFound()
+  }
+
+  const isPrintMode = searchParams.print === '1'
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      {!isPrintMode && <TopNav />}
+      <PrintHeader branchName={`${branch.name} - ${recipe.name}`} />
+
+      <main className="flex-1 container mx-auto px-4 py-8">
+        <Breadcrumbs
+          items={[
+            { label: 'Home', href: '/' },
+            { label: branch.name, href: `/branch/${branch.slug}` },
+            { label: 'Recipes', href: `/branch/${branch.slug}/recipes` },
+            { label: recipe.name },
+          ]}
+        />
+
+        {/* Header */}
+        <div className="mb-8">
+          <div className="mb-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <ChefHat className="h-8 w-8" />
+                <h1 className="text-4xl font-bold">{recipe.name}</h1>
+              </div>
+              <p className="text-xl text-muted-foreground mb-4">{recipe.category}</p>
+              
+              {/* Key Info */}
+              <div className="flex flex-wrap gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">Prep:</span>
+                  <span className="font-semibold">{recipe.prepTime}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">Cook:</span>
+                  <span className="font-semibold">{recipe.cookTime}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">Servings:</span>
+                  <span className="font-semibold">{recipe.servings}</span>
+                </div>
+              </div>
+
+              {/* Days Available */}
+              <div className="mt-3 flex items-center overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                <span className="text-sm text-muted-foreground mr-2 flex-shrink-0">Available on:</span>
+                <div className="flex gap-1 flex-nowrap">
+                  {recipe.daysAvailable.map((day, index) => (
+                    <Badge key={index} variant="secondary" className="flex-shrink-0">
+                      {day}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              {/* Allergens */}
+              {recipe.allergens.length > 0 && (
+                <div className="mt-3 p-3 bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-md">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-500 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-sm text-yellow-900 dark:text-yellow-100">
+                        Allergen Warning
+                      </p>
+                      <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                        {recipe.allergens.join(', ')}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content Tabs */}
+        <RecipeTabs recipe={recipe} />
+
+        {/* Print Button */}
+        {!isPrintMode && (
+          <div className="mt-8 flex justify-center">
+            <Link href={`/branch/${branch.slug}/recipes/${recipe.recipeId}?print=1`} target="_blank">
+              <Button variant="outline" size="lg">Print Recipe</Button>
+            </Link>
+          </div>
+        )}
+      </main>
+
+      <Footer />
+    </div>
+  )
+}
+
+export async function generateStaticParams() {
+  const branches = loadBranches()
+  const recipes = loadRecipes()
+  
+  const params = []
+  for (const branch of branches) {
+    for (const recipe of recipes) {
+      params.push({
+        slug: branch.slug,
+        recipeId: recipe.recipeId,
+      })
+    }
+  }
+  
+  return params
+}
+

@@ -1,5 +1,6 @@
 import branchesData from '@/data/branches.json'
 import rolesData from '@/data/roles.json'
+import recipesData from '@/data/recipes.json'
 
 export interface Contact {
   name: string
@@ -76,6 +77,60 @@ export interface Role {
   checklists: Checklists
   dos: string[]
   donts: string[]
+}
+
+export interface Ingredient {
+  item: string
+  quantity: string
+  notes?: string
+}
+
+export interface PreparationStep {
+  step: number
+  instruction: string
+  time: string
+  critical: boolean
+  hint?: string
+}
+
+export interface PresentationInstruction {
+  step: string
+  notes?: string
+}
+
+export interface Presentation {
+  description: string
+  instructions: PresentationInstruction[]
+  photos: string[]
+}
+
+export interface SOPs {
+  foodSafetyAndHygiene: string[]
+  cookingStandards: string[]
+  storageAndHolding: string[]
+  qualityStandards: string[]
+}
+
+export interface TroubleshootingItem {
+  problem: string
+  solutions: string[]
+}
+
+export interface Recipe {
+  recipeId: string
+  name: string
+  category: string
+  daysAvailable: string[]
+  prepTime: string
+  cookTime: string
+  servings: string
+  ingredients: Ingredient[]
+  preparation: PreparationStep[]
+  presentation: Presentation
+  sops: SOPs
+  troubleshooting: TroubleshootingItem[]
+  allergens: string[]
+  storageInstructions: string
 }
 
 /**
@@ -250,5 +305,62 @@ export function exportMergedData(): string {
     null,
     2
   )
+}
+
+/**
+ * Load all recipes
+ */
+export function loadRecipes(): Recipe[] {
+  return recipesData as Recipe[]
+}
+
+/**
+ * Get a single recipe by recipeId
+ */
+export function getRecipe(recipeId: string): Recipe | undefined {
+  const recipes = loadRecipes()
+  return recipes.find(recipe => recipe.recipeId === recipeId)
+}
+
+/**
+ * Get recipes available for a specific day
+ */
+export function getRecipesForDay(day: string): Recipe[] {
+  const recipes = loadRecipes()
+  return recipes.filter(recipe => 
+    recipe.daysAvailable.includes(day)
+  )
+}
+
+/**
+ * Get recipes by category
+ */
+export function getRecipesByCategory(category: string): Recipe[] {
+  const recipes = loadRecipes()
+  return recipes.filter(recipe => recipe.category === category)
+}
+
+/**
+ * Get unique days from all recipes
+ */
+export function getUniqueDays(): string[] {
+  const recipes = loadRecipes()
+  const daysSet = new Set<string>()
+  recipes.forEach(recipe => {
+    recipe.daysAvailable.forEach(day => daysSet.add(day))
+  })
+  return Array.from(daysSet).sort((a, b) => {
+    const dayOrder = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    return dayOrder.indexOf(a) - dayOrder.indexOf(b)
+  })
+}
+
+/**
+ * Get unique categories from all recipes
+ */
+export function getUniqueCategories(): string[] {
+  const recipes = loadRecipes()
+  const categories = recipes.map(r => r.category)
+  return Array.from(new Set(categories)).sort()
 }
 
