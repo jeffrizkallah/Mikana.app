@@ -11,7 +11,7 @@ import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Upload, Package, Clock, CheckCircle2, AlertTriangle, Trash2 } from 'lucide-react'
+import { Upload, Package, Clock, CheckCircle2, AlertTriangle, Trash2, FileText } from 'lucide-react'
 
 interface Dispatch {
   id: string
@@ -251,25 +251,39 @@ export default function DispatchDashboardPage() {
                               Delivery: {formatDate(dispatch.deliveryDate)}
                             </h3>
                             {withIssues > 0 && (
-                              <Badge variant="destructive" className="flex items-center gap-1">
-                                <AlertTriangle className="h-3 w-3" />
-                                {withIssues} Issue{withIssues > 1 ? 's' : ''}
-                              </Badge>
+                              <Link href={`/dispatch/${dispatch.id}/report`}>
+                                <Badge variant="destructive" className="flex items-center gap-1 cursor-pointer hover:bg-destructive/80 transition-colors">
+                                  <AlertTriangle className="h-3 w-3" />
+                                  {withIssues} Issue{withIssues > 1 ? 's' : ''}
+                                </Badge>
+                              </Link>
                             )}
                           </div>
                           <div className="text-sm text-muted-foreground">
                             Created: {formatDate(dispatch.createdDate)} by {dispatch.createdBy}
                           </div>
                         </div>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => handleDeleteClick(dispatch)}
-                          className="flex items-center gap-2"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                          Delete
-                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Link href={`/dispatch/${dispatch.id}/report`}>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex items-center gap-2"
+                            >
+                              <FileText className="h-4 w-4" />
+                              View Report
+                            </Button>
+                          </Link>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => handleDeleteClick(dispatch)}
+                            className="flex items-center gap-2"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            Delete
+                          </Button>
+                        </div>
                       </div>
 
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">

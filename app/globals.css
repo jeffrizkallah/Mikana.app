@@ -122,6 +122,28 @@
     font-size: 0.75rem;
     color: #666;
   }
+
+  /* Print styles for dispatch reports */
+  .print-only {
+    display: block !important;
+  }
+
+  /* Preserve colors for badges and important indicators */
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Keep table borders visible */
+  table, th, td {
+    border-color: #000 !important;
+  }
+
+  /* Avoid breaking tables and cards */
+  .no-break, table, .border {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
 }
 
 /* Accessible focus states */
