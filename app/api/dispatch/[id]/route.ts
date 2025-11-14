@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
-import { writeFileSync, readFileSync, existsSync } from 'fs'
-import { join } from 'path'
+import { sql } from '@vercel/postgres'
 
 export async function PATCH(
   request: Request,
@@ -10,21 +9,20 @@ export async function PATCH(
     const updates = await request.json()
     const dispatchId = params.id
     
-    // Read existing dispatches
-    const dispatchFilePath = join(process.cwd(), 'data', 'dispatches.json')
-    const fileContent = readFileSync(dispatchFilePath, 'utf-8')
-    const dispatches = JSON.parse(fileContent)
+    // Get the current dispatch
+    const dispatch = await sql`
+      SELECT branch_dispatches as "branchDispatches"
+      FROM dispatches
+      WHERE id = ${dispatchId} AND is_archived = false
+    `
     
-    // Find and update the dispatch
-    const dispatchIndex = dispatches.findIndex((d: any) => d.id === dispatchId)
-    
-    if (dispatchIndex === -1) {
+    if (dispatch.rows.length === 0) {
       return NextResponse.json({ error: 'Dispatch not found' }, { status: 404 })
     }
     
-    // Update branch dispatch
-    const dispatch = dispatches[dispatchIndex]
-    const branchIndex = dispatch.branchDispatches.findIndex(
+    // Update branch dispatch in the JSONB array
+    const branchDispatches = dispatch.rows[0].branchDispatches
+    const branchIndex = branchDispatches.findIndex(
       (bd: any) => bd.branchSlug === updates.branchSlug
     )
     
@@ -33,15 +31,17 @@ export async function PATCH(
     }
     
     // Merge updates
-    dispatch.branchDispatches[branchIndex] = {
-      ...dispatch.branchDispatches[branchIndex],
+    branchDispatches[branchIndex] = {
+      ...branchDispatches[branchIndex],
       ...updates
     }
     
-    dispatches[dispatchIndex] = dispatch
-    
-    // Save back to file
-    writeFileSync(dispatchFilePath, JSON.stringify(dispatches, null, 2))
+    // Update the database
+    await sql`
+      UPDATE dispatches
+      SET branch_dispatches = ${JSON.stringify(branchDispatches)}::jsonb
+      WHERE id = ${dispatchId}
+    `
     
     return NextResponse.json({ success: true })
   } catch (error) {
@@ -57,50 +57,20 @@ export async function DELETE(
   try {
     const dispatchId = params.id
     
-    // Read existing dispatches
-    const dispatchFilePath = join(process.cwd(), 'data', 'dispatches.json')
-    const fileContent = readFileSync(dispatchFilePath, 'utf-8')
-    const dispatches = JSON.parse(fileContent)
+    // Mark dispatch as archived instead of physically deleting
+    const result = await sql`
+      UPDATE dispatches
+      SET 
+        is_archived = true,
+        deleted_at = NOW(),
+        deleted_by = 'Admin'
+      WHERE id = ${dispatchId} AND is_archived = false
+      RETURNING id
+    `
     
-    // Find the dispatch to delete
-    const dispatchIndex = dispatches.findIndex((d: any) => d.id === dispatchId)
-    
-    if (dispatchIndex === -1) {
+    if (result.rowCount === 0) {
       return NextResponse.json({ error: 'Dispatch not found' }, { status: 404 })
     }
-    
-    // Get the dispatch to archive
-    const dispatchToArchive = dispatches[dispatchIndex]
-    
-    // Add deletion metadata
-    dispatchToArchive.deletedAt = new Date().toISOString()
-    dispatchToArchive.deletedBy = 'Admin'
-    
-    // Remove from active dispatches
-    dispatches.splice(dispatchIndex, 1)
-    
-    // Save updated dispatches
-    writeFileSync(dispatchFilePath, JSON.stringify(dispatches, null, 2))
-    
-    // Move to archive
-    const archiveFilePath = join(process.cwd(), 'data', 'dispatches-archive.json')
-    let archivedDispatches = []
-    
-    // Read existing archive if it exists
-    if (existsSync(archiveFilePath)) {
-      try {
-        const archiveContent = readFileSync(archiveFilePath, 'utf-8')
-        archivedDispatches = JSON.parse(archiveContent)
-      } catch {
-        archivedDispatches = []
-      }
-    }
-    
-    // Add to archive
-    archivedDispatches.push(dispatchToArchive)
-    
-    // Save archive
-    writeFileSync(archiveFilePath, JSON.stringify(archivedDispatches, null, 2))
     
     return NextResponse.json({ 
       success: true, 

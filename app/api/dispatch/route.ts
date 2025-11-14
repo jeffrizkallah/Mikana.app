@@ -1,28 +1,28 @@
 import { NextResponse } from 'next/server'
-import { writeFileSync, readFileSync } from 'fs'
-import { join } from 'path'
+import { sql } from '@vercel/postgres'
 
 export async function POST(request: Request) {
   try {
     const dispatch = await request.json()
     
-    // Read existing dispatches
-    const dispatchFilePath = join(process.cwd(), 'data', 'dispatches.json')
-    let dispatches = []
-    
-    try {
-      const fileContent = readFileSync(dispatchFilePath, 'utf-8')
-      dispatches = JSON.parse(fileContent)
-    } catch (err) {
-      // File doesn't exist or is empty, start with empty array
-      dispatches = []
-    }
-    
-    // Add new dispatch
-    dispatches.push(dispatch)
-    
-    // Save back to file
-    writeFileSync(dispatchFilePath, JSON.stringify(dispatches, null, 2))
+    // Insert new dispatch into database
+    await sql`
+      INSERT INTO dispatches (
+        id,
+        created_date,
+        delivery_date,
+        created_by,
+        branch_dispatches,
+        is_archived
+      ) VALUES (
+        ${dispatch.id},
+        ${dispatch.createdDate},
+        ${dispatch.deliveryDate},
+        ${dispatch.createdBy},
+        ${JSON.stringify(dispatch.branchDispatches)}::jsonb,
+        false
+      )
+    `
     
     return NextResponse.json({ success: true, id: dispatch.id })
   } catch (error) {
@@ -33,12 +33,22 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const dispatchFilePath = join(process.cwd(), 'data', 'dispatches.json')
-    const fileContent = readFileSync(dispatchFilePath, 'utf-8')
-    const dispatches = JSON.parse(fileContent)
+    // Get all non-archived dispatches
+    const result = await sql`
+      SELECT 
+        id,
+        created_date as "createdDate",
+        delivery_date as "deliveryDate",
+        created_by as "createdBy",
+        branch_dispatches as "branchDispatches"
+      FROM dispatches
+      WHERE is_archived = false
+      ORDER BY delivery_date DESC
+    `
     
-    return NextResponse.json(dispatches)
+    return NextResponse.json(result.rows)
   } catch (error) {
+    console.error('Error fetching dispatches:', error)
     return NextResponse.json([], { status: 200 })
   }
 }
