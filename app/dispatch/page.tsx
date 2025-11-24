@@ -12,14 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Upload, Package, Clock, CheckCircle2, AlertTriangle, Trash2, FileText } from 'lucide-react'
-
-interface Dispatch {
-  id: string
-  createdDate: string
-  deliveryDate: string
-  createdBy: string
-  branchDispatches: any[]
-}
+import type { Dispatch } from '@/lib/data'
 
 export default function DispatchDashboardPage() {
   const router = useRouter()

@@ -6,36 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Package, Clock, CheckCircle2, AlertTriangle, ChevronRight } from 'lucide-react'
-
-interface DispatchItem {
-  id: string
-  name: string
-  orderedQty: number
-  unit: string
-  receivedQty: number | null
-  checked: boolean
-  notes: string
-  issue: 'missing' | 'damaged' | 'partial' | null
-}
-
-interface BranchDispatch {
-  branchSlug: string
-  branchName: string
-  status: 'pending' | 'receiving' | 'completed'
-  items: DispatchItem[]
-  receivedBy: string | null
-  receivedAt: string | null
-  completedAt: string | null
-  overallNotes: string
-}
-
-interface Dispatch {
-  id: string
-  createdDate: string
-  deliveryDate: string
-  createdBy: string
-  branchDispatches: BranchDispatch[]
-}
+import type { Dispatch, BranchDispatch } from '@/lib/data'
 
 interface BranchDispatchesProps {
   branchSlug: string
