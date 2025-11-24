@@ -14,6 +14,7 @@ import { RecipeTabs } from '@/components/RecipeTabs'
 import { loadBranch, getRecipe, loadRecipes, loadBranches } from '@/lib/data'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Card, CardContent } from '@/components/ui/card'
 
 interface RecipePageProps {
   params: {
@@ -110,6 +111,34 @@ export default function RecipePage({ params, searchParams }: RecipePageProps) {
             </div>
           </div>
         </div>
+
+        {/* Compact Recipe Info - Only if enhanced data exists */}
+        {(recipe.station || recipe.yield || recipe.recipeCode) && (
+          <Card className="mb-6 bg-primary/5">
+            <CardContent className="py-3">
+              <div className="flex flex-wrap gap-6 text-sm">
+                {recipe.station && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-muted-foreground">Station:</span>
+                    <span className="font-semibold">{recipe.station}</span>
+                  </div>
+                )}
+                {recipe.yield && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-muted-foreground">Yield:</span>
+                    <span className="font-semibold">{recipe.yield}</span>
+                  </div>
+                )}
+                {recipe.recipeCode && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-muted-foreground">Code:</span>
+                    <span className="font-semibold font-mono">{recipe.recipeCode}</span>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Main Content Tabs */}
         <RecipeTabs recipe={recipe} />

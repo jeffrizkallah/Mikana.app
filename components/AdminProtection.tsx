@@ -6,21 +6,20 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Lock, AlertCircle } from 'lucide-react'
 
-interface PinProtectionProps {
+interface AdminProtectionProps {
   children: React.ReactNode
 }
 
-const CORRECT_PIN = '1234' // You can change this to any 4-6 digit code
+const CORRECT_PIN = '1234' // Same PIN for simplicity
 
-export function PinProtection({ children }: PinProtectionProps) {
+export function AdminProtection({ children }: AdminProtectionProps) {
   const [isUnlocked, setIsUnlocked] = useState(false)
   const [pin, setPin] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Check if PIN is already stored in session
-    const storedPin = sessionStorage.getItem('dispatch_pin')
+    const storedPin = sessionStorage.getItem('admin_pin')
     if (storedPin === CORRECT_PIN) {
       setIsUnlocked(true)
     }
@@ -32,7 +31,7 @@ export function PinProtection({ children }: PinProtectionProps) {
     setError('')
 
     if (pin === CORRECT_PIN) {
-      sessionStorage.setItem('dispatch_pin', pin)
+      sessionStorage.setItem('admin_pin', pin)
       setIsUnlocked(true)
     } else {
       setError('Incorrect Pin. Please try again.')
@@ -55,14 +54,14 @@ export function PinProtection({ children }: PinProtectionProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Lock className="h-5 w-5" />
-              Admin Access Required
+              Admin Access
             </CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  Enter Pin to access Dispatch Management
+                  Enter Admin Pin
                 </label>
                 <Input
                   type="password"
@@ -85,15 +84,9 @@ export function PinProtection({ children }: PinProtectionProps) {
               )}
 
               <Button type="submit" className="w-full" size="lg">
-                Unlock
+                Login
               </Button>
             </form>
-
-            <div className="mt-4 text-xs text-muted-foreground text-center">
-              This page is restricted to authorized personnel only.
-              <br />
-              Contact IT if you need access.
-            </div>
           </CardContent>
         </Card>
       </div>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { TopNav } from '@/components/TopNav'
+import { Sidebar } from '@/components/Sidebar'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { PinProtection } from '@/components/PinProtection'
@@ -81,10 +81,10 @@ export default function DispatchDashboardPage() {
   const stats = {
     total: dispatches.length,
     pending: dispatches.filter(d => 
-      d.branchDispatches.some(bd => bd.status === 'pending')
+      d.branchDispatches.some(bd => bd.status === 'pending' || bd.status === 'packing')
     ).length,
-    receiving: dispatches.filter(d => 
-      d.branchDispatches.some(bd => bd.status === 'receiving')
+    dispatched: dispatches.filter(d => 
+      d.branchDispatches.some(bd => bd.status === 'dispatched' || bd.status === 'receiving')
     ).length,
     completed: dispatches.filter(d => 
       d.branchDispatches.every(bd => bd.status === 'completed')
@@ -100,15 +100,17 @@ export default function DispatchDashboardPage() {
   )
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, { variant: any, icon: any, label: string }> = {
+    const variants: Record<string, { variant: any, icon: any, label: string, color?: string }> = {
       pending: { variant: 'secondary', icon: Clock, label: 'Pending' },
-      receiving: { variant: 'default', icon: Package, label: 'Receiving' },
-      completed: { variant: 'default', icon: CheckCircle2, label: 'Completed' },
+      packing: { variant: 'default', icon: Package, label: 'Packing', color: 'bg-blue-600' },
+      dispatched: { variant: 'default', icon: Package, label: 'Dispatched', color: 'bg-orange-600' },
+      receiving: { variant: 'default', icon: Package, label: 'Receiving', color: 'bg-orange-600' },
+      completed: { variant: 'default', icon: CheckCircle2, label: 'Completed', color: 'bg-green-600' },
     }
     const config = variants[status] || variants.pending
     const Icon = config.icon
     return (
-      <Badge variant={config.variant} className="flex items-center gap-1">
+      <Badge variant={config.variant} className={`flex items-center gap-1 ${config.color || ''}`}>
         <Icon className="h-3 w-3" />
         {config.label}
       </Badge>
@@ -126,18 +128,19 @@ export default function DispatchDashboardPage() {
 
   return (
     <PinProtection>
-      <div className="min-h-screen flex flex-col">
-        <TopNav />
+      <div className="flex min-h-screen">
+        <Sidebar />
       
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <Breadcrumbs
-          items={[
-            { label: 'Home', href: '/' },
-            { label: 'Dispatch' },
-          ]}
-        />
+        <main className="flex-1 flex flex-col pt-16 md:pt-0">
+          <div className="flex-1 container mx-auto px-4 py-8">
+            <Breadcrumbs
+              items={[
+                { label: 'Home', href: '/' },
+                { label: 'Dispatch' },
+              ]}
+            />
 
-        <div className="mb-8">
+            <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-4xl font-bold mb-2">Dispatch Management</h1>
@@ -149,11 +152,11 @@ export default function DispatchDashboardPage() {
                 Create Dispatch
               </Button>
             </Link>
-          </div>
-        </div>
+            </div>
+            </div>
 
-        {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+            {/* Statistics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
           <Card>
             <CardContent className="pt-6">
               <div className="text-center">
@@ -175,8 +178,8 @@ export default function DispatchDashboardPage() {
           <Card>
             <CardContent className="pt-6">
               <div className="text-center">
-                <div className="text-3xl font-bold text-blue-600">{stats.receiving}</div>
-                <div className="text-sm text-muted-foreground mt-1">In Progress</div>
+                <div className="text-3xl font-bold text-blue-600">{stats.dispatched}</div>
+                <div className="text-sm text-muted-foreground mt-1">Dispatched</div>
               </div>
             </CardContent>
           </Card>
@@ -190,18 +193,18 @@ export default function DispatchDashboardPage() {
             </CardContent>
           </Card>
           
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-red-600">{stats.withIssues}</div>
-                <div className="text-sm text-muted-foreground mt-1">With Issues</div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-red-600">{stats.withIssues}</div>
+                    <div className="text-sm text-muted-foreground mt-1">With Issues</div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
 
-        {/* Dispatch List */}
-        <Card>
+            {/* Dispatch List */}
+            <Card>
           <CardHeader>
             <CardTitle>All Dispatches</CardTitle>
           </CardHeader>
@@ -233,10 +236,10 @@ export default function DispatchDashboardPage() {
                     bd => bd.status === 'completed'
                   ).length
                   const pendingBranches = dispatch.branchDispatches.filter(
-                    bd => bd.status === 'pending'
+                    bd => bd.status === 'pending' || bd.status === 'packing'
                   ).length
-                  const receivingBranches = dispatch.branchDispatches.filter(
-                    bd => bd.status === 'receiving'
+                  const dispatchedBranches = dispatch.branchDispatches.filter(
+                    bd => bd.status === 'dispatched' || bd.status === 'receiving'
                   ).length
                   const withIssues = dispatch.branchDispatches.filter(
                     bd => bd.items?.some((item: any) => item.issue !== null)
@@ -296,11 +299,11 @@ export default function DispatchDashboardPage() {
                           <div className="text-xl font-semibold text-green-600">{completedBranches}</div>
                         </div>
                         <div>
-                          <div className="text-sm text-muted-foreground">In Progress</div>
-                          <div className="text-xl font-semibold text-blue-600">{receivingBranches}</div>
+                          <div className="text-sm text-muted-foreground">Dispatched</div>
+                          <div className="text-xl font-semibold text-blue-600">{dispatchedBranches}</div>
                         </div>
                         <div>
-                          <div className="text-sm text-muted-foreground">Pending</div>
+                          <div className="text-sm text-muted-foreground">Packing</div>
                           <div className="text-xl font-semibold text-yellow-600">{pendingBranches}</div>
                         </div>
                       </div>
@@ -324,6 +327,9 @@ export default function DispatchDashboardPage() {
                                           • {issueItems.length} issue{issueItems.length > 1 ? 's' : ''}
                                         </span>
                                       )}
+                                      {bd.packedBy && (
+                                        <span className="ml-2">• Packed by {bd.packedBy}</span>
+                                      )}
                                       {bd.receivedBy && (
                                         <span className="ml-2">• Received by {bd.receivedBy}</span>
                                       )}
@@ -341,13 +347,14 @@ export default function DispatchDashboardPage() {
                     </div>
                   )
                 })}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </main>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
 
-      <Footer />
+          <Footer />
+        </main>
       </div>
 
       {/* Delete Confirmation Dialog */}

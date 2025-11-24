@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { MapPin, User } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { KPIBadge } from '@/components/KPIBadge'
 import type { Branch } from '@/lib/data'
 
 interface BranchCardProps {
@@ -27,11 +26,6 @@ export function BranchCard({ branch }: BranchCardProps) {
             <User className="h-4 w-4 text-muted-foreground" />
             <span>{branch.manager}</span>
           </div>
-        </div>
-
-        {/* KPIs */}
-        <div className="flex flex-wrap gap-2">
-          <KPIBadge label="Waste" value={branch.kpis.wastePct} type="waste" />
         </div>
 
         {/* Action Button */}

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { TopNav } from '@/components/TopNav'
+import { Sidebar } from '@/components/Sidebar'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { PinProtection } from '@/components/PinProtection'
@@ -70,7 +70,7 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
     if (!dispatch) return
     
     // Create CSV export
-    let csv = 'Branch Name,Item Name,Ordered Qty,Received Qty,Still to Send,Unit,Issue Type,Notes,Status,Received By\n'
+    let csv = 'Branch Name,Item Name,Ordered Qty,Packed Qty,Received Qty,Still to Send,Unit,Issue Type,Notes,Status,Packed By,Received By\n'
     
     dispatch.branchDispatches.forEach(bd => {
       bd.items.forEach(item => {
@@ -79,8 +79,11 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
           : item.issue === filterIssueType
         
         if (shouldInclude) {
-          const stillToSend = item.orderedQty - (item.receivedQty || 0)
-          csv += `"${bd.branchName}","${item.name}",${item.orderedQty},${item.receivedQty || 0},${stillToSend},"${item.unit}","${item.issue || 'none'}","${item.notes}","${bd.status}","${bd.receivedBy || ''}"\n`
+          const packedQty = item.packedQty ?? item.orderedQty
+          const receivedQty = item.receivedQty || 0
+          const stillToSend = item.orderedQty - receivedQty
+          const unit = item.orderedQty > 150 ? 'unit' : 'KG'
+          csv += `"${bd.branchName}","${item.name}",${item.orderedQty},${packedQty},${receivedQty},${stillToSend},"${unit}","${item.issue || 'none'}","${item.notes}","${bd.status}","${bd.packedBy || ''}","${bd.receivedBy || ''}"\n`
         }
       })
     })
@@ -97,12 +100,15 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
     if (!dispatch) return
     
     // Create CSV export with ALL items
-    let csv = 'Branch Name,Item Name,Ordered Qty,Received Qty,Still to Send,Unit,Issue Type,Notes,Checked,Status,Received By,Received At\n'
+    let csv = 'Branch Name,Item Name,Ordered Qty,Packed Qty,Received Qty,Still to Send,Unit,Issue Type,Notes,Packed Checked,Received Checked,Status,Packed By,Received By,Received At\n'
     
     dispatch.branchDispatches.forEach(bd => {
       bd.items.forEach(item => {
-        const stillToSend = item.orderedQty - (item.receivedQty || 0)
-        csv += `"${bd.branchName}","${item.name}",${item.orderedQty},${item.receivedQty || 0},${stillToSend},"${item.unit}","${item.issue || 'none'}","${item.notes || ''}",${item.checked},"${bd.status}","${bd.receivedBy || ''}","${bd.receivedAt || ''}"\n`
+        const packedQty = item.packedQty ?? item.orderedQty
+        const receivedQty = item.receivedQty || 0
+        const stillToSend = item.orderedQty - receivedQty
+        const unit = item.orderedQty > 150 ? 'unit' : 'KG'
+        csv += `"${bd.branchName}","${item.name}",${item.orderedQty},${packedQty},${receivedQty},${stillToSend},"${unit}","${item.issue || 'none'}","${item.notes || ''}",${item.packedChecked},${item.receivedChecked},"${bd.status}","${bd.packedBy || ''}","${bd.receivedBy || ''}","${bd.receivedAt || ''}"\n`
       })
     })
     
@@ -138,15 +144,17 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
   if (loading) {
     return (
       <PinProtection>
-        <div className="min-h-screen flex flex-col">
-          <TopNav />
-          <main className="flex-1 container mx-auto px-4 py-8">
-            <div className="text-center py-12">
-              <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50 animate-pulse" />
-              <p className="text-muted-foreground">Loading dispatch report...</p>
+        <div className="flex min-h-screen">
+          <Sidebar />
+          <main className="flex-1 flex flex-col pt-16 md:pt-0">
+            <div className="flex-1 container mx-auto px-4 py-8">
+              <div className="text-center py-12">
+                <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50 animate-pulse" />
+                <p className="text-muted-foreground">Loading dispatch report...</p>
+              </div>
             </div>
+            <Footer />
           </main>
-          <Footer />
         </div>
       </PinProtection>
     )
@@ -155,19 +163,21 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
   if (!dispatch) {
     return (
       <PinProtection>
-        <div className="min-h-screen flex flex-col">
-          <TopNav />
-          <main className="flex-1 container mx-auto px-4 py-8">
-            <div className="text-center py-12">
-              <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <h3 className="text-lg font-semibold mb-2">Dispatch not found</h3>
-              <p className="text-muted-foreground mb-4">The requested dispatch could not be found</p>
-              <Link href="/dispatch">
-                <Button>Back to Dispatch Dashboard</Button>
-              </Link>
+        <div className="flex min-h-screen">
+          <Sidebar />
+          <main className="flex-1 flex flex-col pt-16 md:pt-0">
+            <div className="flex-1 container mx-auto px-4 py-8">
+              <div className="text-center py-12">
+                <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
+                <h3 className="text-lg font-semibold mb-2">Dispatch not found</h3>
+                <p className="text-muted-foreground mb-4">The requested dispatch could not be found</p>
+                <Link href="/dispatch">
+                  <Button>Back to Dispatch Dashboard</Button>
+                </Link>
+              </div>
             </div>
+            <Footer />
           </main>
-          <Footer />
         </div>
       </PinProtection>
     )
@@ -254,8 +264,8 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
 
   return (
     <PinProtection>
-      <div className="min-h-screen flex flex-col">
-        {!isPrintMode && <TopNav />}
+      <div className={isPrintMode ? "min-h-screen flex flex-col" : "flex min-h-screen"}>
+        {!isPrintMode && <Sidebar />}
         
         {/* Print Header */}
         {isPrintMode && (
@@ -267,7 +277,8 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
           </div>
         )}
         
-        <main className="flex-1 container mx-auto px-4 py-8">
+        <main className={isPrintMode ? "flex-1 container mx-auto px-4 py-8" : "flex-1 flex flex-col pt-16 md:pt-0"}>
+          <div className="flex-1 container mx-auto px-4 py-8">
           {!isPrintMode && (
             <Breadcrumbs
               items={[
@@ -441,12 +452,18 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
                             {bd.branchName}
                             {getStatusBadge(bd.status)}
                           </CardTitle>
-                          <div className="text-sm text-muted-foreground mt-2">
+                          <div className="text-sm text-muted-foreground mt-2 space-y-1">
+                            {bd.packedBy && (
+                              <div>
+                                Packed by: <span className="font-medium">{bd.packedBy}</span>
+                                {bd.packingCompletedAt && <> at {formatTime(bd.packingCompletedAt)}</>}
+                              </div>
+                            )}
                             {bd.receivedBy && (
-                              <>
+                              <div>
                                 Received by: <span className="font-medium">{bd.receivedBy}</span>
                                 {bd.receivedAt && <> at {formatTime(bd.receivedAt)}</>}
-                              </>
+                              </div>
                             )}
                           </div>
                         </div>
@@ -463,6 +480,7 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
                             <tr>
                               <th className="text-left p-3 font-medium">Item Name</th>
                               <th className="text-center p-3 font-medium">Ordered</th>
+                              <th className="text-center p-3 font-medium">Packed</th>
                               <th className="text-center p-3 font-medium">Received</th>
                               <th className="text-center p-3 font-medium">Still to Send</th>
                               <th className="text-center p-3 font-medium">Unit</th>
@@ -472,22 +490,34 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
                           </thead>
                           <tbody>
                             {bd.items.map(item => {
-                              const stillToSend = item.orderedQty - (item.receivedQty || 0)
+                              const packedQty = item.packedQty ?? item.orderedQty
+                              const receivedQty = item.receivedQty ?? 0
+                              const stillToSend = item.orderedQty - receivedQty
+                              const packingIssue = item.orderedQty !== packedQty
+                              const transitIssue = packedQty !== receivedQty
+                              
                               return (
                                 <tr key={item.id} className="border-t hover:bg-muted/50">
                                   <td className="p-3 font-medium">{item.name}</td>
                                   <td className="p-3 text-center">{item.orderedQty}</td>
                                   <td className="p-3 text-center">
-                                    <span className={item.receivedQty !== item.orderedQty ? 'text-red-600 font-semibold' : ''}>
-                                      {item.receivedQty || 0}
+                                    <span className={packingIssue ? 'text-orange-600 font-semibold' : ''}>
+                                      {packedQty}
                                     </span>
+                                    {packingIssue && <div className="text-xs text-orange-600">Kitchen</div>}
+                                  </td>
+                                  <td className="p-3 text-center">
+                                    <span className={transitIssue ? 'text-red-600 font-semibold' : ''}>
+                                      {receivedQty}
+                                    </span>
+                                    {transitIssue && <div className="text-xs text-red-600">Transit</div>}
                                   </td>
                                   <td className="p-3 text-center">
                                     <span className={stillToSend > 0 ? 'text-orange-600 font-semibold' : 'text-green-600'}>
                                       {stillToSend.toFixed(1)}
                                     </span>
                                   </td>
-                                  <td className="p-3 text-center text-sm text-muted-foreground">{item.unit}</td>
+                                  <td className="p-3 text-center text-sm text-muted-foreground">{item.orderedQty > 150 ? 'unit' : 'KG'}</td>
                                   <td className="p-3 text-center">
                                     {item.issue && getIssueTypeBadge(item.issue)}
                                   </td>
@@ -695,6 +725,7 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
                                   <tr>
                                     <th className="text-left p-3 font-medium">Item Name</th>
                                     <th className="text-center p-3 font-medium">Ordered</th>
+                                    <th className="text-center p-3 font-medium">Packed</th>
                                     <th className="text-center p-3 font-medium">Received</th>
                                     <th className="text-center p-3 font-medium">Still to Send</th>
                                     <th className="text-center p-3 font-medium">Unit</th>
@@ -704,9 +735,13 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
                                 </thead>
                                 <tbody>
                                   {displayItems.map(item => {
-                                    const stillToSend = item.orderedQty - (item.receivedQty || 0)
+                                    const packedQty = item.packedQty ?? item.orderedQty
+                                    const receivedQty = item.receivedQty ?? 0
+                                    const stillToSend = item.orderedQty - receivedQty
                                     const hasIssue = item.issue !== null
-                                    const isPerfect = item.receivedQty === item.orderedQty && !hasIssue
+                                    const isPerfect = receivedQty === item.orderedQty && packedQty === item.orderedQty && !hasIssue
+                                    const packingIssue = item.orderedQty !== packedQty
+                                    const transitIssue = packedQty !== receivedQty
                                     
                                     return (
                                       <tr 
@@ -718,8 +753,13 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
                                         <td className="p-3 font-medium">{item.name}</td>
                                         <td className="p-3 text-center">{item.orderedQty}</td>
                                         <td className="p-3 text-center">
-                                          <span className={item.receivedQty !== item.orderedQty ? 'text-orange-600 font-semibold' : ''}>
-                                            {item.receivedQty ?? 'N/A'}
+                                          <span className={packingIssue ? 'text-orange-600 font-semibold' : ''}>
+                                            {packedQty}
+                                          </span>
+                                        </td>
+                                        <td className="p-3 text-center">
+                                          <span className={transitIssue ? 'text-red-600 font-semibold' : ''}>
+                                            {receivedQty || 'N/A'}
                                           </span>
                                         </td>
                                         <td className="p-3 text-center">
@@ -727,7 +767,7 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
                                             {item.receivedQty !== null ? stillToSend.toFixed(1) : 'N/A'}
                                           </span>
                                         </td>
-                                        <td className="p-3 text-center text-sm text-muted-foreground">{item.unit}</td>
+                                        <td className="p-3 text-center text-sm text-muted-foreground">{item.orderedQty > 150 ? 'unit' : 'KG'}</td>
                                         <td className="p-3 text-center">
                                           {hasIssue ? (
                                             getIssueTypeBadge(item.issue!)
@@ -769,12 +809,13 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
                     </Card>
                   )
                 })}
+                </div>
               </div>
-            </div>
-          )}
-        </main>
+            )}
+          </div>
 
-        {!isPrintMode && <Footer />}
+          {!isPrintMode && <Footer />}
+        </main>
       </div>
     </PinProtection>
   )

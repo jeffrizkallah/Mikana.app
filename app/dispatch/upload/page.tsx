@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { TopNav } from '@/components/TopNav'
+import { Sidebar } from '@/components/Sidebar'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -49,8 +49,7 @@ export default function DispatchUploadPage() {
     'UEQ': 'isc-ueq',
     'RAK': 'isc-rak',
     'YAS': 'sabis-yas',
-    'Ruwais': 'ruwais',
-    'CA': 'ck',
+    'Ruwais': 'sis-ruwais',
     'Ain': 'isc-ain',
     'Khalifa': 'isc-khalifa',
   }
@@ -172,9 +171,6 @@ export default function DispatchUploadPage() {
         // Column B (index 1) = Recipe name
         const itemName = cells[1].trim()
         
-        // Column I (index 8) = Adj Unit
-        const unitCell = cells[8]?.trim() || 'Kg'
-        
         // Skip if item name is invalid
         if (!itemName || itemName === 'Recipe') continue
         
@@ -182,22 +178,25 @@ export default function DispatchUploadPage() {
         Object.entries(branchTotalColumns).forEach(([branchName, totalColumnIndex]) => {
           const quantityStr = cells[totalColumnIndex]?.trim() || '0'
           
-          // Parse quantity - handle numbers, commas, etc.
+          // Parse quantity - handle numbers, commas, and multiple space-separated values
           let quantity = 0
           try {
-            // Remove commas and parse
-            const cleaned = quantityStr.replace(/,/g, '')
+            // Remove commas and get only the first number if there are multiple space-separated values
+            const cleaned = quantityStr.replace(/,/g, '').split(/\s+/)[0] || '0'
             quantity = parseFloat(cleaned) || 0
           } catch {
             quantity = 0
           }
+          
+          // Determine unit: "KG" by default, "unit" if quantity > 150
+          const unit = quantity > 150 ? 'unit' : 'KG'
           
           // Only add if quantity > 0
           if (quantity > 0) {
             branchData[branchName].push({
               name: itemName,
               quantity: quantity,
-              unit: unitCell
+              unit: unit
             })
           }
         })
@@ -263,13 +262,21 @@ export default function DispatchUploadPage() {
             id: `${branch.branchSlug}-item-${index}`,
             name: item.name,
             orderedQty: item.quantity,
-            unit: item.unit,
+            packedQty: null,
             receivedQty: null,
-            checked: false,
+            unit: item.unit,
+            packedChecked: false,
+            receivedChecked: false,
             notes: '',
             issue: null
           })),
+          // Packing checkpoint
+          packedBy: null,
+          packingStartedAt: null,
+          packingCompletedAt: null,
+          // Receiving checkpoint
           receivedBy: null,
+          receivingStartedAt: null,
           receivedAt: null,
           completedAt: null,
           overallNotes: ''
@@ -302,11 +309,12 @@ export default function DispatchUploadPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <TopNav />
+    <div className="flex min-h-screen">
+      <Sidebar />
       
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <Breadcrumbs
+      <main className="flex-1 flex flex-col pt-16 md:pt-0">
+        <div className="flex-1 container mx-auto px-4 py-8">
+          <Breadcrumbs
           items={[
             { label: 'Home', href: '/' },
             { label: 'Dispatch', href: '/dispatch' },
@@ -474,11 +482,12 @@ export default function DispatchUploadPage() {
                 </CardContent>
               </Card>
             )}
-          </>
-        )}
-      </main>
+            </>
+          )}
+        </div>
 
-      <Footer />
+        <Footer />
+      </main>
     </div>
   )
 }

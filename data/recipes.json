@@ -764,6 +764,772 @@
     ],
     "allergens": ["Wheat (gluten in dough)", "Dairy (cheese)"],
     "storageInstructions": "Baked pizza should be served immediately or held at 65°C+ for maximum 2 hours. Do not store cooked pizza overnight. Unused dough can be frozen for up to 1 month."
+  },
+  {
+    "recipeId": "fish-fillet-creamy-dill-veggies",
+    "name": "Fish Fillet w/ Creamy Dill Sauce & Veggies Platter",
+    "category": "Main Course",
+    "station": "Hot Section / Butchery / Pantry",
+    "recipeCode": "CK-001",
+    "yield": "1 portion",
+    "daysAvailable": ["Sunday", "Tuesday", "Thursday"],
+    "prepTime": "20 minutes",
+    "cookTime": "30 minutes",
+    "servings": "1 portion",
+    "ingredients": [],
+    "mainIngredients": [
+      {
+        "name": "Grilled Fish Hamour Marination 1 KG",
+        "quantity": 200,
+        "unit": "GM",
+        "specifications": "Pre-marinated",
+        "subRecipeId": "grilled-fish-hamour-marination"
+      },
+      {
+        "name": "Steamed Vegetables 1 KG",
+        "quantity": 100,
+        "unit": "GM",
+        "specifications": "Pre-prepared",
+        "subRecipeId": "steamed-vegetables"
+      },
+      {
+        "name": "Roast Potatoes with Rosemary 1 KG",
+        "quantity": 100,
+        "unit": "GM",
+        "specifications": "Pre-cooked",
+        "subRecipeId": "roast-potatoes-rosemary"
+      },
+      {
+        "name": "Creamy Dill Sauce 1 KG",
+        "quantity": 100,
+        "unit": "GM",
+        "specifications": "Pre-prepared",
+        "subRecipeId": "creamy-dill-sauce"
+      },
+      {
+        "name": "Lemon Juice Fresh",
+        "quantity": 4,
+        "unit": "ML"
+      },
+      {
+        "name": "Salt",
+        "quantity": 0.8,
+        "unit": "GM"
+      },
+      {
+        "name": "Black Pepper Powder",
+        "quantity": 0.3,
+        "unit": "GM"
+      },
+      {
+        "name": "Vacuum Bag 20×30",
+        "quantity": 1,
+        "unit": "unit",
+        "specifications": "For packing"
+      },
+      {
+        "name": "Black Base Rect Container 2 Comp",
+        "quantity": 1,
+        "unit": "unit",
+        "specifications": "Packaging"
+      },
+      {
+        "name": "Cutlery Pack 4-in-1",
+        "quantity": 1,
+        "unit": "unit",
+        "specifications": "Service"
+      }
+    ],
+    "subRecipes": [
+      {
+        "subRecipeId": "grilled-fish-hamour-marination",
+        "name": "Grilled Fish Hamour Marination 1 KG",
+        "yield": "1 KG",
+        "ingredients": [
+          {
+            "item": "Hamour Fish Fillet",
+            "quantity": "200",
+            "unit": "GM"
+          },
+          {
+            "item": "Flour",
+            "quantity": "3.8",
+            "unit": "GM"
+          },
+          {
+            "item": "Salt",
+            "quantity": "1",
+            "unit": "GM"
+          },
+          {
+            "item": "White Pepper",
+            "quantity": "0.4",
+            "unit": "GM"
+          },
+          {
+            "item": "Sunflower Oil",
+            "quantity": "2",
+            "unit": "ML"
+          },
+          {
+            "item": "Dijon Mustard",
+            "quantity": "1",
+            "unit": "GM"
+          }
+        ],
+        "preparation": [
+          {
+            "step": 1,
+            "instruction": "Coat fish lightly with flour, salt, white pepper, and Dijon mustard mixture",
+            "time": "3 minutes",
+            "critical": false,
+            "hint": "Ensure even coating for consistent flavor"
+          },
+          {
+            "step": 2,
+            "instruction": "Heat sunflower oil on grill or pan to medium temperature",
+            "time": "2 minutes",
+            "critical": true,
+            "hint": "Pan should be hot before adding fish"
+          },
+          {
+            "step": 3,
+            "instruction": "Cook fish fillets 3-4 minutes per side until golden and internal temperature reaches 75°C",
+            "time": "8 minutes",
+            "critical": true,
+            "hint": "Do not press the fillet while cooking. Keep surface golden, not burnt"
+          }
+        ],
+        "requiredMachinesTools": [
+          {
+            "name": "Grill Pan or Flat Top Grill",
+            "purpose": "Cooking fish fillets",
+            "specifications": "Medium heat capability, non-stick surface preferred"
+          },
+          {
+            "name": "Probe Thermometer",
+            "purpose": "Check internal temperature",
+            "specifications": "Must read up to 100°C"
+          },
+          {
+            "name": "Fish Turner/Spatula",
+            "purpose": "Flipping fish fillets without breaking",
+            "specifications": "Wide, flexible blade"
+          },
+          {
+            "name": "Mixing Bowl",
+            "purpose": "Mixing marinade coating",
+            "specifications": "Medium size, stainless steel"
+          }
+        ],
+        "qualitySpecifications": [
+          {
+            "aspect": "Temperature",
+            "specification": "Internal temperature must reach minimum 75°C",
+            "checkMethod": "Use calibrated probe thermometer"
+          },
+          {
+            "aspect": "Color",
+            "specification": "Golden brown exterior, opaque white interior",
+            "checkMethod": "Visual inspection"
+          },
+          {
+            "aspect": "Texture",
+            "specification": "Firm but moist, flakes easily with fork",
+            "checkMethod": "Fork test"
+          },
+          {
+            "aspect": "Coating",
+            "specification": "Even coating, no bare spots",
+            "checkMethod": "Visual inspection before cooking"
+          }
+        ],
+        "packingLabeling": {
+          "packingType": "Refrigerated holding",
+          "serviceItems": ["Tongs", "Serving tray"],
+          "labelRequirements": "Keep hot - serve within 2 hours",
+          "storageCondition": "Hold at 65°C+ until service",
+          "shelfLife": "2 hours maximum"
+        }
+      },
+      {
+        "subRecipeId": "steamed-vegetables",
+        "name": "Steamed Vegetables 1 KG",
+        "yield": "1 KG",
+        "ingredients": [
+          {
+            "item": "Broccoli",
+            "quantity": "20",
+            "unit": "GM"
+          },
+          {
+            "item": "Carrots",
+            "quantity": "30",
+            "unit": "GM"
+          },
+          {
+            "item": "Water",
+            "quantity": "100",
+            "unit": "ML"
+          },
+          {
+            "item": "Salt",
+            "quantity": "0.5",
+            "unit": "GM"
+          },
+          {
+            "item": "Oregano",
+            "quantity": "0.5",
+            "unit": "GM"
+          },
+          {
+            "item": "Marrow",
+            "quantity": "30",
+            "unit": "GM"
+          },
+          {
+            "item": "Green Beans",
+            "quantity": "20",
+            "unit": "GM"
+          }
+        ],
+        "preparation": [
+          {
+            "step": 1,
+            "instruction": "Prepare steamer with water and bring to boil",
+            "time": "3 minutes",
+            "critical": false,
+            "hint": "Ensure steamer has adequate water level"
+          },
+          {
+            "step": 2,
+            "instruction": "Steam broccoli, carrots, marrow, and green beans until tender but still crisp",
+            "time": "6 minutes",
+            "critical": false,
+            "hint": "Vegetables must remain bright, not dull or overcooked"
+          },
+          {
+            "step": 3,
+            "instruction": "Season with salt and oregano while hot",
+            "time": "1 minute",
+            "critical": false,
+            "hint": "Season immediately after steaming for best flavor absorption"
+          }
+        ],
+        "requiredMachinesTools": [
+          {
+            "name": "Steamer Pot or Steam Basket",
+            "purpose": "Steaming vegetables",
+            "specifications": "Large enough for batch cooking, with tight-fitting lid"
+          },
+          {
+            "name": "Cutting Board",
+            "purpose": "Cutting vegetables",
+            "specifications": "Color-coded for vegetables"
+          },
+          {
+            "name": "Chef's Knife",
+            "purpose": "Chopping vegetables",
+            "specifications": "Sharp, well-maintained"
+          },
+          {
+            "name": "Colander",
+            "purpose": "Draining steamed vegetables",
+            "specifications": "Heat-resistant"
+          }
+        ],
+        "qualitySpecifications": [
+          {
+            "aspect": "Color",
+            "specification": "Bright, vibrant colors (green, orange). No dull or gray vegetables",
+            "checkMethod": "Visual inspection"
+          },
+          {
+            "aspect": "Texture",
+            "specification": "Tender-crisp, not mushy. Should have slight resistance when bitten",
+            "checkMethod": "Fork and taste test"
+          },
+          {
+            "aspect": "Temperature",
+            "specification": "Hot when served (65°C+)",
+            "checkMethod": "Touch test or thermometer"
+          },
+          {
+            "aspect": "Seasoning",
+            "specification": "Evenly seasoned with salt and oregano",
+            "checkMethod": "Taste test"
+          }
+        ],
+        "packingLabeling": {
+          "packingType": "Hot holding pan",
+          "serviceItems": ["Serving spoon", "Hot pan"],
+          "labelRequirements": "Keep hot - serve immediately",
+          "storageCondition": "Hold at 65°C+ until service",
+          "shelfLife": "2 hours maximum"
+        }
+      },
+      {
+        "subRecipeId": "roast-potatoes-rosemary",
+        "name": "Roast Potatoes with Rosemary 1 KG",
+        "yield": "1 KG",
+        "ingredients": [
+          {
+            "item": "Potato",
+            "quantity": "120",
+            "unit": "GM",
+            "notes": "Cubes"
+          },
+          {
+            "item": "Rosemary",
+            "quantity": "1",
+            "unit": "GM"
+          },
+          {
+            "item": "Salt",
+            "quantity": "0.5",
+            "unit": "GM"
+          },
+          {
+            "item": "Sunflower Oil",
+            "quantity": "5",
+            "unit": "ML"
+          },
+          {
+            "item": "Fresh Garlic",
+            "quantity": "1",
+            "unit": "GM",
+            "notes": "Minced"
+          }
+        ],
+        "preparation": [
+          {
+            "step": 1,
+            "instruction": "Preheat oven to 180°C",
+            "time": "10 minutes",
+            "critical": true,
+            "hint": "Oven must be fully preheated for even roasting"
+          },
+          {
+            "step": 2,
+            "instruction": "Toss potato cubes with sunflower oil, rosemary, minced garlic, and salt",
+            "time": "3 minutes",
+            "critical": false,
+            "hint": "Ensure even coating on all potato pieces"
+          },
+          {
+            "step": 3,
+            "instruction": "Spread potatoes in single layer on baking tray and roast until golden and crispy",
+            "time": "25 minutes",
+            "critical": false,
+            "hint": "Turn halfway through for even browning"
+          }
+        ],
+        "requiredMachinesTools": [
+          {
+            "name": "Convection Oven",
+            "purpose": "Roasting potatoes",
+            "specifications": "Must reach and maintain 180°C"
+          },
+          {
+            "name": "Baking Tray/Sheet Pan",
+            "purpose": "Holding potatoes for roasting",
+            "specifications": "Heavy-duty, non-warping"
+          },
+          {
+            "name": "Mixing Bowl",
+            "purpose": "Tossing potatoes with oil and seasonings",
+            "specifications": "Large enough for mixing"
+          },
+          {
+            "name": "Peeler",
+            "purpose": "Peeling potatoes",
+            "specifications": "Sharp blade"
+          },
+          {
+            "name": "Chef's Knife",
+            "purpose": "Cutting potatoes into cubes",
+            "specifications": "Sharp, well-maintained"
+          }
+        ],
+        "qualitySpecifications": [
+          {
+            "aspect": "Color",
+            "specification": "Golden brown exterior with no burnt spots",
+            "checkMethod": "Visual inspection"
+          },
+          {
+            "aspect": "Texture",
+            "specification": "Crispy exterior, fluffy interior",
+            "checkMethod": "Fork test and taste"
+          },
+          {
+            "aspect": "Size",
+            "specification": "Uniform 2cm cubes for even cooking",
+            "checkMethod": "Visual measurement"
+          },
+          {
+            "aspect": "Seasoning",
+            "specification": "Fragrant rosemary and garlic aroma, well-salted",
+            "checkMethod": "Aroma check and taste test"
+          }
+        ],
+        "packingLabeling": {
+          "packingType": "Hot holding pan",
+          "serviceItems": ["Serving spoon"],
+          "labelRequirements": "Keep hot - serve within 2 hours",
+          "storageCondition": "Hold at 65°C+ until service",
+          "shelfLife": "2 hours maximum"
+        }
+      },
+      {
+        "subRecipeId": "creamy-dill-sauce",
+        "name": "Creamy Dill Sauce 1 KG",
+        "yield": "1 KG",
+        "ingredients": [
+          {
+            "item": "Butter",
+            "quantity": "10",
+            "unit": "GM"
+          },
+          {
+            "item": "Virgin Olive Oil",
+            "quantity": "5",
+            "unit": "ML"
+          },
+          {
+            "item": "Garlic Fresh",
+            "quantity": "2",
+            "unit": "GM",
+            "notes": "Minced"
+          },
+          {
+            "item": "Flour",
+            "quantity": "6",
+            "unit": "GM"
+          },
+          {
+            "item": "Milk Powder",
+            "quantity": "5",
+            "unit": "GM"
+          },
+          {
+            "item": "Water",
+            "quantity": "50",
+            "unit": "ML"
+          },
+          {
+            "item": "Cooking Cream",
+            "quantity": "40",
+            "unit": "ML"
+          },
+          {
+            "item": "Dill Leaves",
+            "quantity": "6",
+            "unit": "GM",
+            "notes": "Chopped"
+          },
+          {
+            "item": "Lemon Juice",
+            "quantity": "4",
+            "unit": "ML"
+          },
+          {
+            "item": "Salt",
+            "quantity": "0.8",
+            "unit": "GM"
+          },
+          {
+            "item": "Black Pepper",
+            "quantity": "0.3",
+            "unit": "GM"
+          }
+        ],
+        "preparation": [
+          {
+            "step": 1,
+            "instruction": "Melt butter and olive oil in saucepan over low-medium heat",
+            "time": "2 minutes",
+            "critical": false,
+            "hint": "Don't let butter brown"
+          },
+          {
+            "step": 2,
+            "instruction": "Add minced garlic and sauté lightly until fragrant",
+            "time": "1 minute",
+            "critical": false,
+            "hint": "Garlic should be aromatic but not browned"
+          },
+          {
+            "step": 3,
+            "instruction": "Add flour to make a roux, whisk continuously for 1-2 minutes",
+            "time": "2 minutes",
+            "critical": true,
+            "hint": "Roux should be smooth with no lumps"
+          },
+          {
+            "step": 4,
+            "instruction": "Gradually add water mixed with milk powder, whisking constantly until smooth",
+            "time": "2 minutes",
+            "critical": true,
+            "hint": "Add liquid slowly to prevent lumps"
+          },
+          {
+            "step": 5,
+            "instruction": "Add cooking cream and simmer until sauce thickens to desired consistency",
+            "time": "3 minutes",
+            "critical": false,
+            "hint": "Avoid boiling after adding cream to prevent separation"
+          },
+          {
+            "step": 6,
+            "instruction": "Stir in chopped dill, lemon juice, salt, and black pepper",
+            "time": "1 minute",
+            "critical": false,
+            "hint": "Taste and adjust seasoning as needed"
+          }
+        ],
+        "requiredMachinesTools": [
+          {
+            "name": "Sauce Pot",
+            "purpose": "Making the cream sauce",
+            "specifications": "Heavy-bottom, 2L capacity minimum"
+          },
+          {
+            "name": "Whisk",
+            "purpose": "Mixing sauce to prevent lumps",
+            "specifications": "Stainless steel, medium size"
+          },
+          {
+            "name": "Cutting Board",
+            "purpose": "Chopping dill and garlic",
+            "specifications": "Small, designated for herbs"
+          },
+          {
+            "name": "Chef's Knife",
+            "purpose": "Mincing garlic and chopping dill",
+            "specifications": "Sharp"
+          },
+          {
+            "name": "Measuring Cups/Spoons",
+            "purpose": "Accurate ingredient measurement",
+            "specifications": "Standard metric measurements"
+          }
+        ],
+        "qualitySpecifications": [
+          {
+            "aspect": "Consistency",
+            "specification": "Smooth, pourable consistency that coats the back of a spoon. No lumps",
+            "checkMethod": "Spoon test - should coat evenly"
+          },
+          {
+            "aspect": "Color",
+            "specification": "Creamy white with green flecks of dill",
+            "checkMethod": "Visual inspection"
+          },
+          {
+            "aspect": "Flavor",
+            "specification": "Balanced creamy, tangy, and herby. Not too salty",
+            "checkMethod": "Taste test"
+          },
+          {
+            "aspect": "Temperature",
+            "specification": "Warm but not boiling (70-80°C)",
+            "checkMethod": "Thermometer or touch test"
+          },
+          {
+            "aspect": "Aroma",
+            "specification": "Fresh dill aroma, no burnt smell",
+            "checkMethod": "Smell test"
+          }
+        ],
+        "packingLabeling": {
+          "packingType": "Sauce container",
+          "serviceItems": ["Ladle", "Sauce boat"],
+          "labelRequirements": "Keep warm - use within 2 hours",
+          "storageCondition": "Hold at 65°C+ or refrigerate if not serving immediately",
+          "shelfLife": "2 hours hot holding, 24 hours refrigerated"
+        }
+      }
+    ],
+    "preparation": [
+      {
+        "step": 1,
+        "instruction": "Prepare fish marination ingredients, chop vegetables and portion potatoes, prepare mise en place for dill sauce",
+        "time": "10 minutes",
+        "critical": false,
+        "hint": "Keep fish cold until cooking time. Ensure vegetables are cut evenly for uniform steaming."
+      },
+      {
+        "step": 2,
+        "instruction": "Coat fish lightly with flour, salt, pepper, and Dijon mustard mixture. Heat sunflower oil on grill or pan. Cook fish fillets 3-4 minutes per side. Fish must reach internal temperature ≥75°C",
+        "time": "10 minutes",
+        "critical": true,
+        "hint": "Do not press the fillet while cooking. Keep surface golden, not burnt."
+      },
+      {
+        "step": 3,
+        "instruction": "Melt butter and olive oil in saucepan. Add garlic and sauté lightly. Add flour to make a roux. Add water + milk powder and whisk until smooth. Add cooking cream and simmer until thick. Add dill, lemon juice, salt, and pepper",
+        "time": "8 minutes",
+        "critical": false,
+        "hint": "Sauce must be smooth with no lumps. Avoid boiling after adding cream."
+      },
+      {
+        "step": 4,
+        "instruction": "Steam broccoli, carrots, marrow, and green beans until tender. Season with salt and oregano",
+        "time": "7 minutes",
+        "critical": false,
+        "hint": "Vegetables must remain bright, not dull or overcooked."
+      },
+      {
+        "step": 5,
+        "instruction": "Place grilled fish fillet on platter. Add steamed vegetables and roast potatoes on the side. Pour creamy dill sauce over fish or serve on the side. Add lemon juice if required",
+        "time": "3 minutes",
+        "critical": false,
+        "hint": "Vegetables must remain bright, not dull or overcooked."
+      }
+    ],
+    "requiredMachinesTools": [
+      {
+        "name": "Flat Grill or Pan",
+        "setting": "Medium",
+        "purpose": "Cooking fish",
+        "notes": "Avoid overcooking"
+      },
+      {
+        "name": "Sauce Pot",
+        "setting": "Low-Medium",
+        "purpose": "Preparing sauce",
+        "notes": "Stir continuously"
+      },
+      {
+        "name": "Steamer",
+        "setting": "Medium",
+        "purpose": "Vegetable steaming"
+      },
+      {
+        "name": "Oven",
+        "setting": "180°C",
+        "purpose": "Reheat potatoes"
+      },
+      {
+        "name": "Mixing Bowls",
+        "setting": "",
+        "purpose": "Prep"
+      },
+      {
+        "name": "Vacuum Machine",
+        "setting": "",
+        "purpose": "Packing",
+        "notes": "Required for batch prep"
+      }
+    ],
+    "qualitySpecifications": [
+      {
+        "parameter": "Fish golden, clean grill marks; Bright vegetables; Potatoes golden",
+        "texture": "Fish moist, flakes easily; Tender but firm; Crispy outside, soft inside",
+        "tasteFlavorProfile": "Creamy herb sauce, balanced dill; Seasoned lightly; Rosemary + garlic",
+        "aroma": "Fresh dill + lemon; Steamed vegetables aroma; Roasted potatoes smell"
+      }
+    ],
+    "packingLabeling": {
+      "packingType": "Black Base 2 Comp Container",
+      "serviceItems": ["1x Black HD Fork"],
+      "labelRequirements": "Production date & Expiration Date",
+      "storageCondition": "Chilled: 0-5°C - Frozen: -18°C",
+      "shelfLife": "Chilled: max 3 days - Frozen: max 3 months"
+    },
+    "presentation": {
+      "description": "Present the fish fillet with vegetables and potatoes in an attractive platter arrangement for student appeal",
+      "instructions": [
+        {
+          "step": "Place grilled fish fillet as the centerpiece",
+          "notes": "Ensure fish has appealing grill marks"
+        },
+        {
+          "step": "Arrange steamed vegetables and roasted potatoes on the side",
+          "notes": "Use vibrant colors for visual appeal"
+        },
+        {
+          "step": "Drizzle or side-serve creamy dill sauce",
+          "notes": "Garnish with fresh dill and lemon wedge"
+        }
+      ],
+      "photos": [
+        "https://picsum.photos/seed/fish-fillet-1/800/600",
+        "https://picsum.photos/seed/fish-fillet-2/800/600",
+        "https://picsum.photos/seed/fish-fillet-3/800/600"
+      ]
+    },
+    "sops": {
+      "foodSafetyAndHygiene": [
+        "Wash hands thoroughly before and after handling raw fish",
+        "Use separate cutting boards and utensils for fish",
+        "Cook fish to internal temperature of 75°C minimum",
+        "Keep cold foods below 5°C and hot foods above 65°C",
+        "Discard any fish that has been in danger zone (5-65°C) for more than 2 hours"
+      ],
+      "cookingStandards": [
+        "Preheat equipment to specified temperatures before use",
+        "Monitor cooking temperature continuously",
+        "Use calibrated thermometers for temperature checks",
+        "Follow FIFO (First In, First Out) for ingredient usage",
+        "Maintain consistent portion sizes using measuring tools"
+      ],
+      "storageAndHolding": [
+        "Store raw fish at 0-4°C in designated refrigerator",
+        "Keep cooked fish at 65°C+ in holding equipment",
+        "Cover all stored items and label with date/time",
+        "Use cooked fish within 4 hours of preparation",
+        "Discard any leftovers at end of service"
+      ],
+      "qualityStandards": [
+        "Fish should be moist and tender, not dry",
+        "Meat should have even browning and grill marks",
+        "No pink color in the center of fish",
+        "Vegetables must be bright and crisp",
+        "Sauce should be smooth and creamy, not lumpy"
+      ]
+    },
+    "troubleshooting": [
+      {
+        "problem": "Fish is dry and tough",
+        "solutions": [
+          "Reduce cooking time by 1-2 minutes",
+          "Check marinade application - should be well-coated",
+          "Ensure grill temperature is not too high (medium heat)",
+          "Do not press fish while cooking"
+        ]
+      },
+      {
+        "problem": "Sauce is too thin/runny",
+        "solutions": [
+          "Add 1 tablespoon of cornstarch mixed with cold water",
+          "Simmer for additional 2-3 minutes to thicken",
+          "Add more flour to the roux",
+          "Ensure proper measurements of liquid ingredients"
+        ]
+      },
+      {
+        "problem": "Vegetables are overcooked and mushy",
+        "solutions": [
+          "Reduce steaming time by 2 minutes",
+          "Ensure vegetables are cut uniformly",
+          "Steam on medium heat, not high",
+          "Remove vegetables immediately when tender"
+        ]
+      },
+      {
+        "problem": "Sauce has lumps",
+        "solutions": [
+          "Whisk vigorously while adding liquids",
+          "Strain sauce through fine mesh sieve",
+          "Ensure roux is smooth before adding liquids",
+          "Add liquids gradually, not all at once"
+        ]
+      }
+    ],
+    "allergens": ["Fish", "Gluten (flour)", "Dairy (butter, cream, milk)"],
+    "storageInstructions": "Store leftover cooked fish in sealed container at 4°C. Label with date and time. Use within 24 hours or discard. Sauce can be refrigerated for up to 2 days."
   }
 ]
 

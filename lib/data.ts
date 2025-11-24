@@ -84,6 +84,7 @@ export interface Ingredient {
   item: string
   quantity: string
   notes?: string
+  unit?: string
 }
 
 export interface PreparationStep {
@@ -117,16 +118,79 @@ export interface TroubleshootingItem {
   solutions: string[]
 }
 
+// New interfaces for sub-recipes and enhanced recipe structure
+export interface MainIngredient {
+  name: string
+  quantity: number
+  unit: string
+  specifications?: string
+  subRecipeId?: string
+}
+
+export interface SubRecipe {
+  subRecipeId: string
+  name: string
+  yield: string
+  ingredients: Ingredient[]
+  preparation?: PreparationStep[]
+  notes?: string
+  requiredMachinesTools?: MachineToolRequirement[]
+  qualitySpecifications?: QualitySpecification[]
+  packingLabeling?: PackingLabeling
+}
+
+export interface MachineToolRequirement {
+  name: string
+  purpose: string
+  specifications?: string
+  setting?: string
+  notes?: string
+}
+
+export interface QualitySpecification {
+  aspect: string
+  specification: string
+  checkMethod: string
+  parameter?: string
+  texture?: string
+  tasteFlavorProfile?: string
+  aroma?: string
+}
+
+export interface PackingLabeling {
+  packingType: string
+  serviceItems: string[]
+  labelRequirements: string
+  storageCondition: string
+  shelfLife: string
+}
+
 export interface Recipe {
   recipeId: string
   name: string
   category: string
+  station?: string
+  recipeCode?: string
+  yield?: string
   daysAvailable: string[]
   prepTime: string
   cookTime: string
   servings: string
+  
+  // Legacy ingredients (for backward compatibility)
   ingredients: Ingredient[]
+  
+  // New structured ingredients
+  mainIngredients?: MainIngredient[]
+  subRecipes?: SubRecipe[]
+  
   preparation: PreparationStep[]
+  
+  // New fields
+  requiredMachinesTools?: MachineToolRequirement[]
+  qualitySpecifications?: QualitySpecification[]
+  packingLabeling?: PackingLabeling
+  
   presentation: Presentation
   sops: SOPs
   troubleshooting: TroubleshootingItem[]
@@ -138,19 +202,29 @@ export interface DispatchItem {
   id: string
   name: string
   orderedQty: number
+  packedQty: number | null      // Quantity packed at kitchen
+  receivedQty: number | null    // Quantity received at branch
   unit: string
-  receivedQty: number | null
-  checked: boolean
+  packedChecked: boolean        // Checked during packing
+  receivedChecked: boolean      // Checked during receiving
   notes: string
-  issue: 'missing' | 'damaged' | 'partial' | null
+  issue: 'missing' | 'damaged' | 'partial' | 'shortage' | null
 }
 
 export interface BranchDispatch {
   branchSlug: string
   branchName: string
-  status: 'pending' | 'receiving' | 'completed'
+  status: 'pending' | 'packing' | 'dispatched' | 'receiving' | 'completed'
   items: DispatchItem[]
+  
+  // Packing checkpoint
+  packedBy: string | null
+  packingStartedAt: string | null
+  packingCompletedAt: string | null
+  
+  // Receiving checkpoint
   receivedBy: string | null
+  receivingStartedAt: string | null
   receivedAt: string | null
   completedAt: string | null
   overallNotes: string
@@ -436,11 +510,20 @@ export function getDispatchesForBranch(branchSlug: string): BranchDispatch[] {
 }
 
 /**
- * Get pending dispatches for a branch
+ * Get pending dispatches for a branch (needs packing)
  */
 export function getPendingDispatchesForBranch(branchSlug: string): BranchDispatch[] {
   return getDispatchesForBranch(branchSlug).filter(
-    d => d.status === 'pending' || d.status === 'receiving'
+    d => d.status === 'pending' || d.status === 'packing'
+  )
+}
+
+/**
+ * Get dispatched dispatches for a branch (needs receiving)
+ */
+export function getDispatchedDispatchesForBranch(branchSlug: string): BranchDispatch[] {
+  return getDispatchesForBranch(branchSlug).filter(
+    d => d.status === 'dispatched' || d.status === 'receiving'
   )
 }
 
@@ -460,8 +543,8 @@ export function getDispatchStats() {
   
   return {
     total: allBranchDispatches.length,
-    pending: allBranchDispatches.filter(bd => bd.status === 'pending').length,
-    receiving: allBranchDispatches.filter(bd => bd.status === 'receiving').length,
+    pending: allBranchDispatches.filter(bd => bd.status === 'pending' || bd.status === 'packing').length,
+    dispatched: allBranchDispatches.filter(bd => bd.status === 'dispatched' || bd.status === 'receiving').length,
     completed: allBranchDispatches.filter(bd => bd.status === 'completed').length,
     withIssues: allBranchDispatches.filter(bd => 
       bd.items.some(item => item.issue !== null)

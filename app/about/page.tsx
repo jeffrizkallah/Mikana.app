@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { TopNav } from '@/components/TopNav'
+import { Sidebar } from '@/components/Sidebar'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,23 +10,24 @@ export default function AboutPage() {
   const lastUpdated = 'November 12, 2025'
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <TopNav />
+    <div className="flex min-h-screen">
+      <Sidebar />
 
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'About' }]} />
+      <main className="flex-1 flex flex-col pt-16 md:pt-0">
+        <div className="flex-1 container mx-auto px-4 py-8">
+          <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'About' }]} />
 
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-4">About Branch Guidebook</h1>
-            <p className="text-xl text-muted-foreground">
-              Your comprehensive operational guide for excellence across all Mikana branches
-            </p>
-          </div>
+          <div className="max-w-4xl mx-auto">
+            {/* Header */}
+            <div className="text-center mb-12">
+              <h1 className="text-4xl font-bold mb-4">About Branch Guidebook</h1>
+              <p className="text-xl text-muted-foreground">
+                Your comprehensive operational guide for excellence across all Mikana branches
+              </p>
+            </div>
 
-          {/* Purpose Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            {/* Purpose Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             <Card>
               <CardHeader>
                 <BookOpen className="h-8 w-8 text-primary mb-2" />
@@ -185,10 +186,11 @@ export default function AboutPage() {
               </div>
             </CardContent>
           </Card>
+          </div>
         </div>
-      </main>
 
-      <Footer />
+        <Footer />
+      </main>
     </div>
   )
 }

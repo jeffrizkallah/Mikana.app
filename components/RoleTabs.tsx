@@ -27,7 +27,7 @@ export function RoleTabs({ roles, branchSlug, defaultRole }: RoleTabsProps) {
 
   return (
     <Tabs value={activeRole} onValueChange={setActiveRole} className="w-full">
-      <TabsList className="w-full justify-start overflow-x-auto flex-wrap h-auto">
+      <TabsList className="w-full inline-flex md:grid md:grid-cols-5 overflow-x-auto overflow-y-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] justify-start h-10">
         {roles.map(role => (
           <TabsTrigger key={role.roleId} value={role.roleId} className="flex-shrink-0">
             {role.name}

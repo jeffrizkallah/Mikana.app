@@ -11,6 +11,7 @@
     "migrate": "tsx scripts/migrate-to-postgres.ts"
   },
   "dependencies": {
+    "@radix-ui/react-label": "^2.1.8",
     "@vercel/postgres": "^0.10.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",

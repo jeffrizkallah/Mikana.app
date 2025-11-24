@@ -43,7 +43,13 @@
       "wastePct": "2.5%",
       "hygieneScore": "95"
     },
-    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "roles": [
+      "manager",
+      "supervisor",
+      "kitchen",
+      "counter",
+      "cleaner"
+    ],
     "media": {
       "photos": [
         "https://picsum.photos/seed/soufouh1/800/600",
@@ -86,7 +92,13 @@
       "wastePct": "3.1%",
       "hygieneScore": "92"
     },
-    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "roles": [
+      "manager",
+      "supervisor",
+      "kitchen",
+      "counter",
+      "cleaner"
+    ],
     "media": {
       "photos": [
         "https://picsum.photos/seed/dip1/800/600",
@@ -128,7 +140,13 @@
       "wastePct": "2.8%",
       "hygieneScore": "94"
     },
-    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "roles": [
+      "manager",
+      "supervisor",
+      "kitchen",
+      "counter",
+      "cleaner"
+    ],
     "media": {
       "photos": [
         "https://picsum.photos/seed/sharjah1/800/600",
@@ -170,7 +188,13 @@
       "wastePct": "3.5%",
       "hygieneScore": "91"
     },
-    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "roles": [
+      "manager",
+      "supervisor",
+      "kitchen",
+      "counter",
+      "cleaner"
+    ],
     "media": {
       "photos": [
         "https://picsum.photos/seed/rak1/800/600"
@@ -211,7 +235,13 @@
       "wastePct": "2.9%",
       "hygieneScore": "93"
     },
-    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "roles": [
+      "manager",
+      "supervisor",
+      "kitchen",
+      "counter",
+      "cleaner"
+    ],
     "media": {
       "photos": [
         "https://picsum.photos/seed/aljada1/800/600",
@@ -253,7 +283,13 @@
       "wastePct": "3.2%",
       "hygieneScore": "92"
     },
-    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "roles": [
+      "manager",
+      "supervisor",
+      "kitchen",
+      "counter",
+      "cleaner"
+    ],
     "media": {
       "photos": [
         "https://picsum.photos/seed/ajman1/800/600"
@@ -294,53 +330,16 @@
       "wastePct": "3.8%",
       "hygieneScore": "90"
     },
-    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "roles": [
+      "manager",
+      "supervisor",
+      "kitchen",
+      "counter",
+      "cleaner"
+    ],
     "media": {
       "photos": [
         "https://picsum.photos/seed/ueq1/800/600"
-      ],
-      "videos": []
-    }
-  },
-  {
-    "id": "8",
-    "slug": "ck",
-    "name": "CK",
-    "school": "Central Kitchen - Dubai Investment Park",
-    "location": "Dubai",
-    "manager": "Amira Youssef",
-    "contacts": [
-      {
-        "name": "Amira Youssef",
-        "role": "Branch Manager",
-        "phone": "+971 50 901 2345",
-        "email": "amira.youssef@mikana.ae"
-      }
-    ],
-    "operatingHours": "Sunday - Thursday: 7:00 AM - 3:00 PM",
-    "deliverySchedule": [
-      {
-        "day": "Sunday",
-        "time": "6:30 AM",
-        "items": "Fresh produce, dairy, bakery"
-      },
-      {
-        "day": "Wednesday",
-        "time": "6:30 AM",
-        "items": "Dry goods, frozen items"
-      }
-    ],
-    "kpis": {
-      "salesTarget": "AED 50,000/week",
-      "wastePct": "2.2%",
-      "hygieneScore": "96"
-    },
-    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
-    "media": {
-      "photos": [
-        "https://picsum.photos/seed/ck1/800/600",
-        "https://picsum.photos/seed/ck2/800/600",
-        "https://picsum.photos/seed/ck3/800/600"
       ],
       "videos": []
     }
@@ -383,7 +382,13 @@
       "wastePct": "2.4%",
       "hygieneScore": "95"
     },
-    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "roles": [
+      "manager",
+      "supervisor",
+      "kitchen",
+      "counter",
+      "cleaner"
+    ],
     "media": {
       "photos": [
         "https://picsum.photos/seed/yas1/800/600",
@@ -425,7 +430,13 @@
       "wastePct": "2.6%",
       "hygieneScore": "94"
     },
-    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "roles": [
+      "manager",
+      "supervisor",
+      "kitchen",
+      "counter",
+      "cleaner"
+    ],
     "media": {
       "photos": [
         "https://picsum.photos/seed/khalifa1/800/600",
@@ -467,7 +478,13 @@
       "wastePct": "3.0%",
       "hygieneScore": "93"
     },
-    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "roles": [
+      "manager",
+      "supervisor",
+      "kitchen",
+      "counter",
+      "cleaner"
+    ],
     "media": {
       "photos": [
         "https://picsum.photos/seed/ain1/800/600"
@@ -513,7 +530,13 @@
       "wastePct": "2.3%",
       "hygieneScore": "96"
     },
-    "roles": ["manager", "supervisor", "kitchen", "counter", "cleaner"],
+    "roles": [
+      "manager",
+      "supervisor",
+      "kitchen",
+      "counter",
+      "cleaner"
+    ],
     "media": {
       "photos": [
         "https://picsum.photos/seed/bateen1/800/600",
@@ -521,6 +544,32 @@
       ],
       "videos": []
     }
+  },
+  {
+    "id": "13",
+    "slug": "sis-ruwais",
+    "name": "SIS Ruwais",
+    "school": "Sabis International School - Ruwais",
+    "location": "Abu Dhabi",
+    "manager": "Charles",
+    "contacts": [],
+    "operatingHours": "Monday to Friday from 7:00AM - 5:00PM",
+    "deliverySchedule": [],
+    "kpis": {
+      "salesTarget": "",
+      "wastePct": "",
+      "hygieneScore": ""
+    },
+    "roles": [
+      "manager",
+      "supervisor",
+      "kitchen",
+      "counter",
+      "cleaner"
+    ],
+    "media": {
+      "photos": [],
+      "videos": []
+    }
   }
 ]
-

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { MapPin, Phone, Mail, Clock } from 'lucide-react'
-import { TopNav } from '@/components/TopNav'
+import { Sidebar } from '@/components/Sidebar'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { PrintHeader } from '@/components/PrintHeader'
@@ -38,154 +38,156 @@ export default function BranchPage({ params, searchParams }: BranchPageProps) {
     .map(role => ({ roleId: role.roleId, name: role.name }))
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {!isPrintMode && <TopNav />}
+    <div className={isPrintMode ? "min-h-screen flex flex-col" : "flex min-h-screen"}>
+      {!isPrintMode && <Sidebar />}
       <PrintHeader branchName={branch.name} />
 
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <Breadcrumbs
-          items={[
-            { label: 'Home', href: '/' },
-            { label: branch.name },
-          ]}
-        />
+      <main className={isPrintMode ? "flex-1 container mx-auto px-4 py-8" : "flex-1 flex flex-col pt-16 md:pt-0"}>
+        <div className="flex-1 container mx-auto px-4 py-8">
+          <Breadcrumbs
+            items={[
+              { label: 'Home', href: '/' },
+              { label: branch.name },
+            ]}
+          />
 
-        {/* Hero Section */}
-        <div className="mb-8">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <h1 className="text-4xl font-bold mb-2">{branch.name}</h1>
-              <p className="text-xl text-muted-foreground">{branch.school}</p>
+          {/* Hero Section */}
+          <div className="mb-8">
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <h1 className="text-4xl font-bold mb-2">{branch.name}</h1>
+                <p className="text-xl text-muted-foreground">{branch.school}</p>
+              </div>
+              {!isPrintMode && (
+                <Link href={`/branch/${branch.slug}?print=1`} target="_blank">
+                  <Button variant="outline">Print View</Button>
+                </Link>
+              )}
             </div>
+
+            {/* Branch Information Card */}
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle>Branch Information</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-1">
+                    <div className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
+                      <MapPin className="h-4 w-4" />
+                      Location
+                    </div>
+                    <p className="font-semibold">{branch.location}</p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
+                      <Clock className="h-4 w-4" />
+                      Operating Hours
+                    </div>
+                    <p className="text-sm">{branch.operatingHours}</p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="text-sm font-medium text-muted-foreground">
+                      Manager
+                    </div>
+                    <p className="font-semibold">{branch.manager}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* KPIs */}
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle>Key Performance Indicators</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-3">
+                  <KPIBadge
+                    label="Sales Target"
+                    value={branch.kpis.salesTarget}
+                    type="sales"
+                  />
+                  <KPIBadge label="Waste" value={branch.kpis.wastePct} type="waste" />
+                  <KPIBadge
+                    label="Hygiene Score"
+                    value={branch.kpis.hygieneScore}
+                    type="hygiene"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Contacts */}
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle>Contacts</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {branch.contacts.map((contact, index) => (
+                    <div key={index} className="flex flex-col gap-2 pb-4 border-b last:border-b-0 last:pb-0">
+                      <div className="font-semibold">{contact.name}</div>
+                      <div className="text-sm text-muted-foreground">{contact.role}</div>
+                      <div className="flex flex-col gap-1 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Phone className="h-3 w-3" />
+                          <a href={`tel:${contact.phone}`} className="hover:underline">
+                            {contact.phone}
+                          </a>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Mail className="h-3 w-3" />
+                          <a href={`mailto:${contact.email}`} className="hover:underline">
+                            {contact.email}
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Dispatches Section */}
             {!isPrintMode && (
-              <Link href={`/branch/${branch.slug}?print=1`} target="_blank">
-                <Button variant="outline">Print View</Button>
-              </Link>
+              <div className="mb-6">
+                <BranchDispatches branchSlug={branch.slug} />
+              </div>
             )}
           </div>
 
-          {/* Branch Information Card */}
+          {/* Roles Section */}
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle>Branch Information</CardTitle>
+              <CardTitle>Operational Roles</CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">
+                Select a role to view responsibilities, checklists, and daily timelines
+              </p>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="space-y-1">
-                  <div className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    Location
-                  </div>
-                  <p className="font-semibold">{branch.location}</p>
-                </div>
-
-                <div className="space-y-1">
-                  <div className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
-                    <Clock className="h-4 w-4" />
-                    Operating Hours
-                  </div>
-                  <p className="text-sm">{branch.operatingHours}</p>
-                </div>
-
-                <div className="space-y-1">
-                  <div className="text-sm font-medium text-muted-foreground">
-                    Manager
-                  </div>
-                  <p className="font-semibold">{branch.manager}</p>
-                </div>
-              </div>
+              <RoleTabs roles={branchRoles} branchSlug={branch.slug} />
             </CardContent>
           </Card>
 
-          {/* KPIs */}
-          <Card className="mb-6">
+          {/* Recipes Section */}
+          <Card>
             <CardHeader>
-              <CardTitle>Key Performance Indicators</CardTitle>
+              <CardTitle>Daily Recipes & Menu Items</CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">
+                Select a day to view recipes, preparation instructions, and presentation guidelines
+              </p>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-wrap gap-3">
-                <KPIBadge
-                  label="Sales Target"
-                  value={branch.kpis.salesTarget}
-                  type="sales"
-                />
-                <KPIBadge label="Waste" value={branch.kpis.wastePct} type="waste" />
-                <KPIBadge
-                  label="Hygiene Score"
-                  value={branch.kpis.hygieneScore}
-                  type="hygiene"
-                />
-              </div>
+              <RecipeSelector branchSlug={branch.slug} />
             </CardContent>
           </Card>
-
-          {/* Contacts */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Contacts</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {branch.contacts.map((contact, index) => (
-                  <div key={index} className="flex flex-col gap-2 pb-4 border-b last:border-b-0 last:pb-0">
-                    <div className="font-semibold">{contact.name}</div>
-                    <div className="text-sm text-muted-foreground">{contact.role}</div>
-                    <div className="flex flex-col gap-1 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Phone className="h-3 w-3" />
-                        <a href={`tel:${contact.phone}`} className="hover:underline">
-                          {contact.phone}
-                        </a>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Mail className="h-3 w-3" />
-                        <a href={`mailto:${contact.email}`} className="hover:underline">
-                          {contact.email}
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Dispatches Section */}
-          {!isPrintMode && (
-            <div className="mb-6">
-              <BranchDispatches branchSlug={branch.slug} />
-            </div>
-          )}
         </div>
 
-        {/* Roles Section */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Operational Roles</CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">
-              Select a role to view responsibilities, checklists, and daily timelines
-            </p>
-          </CardHeader>
-          <CardContent>
-            <RoleTabs roles={branchRoles} branchSlug={branch.slug} />
-          </CardContent>
-        </Card>
-
-        {/* Recipes Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Daily Recipes & Menu Items</CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">
-              Select a day to view recipes, preparation instructions, and presentation guidelines
-            </p>
-          </CardHeader>
-          <CardContent>
-            <RecipeSelector branchSlug={branch.slug} />
-          </CardContent>
-        </Card>
+        <Footer />
       </main>
-
-      <Footer />
     </div>
   )
 }

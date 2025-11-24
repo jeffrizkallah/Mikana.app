@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Moon, Sun } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -12,14 +11,8 @@ interface TopNavProps {
 }
 
 export function TopNav({ onSearch, searchQuery }: TopNavProps) {
-  const [isDark, setIsDark] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false)
-
-  const toggleTheme = () => {
-    setIsDark(!isDark)
-    document.documentElement.classList.toggle('dark')
-  }
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false)
@@ -31,21 +24,28 @@ export function TopNav({ onSearch, searchQuery }: TopNavProps) {
         <div className="flex items-center justify-between gap-2 sm:gap-4">
           {/* Logo/Brand */}
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="flex items-center">
-              <span className="text-lg sm:text-xl font-bold text-primary">Mikana</span>
-              <span className="ml-2 text-xs sm:text-sm text-muted-foreground hidden md:inline">
-                Branch Guidebook
-              </span>
-            </div>
+            <span className="text-lg sm:text-xl font-bold text-primary">Mikana</span>
           </Link>
 
           {/* Desktop Navigation Links */}
-          <div className="hidden md:flex items-center gap-4">
-            <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">
+          <div className="hidden md:flex items-center gap-2">
+            <Link 
+              href="/" 
+              className="px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-all duration-200"
+            >
               Branches
             </Link>
-            <Link href="/dispatch" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link 
+              href="/dispatch" 
+              className="px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-all duration-200"
+            >
               Dispatch
+            </Link>
+            <Link 
+              href="/admin" 
+              className="px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-all duration-200"
+            >
+              Admin
             </Link>
           </div>
 
@@ -84,15 +84,6 @@ export function TopNav({ onSearch, searchQuery }: TopNavProps) {
               </Button>
             )}
 
-            {/* Theme Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              aria-label="Toggle theme"
-            >
-              {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
 
             {/* Mobile Menu Button */}
             <Button
@@ -141,17 +132,24 @@ export function TopNav({ onSearch, searchQuery }: TopNavProps) {
             <div className="flex flex-col gap-2">
               <Link 
                 href="/" 
-                className="text-sm font-medium hover:text-primary transition-colors py-2 px-2 rounded-md hover:bg-accent"
+                className="px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-all duration-200"
                 onClick={closeMobileMenu}
               >
                 Branches
               </Link>
               <Link 
                 href="/dispatch" 
-                className="text-sm font-medium hover:text-primary transition-colors py-2 px-2 rounded-md hover:bg-accent"
+                className="px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-all duration-200"
                 onClick={closeMobileMenu}
               >
                 Dispatch
+              </Link>
+              <Link 
+                href="/admin" 
+                className="px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-all duration-200"
+                onClick={closeMobileMenu}
+              >
+                Admin
               </Link>
             </div>
           </div>

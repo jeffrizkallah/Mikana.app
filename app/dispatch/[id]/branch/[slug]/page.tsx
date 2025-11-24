@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { TopNav } from '@/components/TopNav'
+import { Sidebar } from '@/components/Sidebar'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -34,8 +34,14 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [receivedBy, setReceivedBy] = useState('')
+  const [packedBy, setPackedBy] = useState('')
   const [overallNotes, setOverallNotes] = useState('')
   const router = useRouter()
+  
+  // Determine mode based on status
+  const mode = branchDispatch?.status === 'pending' || branchDispatch?.status === 'packing' 
+    ? 'packing' 
+    : 'receiving'
 
   const branches = loadBranches()
   const branch = branches.find(b => b.slug === params.slug)
@@ -54,6 +60,7 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
         const bd = dispatch.branchDispatches.find((bd: any) => bd.branchSlug === params.slug)
         if (bd) {
           setBranchDispatch(bd)
+          setPackedBy(bd.packedBy || '')
           setReceivedBy(bd.receivedBy || '')
           setOverallNotes(bd.overallNotes || '')
         }
@@ -71,11 +78,20 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
 
     const updatedItems = branchDispatch.items.map(item => {
       if (item.id === itemId) {
-        return {
-          ...item,
-          checked,
-          receivedQty: checked ? item.orderedQty : null,
-          issue: checked ? null : item.issue
+        if (mode === 'packing') {
+          return {
+            ...item,
+            packedChecked: checked,
+            packedQty: checked ? item.orderedQty : null,
+            issue: checked ? null : item.issue
+          }
+        } else {
+          return {
+            ...item,
+            receivedChecked: checked,
+            receivedQty: checked ? (item.packedQty || item.orderedQty) : null,
+            issue: checked ? null : item.issue
+          }
         }
       }
       return item
@@ -108,16 +124,23 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
     })
   }
 
-  const handleReceivedQty = (itemId: string, qty: string) => {
+  const handleQuantityChange = (itemId: string, qty: string) => {
     if (!branchDispatch) return
 
     const numQty = parseFloat(qty) || 0
 
     const updatedItems = branchDispatch.items.map(item => {
       if (item.id === itemId) {
-        return {
-          ...item,
-          receivedQty: numQty
+        if (mode === 'packing') {
+          return {
+            ...item,
+            packedQty: numQty
+          }
+        } else {
+          return {
+            ...item,
+            receivedQty: numQty
+          }
         }
       }
       return item
@@ -151,15 +174,28 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
     setSaving(true)
     
     try {
+      const updateData: any = {
+        branchSlug: params.slug,
+        items: branchDispatch.items,
+        overallNotes,
+      }
+      
+      if (mode === 'packing') {
+        updateData.status = 'packing'
+        if (!branchDispatch.packingStartedAt) {
+          updateData.packingStartedAt = new Date().toISOString()
+        }
+      } else {
+        updateData.status = 'receiving'
+        if (!branchDispatch.receivingStartedAt) {
+          updateData.receivingStartedAt = new Date().toISOString()
+        }
+      }
+      
       await fetch(`/api/dispatch/${params.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          branchSlug: params.slug,
-          items: branchDispatch.items,
-          overallNotes,
-          status: 'receiving'
-        })
+        body: JSON.stringify(updateData)
       })
       
       alert('✓ Progress saved successfully!')
@@ -173,41 +209,83 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
   const completeDispatch = async () => {
     if (!branchDispatch) return
     
-    if (!receivedBy.trim()) {
-      alert('Please enter the name of the person receiving this dispatch')
-      return
-    }
+    if (mode === 'packing') {
+      // Completing packing
+      if (!packedBy.trim()) {
+        alert('Please enter the name of the person packing this dispatch')
+        return
+      }
 
-    const uncheckedItems = branchDispatch.items.filter(item => !item.checked && item.issue === null)
-    if (uncheckedItems.length > 0) {
-      const confirm = window.confirm(
-        `${uncheckedItems.length} items are not checked yet. Do you want to complete anyway?`
-      )
-      if (!confirm) return
-    }
+      const uncheckedItems = branchDispatch.items.filter(item => !item.packedChecked)
+      if (uncheckedItems.length > 0) {
+        const confirm = window.confirm(
+          `${uncheckedItems.length} items are not checked yet. Do you want to complete packing anyway?`
+        )
+        if (!confirm) return
+      }
 
-    setSaving(true)
-    
-    try {
-      await fetch(`/api/dispatch/${params.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          branchSlug: params.slug,
-          items: branchDispatch.items,
-          receivedBy,
-          receivedAt: new Date().toISOString(),
-          completedAt: new Date().toISOString(),
-          overallNotes,
-          status: 'completed'
-        })
-      })
+      setSaving(true)
       
-      alert('✅ Dispatch completed successfully!')
-      router.push(`/branch/${params.slug}`)
-    } catch (error) {
-      alert('Error completing dispatch. Please try again.')
-      setSaving(false)
+      try {
+        await fetch(`/api/dispatch/${params.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            branchSlug: params.slug,
+            items: branchDispatch.items,
+            packedBy,
+            packingStartedAt: branchDispatch.packingStartedAt || new Date().toISOString(),
+            packingCompletedAt: new Date().toISOString(),
+            overallNotes,
+            status: 'dispatched'
+          })
+        })
+        
+        alert('✅ Packing completed! Dispatch is now ready for delivery.')
+        router.push(`/branch/${params.slug}`)
+      } catch (error) {
+        alert('Error completing packing. Please try again.')
+        setSaving(false)
+      }
+    } else {
+      // Completing receiving
+      if (!receivedBy.trim()) {
+        alert('Please enter the name of the person receiving this dispatch')
+        return
+      }
+
+      const uncheckedItems = branchDispatch.items.filter(item => !item.receivedChecked && item.issue === null)
+      if (uncheckedItems.length > 0) {
+        const confirm = window.confirm(
+          `${uncheckedItems.length} items are not checked yet. Do you want to complete anyway?`
+        )
+        if (!confirm) return
+      }
+
+      setSaving(true)
+      
+      try {
+        await fetch(`/api/dispatch/${params.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            branchSlug: params.slug,
+            items: branchDispatch.items,
+            receivedBy,
+            receivingStartedAt: branchDispatch.receivingStartedAt || new Date().toISOString(),
+            receivedAt: new Date().toISOString(),
+            completedAt: new Date().toISOString(),
+            overallNotes,
+            status: 'completed'
+          })
+        })
+        
+        alert('✅ Dispatch completed successfully!')
+        router.push(`/branch/${params.slug}`)
+      } catch (error) {
+        alert('Error completing dispatch. Please try again.')
+        setSaving(false)
+      }
     }
   }
 
@@ -236,7 +314,9 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
     )
   }
 
-  const checkedCount = branchDispatch.items.filter(item => item.checked).length
+  const checkedCount = mode === 'packing' 
+    ? branchDispatch.items.filter(item => item.packedChecked).length
+    : branchDispatch.items.filter(item => item.receivedChecked).length
   const totalCount = branchDispatch.items.length
   const progressPercent = Math.round((checkedCount / totalCount) * 100)
   const issuesCount = branchDispatch.items.filter(item => item.issue !== null).length
@@ -244,11 +324,12 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
   const isCompleted = branchDispatch.status === 'completed'
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <TopNav />
+    <div className="flex min-h-screen">
+      <Sidebar />
       
-      <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
-        <Breadcrumbs
+      <main className="flex-1 flex flex-col pt-16 md:pt-0">
+        <div className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
+          <Breadcrumbs
           items={[
             { label: 'Home', href: '/' },
             { label: branch.name, href: `/branch/${params.slug}` },
@@ -267,8 +348,15 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
           
           <div className="flex items-start justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold mb-2">📦 Receiving Checklist</h1>
+              <h1 className="text-3xl font-bold mb-2">
+                {mode === 'packing' ? '📋 Packing Checklist' : '📦 Receiving Checklist'}
+              </h1>
               <p className="text-lg text-muted-foreground">{branch.name}</p>
+              {mode === 'receiving' && branchDispatch.packedBy && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  Packed by: {branchDispatch.packedBy}
+                </p>
+              )}
             </div>
             {isCompleted && (
               <Badge className="flex items-center gap-2 text-lg px-4 py-2">
@@ -307,7 +395,9 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
         {/* Items Checklist */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Items to Receive</CardTitle>
+            <CardTitle>
+              {mode === 'packing' ? 'Items to Pack' : 'Items to Receive'}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -329,22 +419,43 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex-1">
                           <div className="font-semibold text-lg mb-1">{item.name}</div>
-                          <div className="text-muted-foreground">
-                            Ordered: {item.orderedQty} {item.unit}
-                          </div>
+                          
+                          {mode === 'packing' ? (
+                            <div className="text-muted-foreground">
+                              Ordered: {item.orderedQty} {item.orderedQty > 150 ? 'unit' : 'KG'}
+                            </div>
+                          ) : (
+                            <div className="text-sm">
+                              <div className="flex items-center gap-2 text-muted-foreground">
+                                <span>Ordered: {item.orderedQty}</span>
+                                <span>→</span>
+                                <span className={item.packedQty !== item.orderedQty ? 'text-orange-600 font-semibold' : ''}>
+                                  Packed: {item.packedQty ?? item.orderedQty}
+                                </span>
+                                <span className="text-xs">({item.orderedQty > 150 ? 'unit' : 'KG'})</span>
+                              </div>
+                              {item.packedQty !== null && item.packedQty < item.orderedQty && (
+                                <div className="text-xs text-orange-600 mt-1">
+                                  ⚠️ Kitchen packed {item.orderedQty - item.packedQty} less than ordered
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
                         
                         {!isCompleted && (
                           <div className="flex items-center gap-2">
                             <Checkbox
-                              checked={item.checked}
+                              checked={mode === 'packing' ? item.packedChecked : item.receivedChecked}
                               onCheckedChange={(checked) => handleItemCheck(item.id, checked as boolean)}
                             />
-                            <label className="text-sm font-medium cursor-pointer">Received</label>
+                            <label className="text-sm font-medium cursor-pointer">
+                              {mode === 'packing' ? 'Packed' : 'Received'}
+                            </label>
                           </div>
                         )}
                         
-                        {item.checked && (
+                        {((mode === 'packing' && item.packedChecked) || (mode === 'receiving' && item.receivedChecked)) && (
                           <CheckCircle2 className="h-6 w-6 text-green-600" />
                         )}
                       </div>
@@ -380,17 +491,17 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
                           {item.issue === 'partial' && (
                             <div className="mb-3">
                               <label className="text-sm font-medium mb-1 block">
-                                Received Quantity:
+                                {mode === 'packing' ? 'Packed' : 'Received'} Quantity:
                               </label>
                               <div className="flex items-center gap-2">
                                 <Input
                                   type="number"
                                   step="0.1"
-                                  value={item.receivedQty || ''}
-                                  onChange={(e) => handleReceivedQty(item.id, e.target.value)}
+                                  value={(mode === 'packing' ? item.packedQty : item.receivedQty) || ''}
+                                  onChange={(e) => handleQuantityChange(item.id, e.target.value)}
                                   className="w-32"
                                 />
-                                <span className="text-sm text-muted-foreground">{item.unit}</span>
+                                <span className="text-sm text-muted-foreground">{item.orderedQty > 150 ? 'unit' : 'KG'}</span>
                               </div>
                             </div>
                           )}
@@ -415,7 +526,7 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
                           <Badge variant="destructive">
                             {item.issue.toUpperCase()}
                             {item.issue === 'partial' && item.receivedQty && 
-                              ` - Received: ${item.receivedQty} ${item.unit}`
+                              ` - Received: ${item.receivedQty} ${item.orderedQty > 150 ? 'unit' : 'KG'}`
                             }
                           </Badge>
                           {item.notes && (
@@ -442,11 +553,13 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium mb-2 block">
-                  Overall Delivery Notes:
+                  {mode === 'packing' ? 'Packing Notes:' : 'Delivery Notes:'}
                 </label>
                 <textarea
                   className="w-full h-24 p-3 border rounded-lg"
-                  placeholder="Any general notes about the delivery (timing, condition, driver info, etc.)"
+                  placeholder={mode === 'packing' 
+                    ? "Any notes about packing (box numbers, substitutions, shortages, etc.)" 
+                    : "Any notes about delivery (timing, condition, driver info, etc.)"}
                   value={overallNotes}
                   onChange={(e) => setOverallNotes(e.target.value)}
                   disabled={isCompleted}
@@ -456,23 +569,40 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
               {!isCompleted && (
                 <div>
                   <label className="text-sm font-medium mb-2 block">
-                    Received By: *
+                    {mode === 'packing' ? 'Packed By: *' : 'Received By: *'}
                   </label>
                   <Input
                     placeholder="Enter your name"
-                    value={receivedBy}
-                    onChange={(e) => setReceivedBy(e.target.value)}
+                    value={mode === 'packing' ? packedBy : receivedBy}
+                    onChange={(e) => mode === 'packing' ? setPackedBy(e.target.value) : setReceivedBy(e.target.value)}
                   />
                 </div>
               )}
 
               {isCompleted && (
-                <div className="bg-muted p-4 rounded-lg">
-                  <div className="text-sm text-muted-foreground mb-1">Received by:</div>
-                  <div className="font-semibold">{branchDispatch.receivedBy}</div>
-                  <div className="text-sm text-muted-foreground mt-2">
-                    Completed: {branchDispatch.completedAt ? new Date(branchDispatch.completedAt).toLocaleString() : ''}
-                  </div>
+                <div className="bg-muted p-4 rounded-lg space-y-2">
+                  {branchDispatch.packedBy && (
+                    <div>
+                      <div className="text-sm text-muted-foreground">Packed by:</div>
+                      <div className="font-semibold">{branchDispatch.packedBy}</div>
+                      {branchDispatch.packingCompletedAt && (
+                        <div className="text-xs text-muted-foreground">
+                          {new Date(branchDispatch.packingCompletedAt).toLocaleString()}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {branchDispatch.receivedBy && (
+                    <div className="mt-2">
+                      <div className="text-sm text-muted-foreground">Received by:</div>
+                      <div className="font-semibold">{branchDispatch.receivedBy}</div>
+                      {branchDispatch.completedAt && (
+                        <div className="text-xs text-muted-foreground">
+                          {new Date(branchDispatch.completedAt).toLocaleString()}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -497,13 +627,18 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
               className="flex-1"
             >
               <CheckCircle2 className="h-4 w-4 mr-2" />
-              {saving ? 'Completing...' : 'Complete & Sign Off'}
+              {saving 
+                ? 'Completing...' 
+                : mode === 'packing' 
+                ? 'Complete Packing' 
+                : 'Complete Receiving'}
             </Button>
-          </div>
-        )}
-      </main>
+            </div>
+          )}
+        </div>
 
-      <Footer />
+        <Footer />
+      </main>
     </div>
   )
 }
