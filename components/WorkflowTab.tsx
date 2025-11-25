@@ -74,17 +74,7 @@ export function WorkflowTab({ recipe }: WorkflowTabProps) {
     })
   }
 
-  // Get quality specs for sub-recipe (prefers subrecipe-specific specs)
-  const getQualityForSubRecipe = (subRecipe: SubRecipe): QualitySpecification[] => {
-    // First, check if the subrecipe has its own quality specifications
-    if (subRecipe.qualitySpecifications && subRecipe.qualitySpecifications.length > 0) {
-      return subRecipe.qualitySpecifications
-    }
-    
-    // Fall back to recipe-level quality specs if subrecipe doesn't have any
-    if (!recipe.qualitySpecifications || recipe.qualitySpecifications.length === 0) return []
-    return recipe.qualitySpecifications
-  }
+  // Quality specs are now only shown in the final assembly step, not in sub-recipes
 
   // Get preparation steps for a sub-recipe
   const getPrepStepsForSubRecipe = (subRecipe: SubRecipe): PreparationStep[] => {
@@ -150,7 +140,6 @@ export function WorkflowTab({ recipe }: WorkflowTabProps) {
         const isExpanded = expandedCards.has(subRecipe.subRecipeId)
         const isCompleted = completedSubRecipes[subRecipe.subRecipeId]
         const equipment = getEquipmentForSubRecipe(subRecipe.name)
-        const qualitySpecs = getQualityForSubRecipe(subRecipe)
         const prepSteps = getPrepStepsForSubRecipe(subRecipe)
 
         return (
@@ -315,79 +304,6 @@ export function WorkflowTab({ recipe }: WorkflowTabProps) {
                               </p>
                             )}
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Quality Specifications */}
-                {qualitySpecs.length > 0 && (
-                  <div>
-                    <h4 className="font-semibold text-sm flex items-center gap-2 mb-3">
-                      <CheckCircle2 className="h-4 w-4 text-green-600" />
-                      Quality Specifications
-                    </h4>
-                    <div className="space-y-3">
-                      {qualitySpecs.map((quality, qIdx) => (
-                        <div key={qIdx} className="p-3 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
-                          {/* Check if this is a detailed quality spec (main recipe format) */}
-                          {(quality.parameter || quality.texture || quality.tasteFlavorProfile || quality.aroma) ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                              {quality.parameter && (
-                                <div>
-                                  <p className="text-xs font-semibold text-green-800 dark:text-green-300 uppercase tracking-wide mb-1">
-                                    Appearance
-                                  </p>
-                                  <p>{quality.parameter}</p>
-                                </div>
-                              )}
-                              {quality.texture && (
-                                <div>
-                                  <p className="text-xs font-semibold text-green-800 dark:text-green-300 uppercase tracking-wide mb-1">
-                                    Texture
-                                  </p>
-                                  <p>{quality.texture}</p>
-                                </div>
-                              )}
-                              {quality.tasteFlavorProfile && (
-                                <div>
-                                  <p className="text-xs font-semibold text-green-800 dark:text-green-300 uppercase tracking-wide mb-1">
-                                    Taste / Flavor
-                                  </p>
-                                  <p>{quality.tasteFlavorProfile}</p>
-                                </div>
-                              )}
-                              {quality.aroma && (
-                                <div>
-                                  <p className="text-xs font-semibold text-green-800 dark:text-green-300 uppercase tracking-wide mb-1">
-                                    Aroma
-                                  </p>
-                                  <p>{quality.aroma}</p>
-                                </div>
-                              )}
-                            </div>
-                          ) : (
-                            /* Simple quality spec format (subrecipe format) */
-                            <div className="space-y-2 text-sm">
-                              {quality.aspect && (
-                                <div>
-                                  <p className="text-xs font-semibold text-green-800 dark:text-green-300 uppercase tracking-wide mb-1">
-                                    {quality.aspect}
-                                  </p>
-                                  <p>{quality.specification}</p>
-                                </div>
-                              )}
-                              {quality.checkMethod && (
-                                <div className="mt-2">
-                                  <p className="text-xs font-semibold text-green-800 dark:text-green-300 uppercase tracking-wide mb-1">
-                                    Check Method
-                                  </p>
-                                  <p>{quality.checkMethod}</p>
-                                </div>
-                              )}
-                            </div>
-                          )}
                         </div>
                       ))}
                     </div>
@@ -590,6 +506,79 @@ export function WorkflowTab({ recipe }: WorkflowTabProps) {
                           </div>
                         )}
                       </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Quality Specifications - Always shown in final step */}
+            {recipe.qualitySpecifications && recipe.qualitySpecifications.length > 0 && (
+              <div>
+                <h4 className="font-semibold text-sm flex items-center gap-2 mb-3">
+                  <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  Quality Specifications
+                </h4>
+                <div className="space-y-3">
+                  {recipe.qualitySpecifications.map((quality, qIdx) => (
+                    <div key={qIdx} className="p-3 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
+                      {/* Check if this is a detailed quality spec (Format 2: parameter/texture/taste/aroma) */}
+                      {(quality.parameter || quality.texture || quality.tasteFlavorProfile || quality.aroma) ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                          {quality.parameter && (
+                            <div>
+                              <p className="text-xs font-semibold text-green-800 dark:text-green-300 uppercase tracking-wide mb-1">
+                                Appearance
+                              </p>
+                              <p>{quality.parameter}</p>
+                            </div>
+                          )}
+                          {quality.texture && (
+                            <div>
+                              <p className="text-xs font-semibold text-green-800 dark:text-green-300 uppercase tracking-wide mb-1">
+                                Texture
+                              </p>
+                              <p>{quality.texture}</p>
+                            </div>
+                          )}
+                          {quality.tasteFlavorProfile && (
+                            <div>
+                              <p className="text-xs font-semibold text-green-800 dark:text-green-300 uppercase tracking-wide mb-1">
+                                Taste / Flavor
+                              </p>
+                              <p>{quality.tasteFlavorProfile}</p>
+                            </div>
+                          )}
+                          {quality.aroma && (
+                            <div>
+                              <p className="text-xs font-semibold text-green-800 dark:text-green-300 uppercase tracking-wide mb-1">
+                                Aroma
+                              </p>
+                              <p>{quality.aroma}</p>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        /* Format 1: aspect/specification/checkMethod */
+                        <div className="space-y-2 text-sm">
+                          {quality.aspect && (
+                            <div>
+                              <p className="text-xs font-semibold text-green-800 dark:text-green-300 uppercase tracking-wide mb-1">
+                                {quality.aspect}
+                              </p>
+                              <p>{quality.specification}</p>
+                            </div>
+                          )}
+                          {quality.checkMethod && (
+                            <div className="mt-2">
+                              <p className="text-xs font-semibold text-green-800 dark:text-green-300 uppercase tracking-wide mb-1">
+                                Check Method
+                              </p>
+                              <p>{quality.checkMethod}</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
