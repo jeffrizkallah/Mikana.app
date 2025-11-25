@@ -107,25 +107,11 @@ export function WorkflowTab({ recipe }: WorkflowTabProps) {
     })
   }
 
-  // Get assembly steps (final preparation steps)
-  const getAssemblySteps = (): PreparationStep[] => {
-    if (!recipe.preparation) return []
-    
-    // Get steps that mention "plate", "serve", "assemble", etc.
-    return recipe.preparation.filter(step => {
-      const stepLower = step.instruction.toLowerCase()
-      return (
-        stepLower.includes('plate') ||
-        stepLower.includes('platter') ||
-        stepLower.includes('serve') ||
-        stepLower.includes('assemble') ||
-        stepLower.includes('arrange') ||
-        stepLower.includes('place') ||
-        stepLower.includes('pour') ||
-        stepLower.includes('drizzle') ||
-        stepLower.includes('garnish')
-      )
-    })
+  // Get main recipe preparation steps
+  const getMainRecipeSteps = (): PreparationStep[] => {
+    // Return all main recipe preparation steps
+    // (Sub-recipe steps are now properly stored in their respective sub-recipes)
+    return recipe.preparation || []
   }
 
   return (
@@ -497,7 +483,7 @@ export function WorkflowTab({ recipe }: WorkflowTabProps) {
               </div>
               <div className="flex-1">
                 <CardTitle className="text-base flex items-center gap-2">
-                  Final Assembly & Plating
+                  Main Recipe: {recipe.name}
                   {completedSubRecipes['assembly'] && (
                     <Badge variant="default" className="bg-green-600">
                       Completed
@@ -505,7 +491,7 @@ export function WorkflowTab({ recipe }: WorkflowTabProps) {
                   )}
                 </CardTitle>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Bring it all together
+                  Final preparation steps
                 </p>
               </div>
             </div>
@@ -528,15 +514,47 @@ export function WorkflowTab({ recipe }: WorkflowTabProps) {
         
         {expandedCards.has('assembly') && (
           <CardContent className="border-t pt-6 space-y-6">
-            {/* Assembly Steps */}
-            {getAssemblySteps().length > 0 && (
+            {/* Main Recipe Ingredients */}
+            {recipe.mainIngredients && recipe.mainIngredients.length > 0 && (
+              <div>
+                <h4 className="font-semibold text-sm flex items-center gap-2 mb-3">
+                  <Package className="h-4 w-4 text-purple-600" />
+                  Main Ingredients
+                </h4>
+                <div className="rounded-md border">
+                  <table className="w-full text-sm">
+                    <thead className="bg-muted/50">
+                      <tr>
+                        <th className="text-left p-2 font-medium">Item</th>
+                        <th className="text-right p-2 font-medium">Quantity</th>
+                        <th className="text-left p-2 font-medium">Unit</th>
+                        <th className="text-left p-2 font-medium">Specifications</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {recipe.mainIngredients.map((ing, idx) => (
+                        <tr key={idx} className="border-t">
+                          <td className="p-2">{ing.name}</td>
+                          <td className="p-2 text-right font-mono">{ing.quantity}</td>
+                          <td className="p-2">{ing.unit || '—'}</td>
+                          <td className="p-2 text-muted-foreground text-xs">{ing.specifications || '—'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Main Recipe Steps */}
+            {getMainRecipeSteps().length > 0 && (
               <div>
                 <h4 className="font-semibold text-sm flex items-center gap-2 mb-3">
                   <ChefHat className="h-4 w-4 text-blue-600" />
-                  Assembly Steps
+                  Preparation Steps
                 </h4>
                 <div className="space-y-3">
-                  {getAssemblySteps().map((step, idx) => (
+                  {getMainRecipeSteps().map((step, idx) => (
                     <div 
                       key={idx}
                       className={`flex gap-3 p-3 rounded-lg ${

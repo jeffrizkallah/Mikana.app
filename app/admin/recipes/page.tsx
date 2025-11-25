@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Plus, Pencil, Trash2, Loader2, Search, X } from 'lucide-react'
+import { Plus, Pencil, Trash2, Loader2, Search, X, Upload } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -107,12 +107,20 @@ export default function AdminRecipesPage() {
           <h1 className="text-3xl font-bold text-primary">Recipe Manager</h1>
           <p className="text-muted-foreground">Manage your branch recipes</p>
         </div>
-        <Link href="/admin/recipes/new">
-          <Button className="gap-2">
-            <Plus className="h-4 w-4" />
-            Add New Recipe
-          </Button>
-        </Link>
+        <div className="flex gap-2">
+          <Link href="/admin/recipes/import">
+            <Button variant="outline" className="gap-2">
+              <Upload className="h-4 w-4" />
+              Import Recipe
+            </Button>
+          </Link>
+          <Link href="/admin/recipes/new">
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" />
+              Add New Recipe
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <Card>
