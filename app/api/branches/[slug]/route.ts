@@ -20,10 +20,10 @@ async function saveBranches(branches: Branch[]) {
 
 export async function PUT(
   request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const slug = params.slug
+    const { slug } = await params
     const updates = await request.json()
     const branches = await getBranches()
     
@@ -50,10 +50,10 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const slug = params.slug
+    const { slug } = await params
     const branches = await getBranches()
     
     const filteredBranches = branches.filter(b => b.slug !== slug)

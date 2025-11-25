@@ -1,201 +1,5 @@
 [
   {
-    "recipeId": "chicken-shawarma-wrap",
-    "name": "Chicken Shawarma Wrap",
-    "category": "Main Course",
-    "daysAvailable": [
-      "Sunday",
-      "Tuesday",
-      "Thursday"
-    ],
-    "prepTime": "60 minutes",
-    "cookTime": "45 minutes",
-    "servings": "50 portions",
-    "ingredients": [
-      {
-        "item": "Chicken breast (marinated)",
-        "quantity": "5 kg",
-        "notes": "Pre-marinated from supplier, check expiry date"
-      },
-      {
-        "item": "Pita bread",
-        "quantity": "50 pieces",
-        "notes": "Keep at room temperature, wrapped"
-      },
-      {
-        "item": "Garlic sauce",
-        "quantity": "500 ml",
-        "notes": "Store refrigerated until service"
-      },
-      {
-        "item": "Fresh tomatoes (diced)",
-        "quantity": "1 kg",
-        "notes": "Wash thoroughly before dicing"
-      },
-      {
-        "item": "Lettuce (shredded)",
-        "quantity": "500 g",
-        "notes": "Wash and keep in ice water until use"
-      },
-      {
-        "item": "Pickles",
-        "quantity": "300 g",
-        "notes": "Sliced, drained"
-      }
-    ],
-    "preparation": [
-      {
-        "step": 1,
-        "instruction": "Preheat the shawarma grill to 180°C",
-        "time": "10 minutes",
-        "critical": true,
-        "hint": "Check temperature with digital thermometer"
-      },
-      {
-        "step": 2,
-        "instruction": "Remove marinated chicken from refrigerator 15 minutes before cooking",
-        "time": "15 minutes",
-        "critical": false,
-        "hint": "This ensures even cooking"
-      },
-      {
-        "step": 3,
-        "instruction": "Arrange chicken pieces tightly on vertical spit",
-        "time": "15 minutes",
-        "critical": true,
-        "hint": "Ensure secure fit to prevent falling during rotation"
-      },
-      {
-        "step": 4,
-        "instruction": "Cook chicken for 45-60 minutes, rotating continuously",
-        "time": "60 minutes",
-        "critical": true,
-        "hint": "Internal temperature must reach 75°C minimum"
-      },
-      {
-        "step": 5,
-        "instruction": "Check internal temperature with probe thermometer",
-        "time": "2 minutes",
-        "critical": true,
-        "hint": "Test multiple spots, record temperature"
-      },
-      {
-        "step": 6,
-        "instruction": "Slice chicken thinly using electric slicer",
-        "time": "5 minutes",
-        "critical": false,
-        "hint": "Slice against the grain for tender pieces"
-      },
-      {
-        "step": 7,
-        "instruction": "Transfer sliced chicken to preheated holding tray",
-        "time": "3 minutes",
-        "critical": true,
-        "hint": "Maintain temperature above 65°C"
-      }
-    ],
-    "presentation": {
-      "description": "Present the shawarma wrap attractively for student appeal",
-      "instructions": [
-        {
-          "step": "Arrange sliced chicken in stainless steel serving tray",
-          "notes": "Keep under heat lamp, maintain 65°C+"
-        },
-        {
-          "step": "Display fresh vegetables in separate compartments",
-          "notes": "Keep vegetables on ice to maintain freshness"
-        },
-        {
-          "step": "Place sauces in squeeze bottles with labels",
-          "notes": "Garlic sauce, tahini, and hot sauce options"
-        },
-        {
-          "step": "Garnish with fresh parsley and lemon wedges",
-          "notes": "Refresh garnish every hour"
-        }
-      ],
-      "photos": [
-        "https://picsum.photos/seed/shawarma-prep/800/600",
-        "https://picsum.photos/seed/shawarma-display/800/600",
-        "https://picsum.photos/seed/shawarma-plated/800/600"
-      ]
-    },
-    "sops": {
-      "foodSafetyAndHygiene": [
-        "Wash hands thoroughly before and after handling raw chicken",
-        "Use separate cutting boards and utensils for raw chicken",
-        "Cook chicken to internal temperature of 75°C minimum",
-        "Keep cold foods below 5°C and hot foods above 65°C",
-        "Discard any chicken that has been in danger zone (5-65°C) for more than 2 hours"
-      ],
-      "cookingStandards": [
-        "Preheat equipment to specified temperatures before use",
-        "Monitor cooking temperature continuously",
-        "Use calibrated thermometers for temperature checks",
-        "Follow FIFO (First In, First Out) for ingredient usage",
-        "Maintain consistent portion sizes using measuring tools"
-      ],
-      "storageAndHolding": [
-        "Store raw chicken at 0-4°C in designated refrigerator",
-        "Keep cooked chicken at 65°C+ in holding equipment",
-        "Cover all stored items and label with date/time",
-        "Use cooked chicken within 4 hours of preparation",
-        "Discard any leftovers at end of service"
-      ],
-      "qualityStandards": [
-        "Chicken should be moist and tender, not dry",
-        "Meat should have even browning and char marks",
-        "No pink color in the center of meat",
-        "Vegetables must be fresh and crisp",
-        "Pita bread should be warm and soft, not hard or stale"
-      ]
-    },
-    "troubleshooting": [
-      {
-        "problem": "Chicken is dry and tough",
-        "solutions": [
-          "Reduce cooking time by 5-10 minutes",
-          "Check marinade application - should be well-coated",
-          "Ensure grill temperature is not too high (max 180°C)",
-          "Slice chicken immediately after cooking to retain moisture"
-        ]
-      },
-      {
-        "problem": "Chicken is undercooked (pink inside)",
-        "solutions": [
-          "Continue cooking until internal temp reaches 75°C",
-          "Check grill heating elements are working properly",
-          "Ensure chicken pieces are not too thick on spit",
-          "Never serve undercooked chicken - safety priority"
-        ]
-      },
-      {
-        "problem": "Garlic sauce is too thin/runny",
-        "solutions": [
-          "Add 1 tablespoon of cornstarch mixed with cold water",
-          "Refrigerate for 30 minutes to thicken",
-          "Add 2 tablespoons of Greek yogurt for thickness",
-          "Contact supplier if consistently thin"
-        ]
-      },
-      {
-        "problem": "Wraps falling apart during assembly",
-        "solutions": [
-          "Warm pita bread slightly before assembly",
-          "Don't overfill - use portion control",
-          "Ensure vegetables are well-drained, not wet",
-          "Wrap tightly and secure with wrapper if needed"
-        ]
-      }
-    ],
-    "allergens": [
-      "Wheat (gluten in pita)",
-      "Dairy (garlic sauce)",
-      "Sesame (tahini)"
-    ],
-    "storageInstructions": "Store leftover cooked chicken in sealed container at 4°C. Label with date and time. Use within 24 hours or discard."
-  },
-  {
     "recipeId": "vegetable-samosas",
     "name": "Vegetable Samosas",
     "category": "Appetizer",
@@ -1866,85 +1670,24 @@
     ],
     "qualitySpecifications": [
       {
-        "aspect": "\"Even browning on crust.",
-        "specification": "",
-        "checkMethod": "",
-        "parameter": "\"Even browning on crust.",
-        "texture": "",
-        "tasteFlavorProfile": "",
-        "aroma": ""
+        "aspect": "APPEARANCE",
+        "specification": "Even browning on crust",
+        "checkMethod": "Visual inspection"
       },
       {
-        "aspect": "Cheese fully melted with light golden spots.",
-        "specification": "",
-        "checkMethod": "",
-        "parameter": "Cheese fully melted with light golden spots.",
-        "texture": "",
-        "tasteFlavorProfile": "",
-        "aroma": ""
+        "aspect": "APPEARANCE",
+        "specification": "Cheese fully melted with light golden spots",
+        "checkMethod": "Visual inspection"
       },
       {
-        "aspect": "Chicken visible and evenly spread.\"",
-        "specification": "\"Crisp bottom.",
-        "checkMethod": "",
-        "parameter": "Chicken visible and evenly spread.\"",
-        "texture": "\"Crisp bottom.",
-        "tasteFlavorProfile": "",
-        "aroma": ""
+        "aspect": "TEXTURE",
+        "specification": "Crisp bottom",
+        "checkMethod": "Touch test"
       },
       {
-        "aspect": "Soft interior.",
-        "specification": "",
-        "checkMethod": "",
-        "parameter": "Soft interior.",
-        "texture": "",
-        "tasteFlavorProfile": "",
-        "aroma": ""
-      },
-      {
-        "aspect": "Chicken tender, not dry.\"",
-        "specification": "\"Balanced tomato and BBQ flavor.",
-        "checkMethod": "",
-        "parameter": "Chicken tender, not dry.\"",
-        "texture": "\"Balanced tomato and BBQ flavor.",
-        "tasteFlavorProfile": "",
-        "aroma": ""
-      },
-      {
-        "aspect": "Mild smokiness.",
-        "specification": "",
-        "checkMethod": "",
-        "parameter": "Mild smokiness.",
-        "texture": "",
-        "tasteFlavorProfile": "",
-        "aroma": ""
-      },
-      {
-        "aspect": "No bitterness or burnt taste.\"",
-        "specification": "\"Fresh baked dough.",
-        "checkMethod": "",
-        "parameter": "No bitterness or burnt taste.\"",
-        "texture": "\"Fresh baked dough.",
-        "tasteFlavorProfile": "",
-        "aroma": ""
-      },
-      {
-        "aspect": "Sweet BBQ scent.",
-        "specification": "",
-        "checkMethod": "",
-        "parameter": "Sweet BBQ scent.",
-        "texture": "",
-        "tasteFlavorProfile": "",
-        "aroma": ""
-      },
-      {
-        "aspect": "Light chicken aroma\"",
-        "specification": "",
-        "checkMethod": "",
-        "parameter": "Light chicken aroma\"",
-        "texture": "",
-        "tasteFlavorProfile": "",
-        "aroma": ""
+        "aspect": "TEXTURE",
+        "specification": "Soft interior",
+        "checkMethod": "Touch test"
       }
     ],
     "packingLabeling": {
@@ -2244,76 +1987,24 @@
     ],
     "qualitySpecifications": [
       {
-        "aspect": "\"Even browning on crust.",
-        "specification": "",
-        "checkMethod": "",
-        "parameter": "\"Even browning on crust.",
-        "texture": "",
-        "tasteFlavorProfile": "",
-        "aroma": ""
+        "aspect": "APPEARANCE",
+        "specification": "Even browning on crust",
+        "checkMethod": "Visual inspection"
       },
       {
-        "aspect": "Cheese fully melted with light golden spots.",
-        "specification": "",
-        "checkMethod": "",
-        "parameter": "Cheese fully melted with light golden spots.",
-        "texture": "",
-        "tasteFlavorProfile": "",
-        "aroma": ""
+        "aspect": "APPEARANCE",
+        "specification": "Cheese fully melted with light golden spots",
+        "checkMethod": "Visual inspection"
       },
       {
-        "aspect": "\"",
-        "specification": "\"Crisp bottom.",
-        "checkMethod": "",
-        "parameter": "\"",
-        "texture": "\"Crisp bottom.",
-        "tasteFlavorProfile": "",
-        "aroma": ""
+        "aspect": "TEXTURE",
+        "specification": "Crisp bottom",
+        "checkMethod": "Touch test"
       },
       {
-        "aspect": "Soft interior.",
-        "specification": "",
-        "checkMethod": "",
-        "parameter": "Soft interior.",
-        "texture": "",
-        "tasteFlavorProfile": "",
-        "aroma": ""
-      },
-      {
-        "aspect": "Cheese fully melted..\"",
-        "specification": "\"Balanced tomato flavor.",
-        "checkMethod": "",
-        "parameter": "Cheese fully melted..\"",
-        "texture": "\"Balanced tomato flavor.",
-        "tasteFlavorProfile": "",
-        "aroma": ""
-      },
-      {
-        "aspect": "Light oregano aroma.",
-        "specification": "",
-        "checkMethod": "",
-        "parameter": "Light oregano aroma.",
-        "texture": "",
-        "tasteFlavorProfile": "",
-        "aroma": ""
-      },
-      {
-        "aspect": "No burnt taste\"",
-        "specification": "\"Fresh baked dough.",
-        "checkMethod": "",
-        "parameter": "No burnt taste\"",
-        "texture": "\"Fresh baked dough.",
-        "tasteFlavorProfile": "",
-        "aroma": ""
-      },
-      {
-        "aspect": "Tomato and mozzarella aroma.\"",
-        "specification": "",
-        "checkMethod": "",
-        "parameter": "Tomato and mozzarella aroma.\"",
-        "texture": "",
-        "tasteFlavorProfile": "",
-        "aroma": ""
+        "aspect": "TEXTURE",
+        "specification": "Soft interior",
+        "checkMethod": "Touch test"
       }
     ],
     "packingLabeling": {

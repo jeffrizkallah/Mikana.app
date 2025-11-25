@@ -20,10 +20,10 @@ async function saveRecipes(recipes: Recipe[]) {
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id
+    const { id } = await params
     const updates = await request.json()
     const recipes = await getRecipes()
     
@@ -50,10 +50,10 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id
+    const { id } = await params
     const recipes = await getRecipes()
     
     const filteredRecipes = recipes.filter(r => r.recipeId !== id)

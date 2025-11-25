@@ -3,11 +3,11 @@ import { sql } from '@vercel/postgres'
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const updates = await request.json()
-    const dispatchId = params.id
+    const { id: dispatchId } = await params
     
     // Get the current dispatch
     const dispatch = await sql`
@@ -52,10 +52,10 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const dispatchId = params.id
+    const { id: dispatchId } = await params
     
     // Mark dispatch as archived instead of physically deleting
     const result = await sql`
