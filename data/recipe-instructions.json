@@ -1,0 +1,264 @@
+[
+  {
+    "instructionId": "hm-oriental-chicken-rice",
+    "dishName": "Hm Oriental Chicken with Rice",
+    "linkedRecipeId": "oriental-chicken-rice",
+    "category": "Main Course",
+    "daysAvailable": ["Sunday", "Tuesday", "Thursday"],
+    "components": [
+      {
+        "componentId": "chicken-stuffed",
+        "subRecipeName": "Chicken Stuffed For Oriental Chicken 1 KG",
+        "servingPerPortion": 120,
+        "unit": "Gr",
+        "reheatingSteps": [
+          "Put the Vacuum bag of chicken in a hot pot",
+          "When Heated take out the chicken and Slice it 2 cm / pc",
+          "Add it on top of the Oriental Rice that's been previously heated"
+        ],
+        "quantityControlNotes": "Apply Oriental Sauce over the Slices of chicken to keep it juicy",
+        "presentationGuidelines": "Sprinkle a pinch of cinnamon powder over the chicken and Use Fresh Rosemary and slices of lemon"
+      },
+      {
+        "componentId": "oriental-rice",
+        "subRecipeName": "Oriental Rice 1 KG",
+        "servingPerPortion": 280,
+        "unit": "Gr",
+        "reheatingSteps": [
+          "Put the vacuum bag in the hot pot for 20 to 25 min if not frozen",
+          "Take out the rice from the bag and put it in the GN",
+          ""
+        ],
+        "quantityControlNotes": "Prevent it from becoming mushy. Avoid applying excessive pressure or squeezing the bag",
+        "presentationGuidelines": "The quantity of Rice should be 60% the quantity of Chicken in the GN"
+      },
+      {
+        "componentId": "sauce-oriental",
+        "subRecipeName": "Sauce Oriental SR",
+        "servingPerPortion": 100,
+        "unit": "Gr",
+        "reheatingSteps": [
+          "Take out the sauce from the vacuum bag put it on a pot, Place it on stovetop on low heat",
+          "Stir the sauce frequently until evenly heat",
+          ""
+        ],
+        "quantityControlNotes": "If the sauce separates, small amount of roux (Mixture of same qty of Butter and Flour) and stir it until gradually Thicken",
+        "presentationGuidelines": "Put the sauce in a small GN over the counter or in a separate rechaud to keep it hot"
+      }
+    ],
+    "visualPresentation": ["https://picsum.photos/seed/oriental-chicken/800/600"],
+    "branchManagerFeedback": ""
+  },
+  {
+    "instructionId": "hm-chicken-kabab",
+    "dishName": "Hm Chicken Kabab",
+    "linkedRecipeId": "chicken-kabab",
+    "category": "Main Course",
+    "daysAvailable": ["Monday", "Wednesday"],
+    "components": [
+      {
+        "componentId": "chicken-kabab",
+        "subRecipeName": "Chicken Kabab 1 KG",
+        "servingPerPortion": 250,
+        "unit": "Gr",
+        "reheatingSteps": [
+          "Put the vacuum bag in the hot pot for 20 to 25 min if not frozen",
+          "Take out the Kabab from the bag and put it in the GN",
+          ""
+        ],
+        "quantityControlNotes": "Add Tomato Sauce at the Bottom of the GN before you put the Chicken Kabab in order to keep it juicy",
+        "presentationGuidelines": "Try to Place the Kabab fingers in Symmetrical pattern Sprinkle Chopped Parsley on top"
+      }
+    ],
+    "visualPresentation": ["https://picsum.photos/seed/chicken-kabab/800/600"],
+    "branchManagerFeedback": ""
+  },
+  {
+    "instructionId": "hm-mexican-burger",
+    "dishName": "Hm Mexican Burger",
+    "linkedRecipeId": "mexican-burger",
+    "category": "Main Course",
+    "daysAvailable": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
+    "components": [
+      {
+        "componentId": "burger-bun",
+        "subRecipeName": "Bread, Brioche, Burger Bun, 30G",
+        "servingPerPortion": 1,
+        "unit": "Unit",
+        "reheatingSteps": [
+          "Cut the bun equally, paste butter inside it and put it over the grill to become light golden",
+          "",
+          ""
+        ],
+        "quantityControlNotes": "",
+        "presentationGuidelines": ""
+      },
+      {
+        "componentId": "lollo-rosso",
+        "subRecipeName": "Lollo Rosso",
+        "servingPerPortion": 5,
+        "unit": "Gr",
+        "reheatingSteps": [
+          "",
+          "",
+          ""
+        ],
+        "quantityControlNotes": "Clean and Sanitize, Make sure its fresh and firm",
+        "presentationGuidelines": ""
+      },
+      {
+        "componentId": "beef-burger",
+        "subRecipeName": "Beef Burger 1 KG",
+        "servingPerPortion": 120,
+        "unit": "Gr",
+        "reheatingSteps": [
+          "Preheat the Grill - light brush the grill with oil to prevent sticking",
+          "if the meat is 2 cm Thickness it needs between 6 to 7 min over the grill",
+          "Close the patties with lid for even cooking"
+        ],
+        "quantityControlNotes": "Flip only once using spatula - Avoid pressing down on the patty (This squeezes out the juices)",
+        "presentationGuidelines": ""
+      },
+      {
+        "componentId": "cheese-cheddar",
+        "subRecipeName": "Cheese Cheddar Block",
+        "servingPerPortion": 15,
+        "unit": "Gr",
+        "reheatingSteps": [
+          "Put over the Grilled meat until it melts (30 to 60 seconds before removing the patties)",
+          "",
+          ""
+        ],
+        "quantityControlNotes": "",
+        "presentationGuidelines": ""
+      },
+      {
+        "componentId": "guacamole",
+        "subRecipeName": "Sauce Guacamole Mik",
+        "servingPerPortion": 15,
+        "unit": "Gr",
+        "reheatingSteps": [
+          "Mash the avocado, add finely chopped onions, tomatoes and coriander then add lemon juice and salt (Follow the recipe on odoo)",
+          "",
+          ""
+        ],
+        "quantityControlNotes": "Make sure the ingredients are fresh",
+        "presentationGuidelines": ""
+      },
+      {
+        "componentId": "tomato",
+        "subRecipeName": "Tomato KG",
+        "servingPerPortion": 20,
+        "unit": "Gr",
+        "reheatingSteps": [
+          "",
+          "",
+          ""
+        ],
+        "quantityControlNotes": "Firm and fresh tomatoes",
+        "presentationGuidelines": "Slice the tomatoes to match the diameter of the burger patty and bun, ensuring a consistent size for even distribution"
+      }
+    ],
+    "visualPresentation": ["https://picsum.photos/seed/mexican-burger/800/600"],
+    "branchManagerFeedback": ""
+  },
+  {
+    "instructionId": "hm-pasta-penne-arabiata",
+    "dishName": "Hm Pasta Penne Arabiata",
+    "linkedRecipeId": "pasta-penne-arabiata",
+    "category": "Main Course",
+    "daysAvailable": ["Tuesday", "Thursday"],
+    "components": [
+      {
+        "componentId": "sauce-arabiata",
+        "subRecipeName": "Sauce Arrabbiata 1 KG",
+        "servingPerPortion": 200,
+        "unit": "Gr",
+        "reheatingSteps": [
+          "Take out the sauce from the vacuum bag put it on a pot, Place it on stovetop on low heat",
+          "Stir the sauce frequently until evenly heat",
+          ""
+        ],
+        "quantityControlNotes": "",
+        "presentationGuidelines": ""
+      },
+      {
+        "componentId": "pasta-penne",
+        "subRecipeName": "Pasta, Penne Raw",
+        "servingPerPortion": 100,
+        "unit": "Gr",
+        "reheatingSteps": [
+          "Boil the water in a large pot, Add salt to enhance the pasta's Flavor",
+          "Add the pasta to the boiling salty water Stir immediately to prevent sticking",
+          ""
+        ],
+        "quantityControlNotes": "Stir Occasionally to ensure even cooking - Do Not Rinse the pasta. Add a bit of olive oil to prevent sticking if you are not going to mix it up with sauce",
+        "presentationGuidelines": "Use Fresh Basil Leaves for Decoration"
+      },
+      {
+        "componentId": "cheese-mozzarella",
+        "subRecipeName": "Cheese Mozzarella Shredded",
+        "servingPerPortion": 10,
+        "unit": "Gr",
+        "reheatingSteps": [
+          "Sprinkle the Shredded Mozzarella Directly over the GN while still hot",
+          "",
+          ""
+        ],
+        "quantityControlNotes": "",
+        "presentationGuidelines": ""
+      }
+    ],
+    "visualPresentation": ["https://picsum.photos/seed/pasta-arabiata/800/600"],
+    "branchManagerFeedback": ""
+  },
+  {
+    "instructionId": "side-steamed-white-rice",
+    "dishName": "Side Steamed White Rice",
+    "linkedRecipeId": "steamed-white-rice",
+    "category": "Side",
+    "daysAvailable": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
+    "components": [
+      {
+        "componentId": "steamed-rice",
+        "subRecipeName": "Steamed White Rice 1 KG",
+        "servingPerPortion": 200,
+        "unit": "Gr",
+        "reheatingSteps": [
+          "Put the vacuum bag in the hot pot for 20 to 25 min if not frozen",
+          "Take out the rice from the bag and put it in the GN",
+          ""
+        ],
+        "quantityControlNotes": "Prevent it from becoming mushy. Avoid applying excessive pressure or squeezing the bag",
+        "presentationGuidelines": "Use Simple Garnish like Chopped Parsley"
+      }
+    ],
+    "visualPresentation": ["https://picsum.photos/seed/white-rice/800/600"],
+    "branchManagerFeedback": ""
+  },
+  {
+    "instructionId": "side-mashed-potato",
+    "dishName": "Side Mashed Potato",
+    "linkedRecipeId": "mashed-potato",
+    "category": "Side",
+    "daysAvailable": ["Monday", "Wednesday", "Thursday"],
+    "components": [
+      {
+        "componentId": "mashed-potato",
+        "subRecipeName": "Mashed Potato 1 KG",
+        "servingPerPortion": 200,
+        "unit": "Gr",
+        "reheatingSteps": [
+          "Remove the mashed potatoes from the bag and transfer them to a large pot over low heat, stirring constantly to prevent sticking.",
+          "",
+          ""
+        ],
+        "quantityControlNotes": "If the mashed potatoes are too thick and need to be loosened, add hot milk gradually while stirring continuously over low heat.",
+        "presentationGuidelines": ""
+      }
+    ],
+    "visualPresentation": ["https://picsum.photos/seed/mashed-potato/800/600"],
+    "branchManagerFeedback": ""
+  }
+]
+

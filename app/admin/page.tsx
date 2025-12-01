@@ -12,7 +12,9 @@ import {
   Settings, 
   ArrowRight,
   Lock,
-  Bell
+  Bell,
+  Flame,
+  Factory
 } from 'lucide-react'
 
 interface FeatureCard {
@@ -28,10 +30,26 @@ export default function AdminDashboardPage() {
   const features: FeatureCard[] = [
     {
       id: 'recipes',
-      title: 'Recipe Manager',
-      description: 'Manage recipes, ingredients, preparation steps, and SOPs',
+      title: 'Recipe Manager (CK)',
+      description: 'Full recipes for Central Kitchen with cooking instructions',
       icon: <ChefHat className="h-5 w-5" />,
       href: '/admin/recipes',
+      available: true,
+    },
+    {
+      id: 'recipe-instructions',
+      title: 'Recipe Instructions',
+      description: 'Reheating & assembly instructions for branches',
+      icon: <Flame className="h-5 w-5 text-orange-500" />,
+      href: '/admin/recipe-instructions',
+      available: true,
+    },
+    {
+      id: 'production-schedules',
+      title: 'Production Schedules',
+      description: 'Weekly production plans for Central Kitchen',
+      icon: <Factory className="h-5 w-5 text-orange-500" />,
+      href: '/admin/production-schedules',
       available: true,
     },
     {

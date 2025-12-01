@@ -1,0 +1,1022 @@
+[
+  {
+    "scheduleId": "week-2024-12-01",
+    "weekStart": "2024-12-01",
+    "weekEnd": "2024-12-05",
+    "createdBy": "Admin",
+    "createdAt": "2024-11-29T08:00:00Z",
+    "days": [
+      {
+        "date": "2024-12-01",
+        "dayName": "Sunday",
+        "items": [
+          {
+            "itemId": "prod-001",
+            "recipeName": "Beef Burger 1 KG (80 grams)",
+            "quantity": 8.5,
+            "unit": "Kg",
+            "station": "Butchery",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-002",
+            "recipeName": "Chicken Fajitas 1 KG",
+            "quantity": 55.6,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-003",
+            "recipeName": "Chicken Fried Cubes 1 Kg",
+            "quantity": 16,
+            "unit": "Kg",
+            "station": "Butchery",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-004",
+            "recipeName": "Brownies 1 KG",
+            "quantity": 76.5,
+            "unit": "Kg",
+            "station": "Desserts",
+            "notes": "",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "date": "2024-12-02",
+        "dayName": "Monday",
+        "items": [
+          {
+            "itemId": "prod-005",
+            "recipeName": "Beef For Burrito",
+            "quantity": 16.7,
+            "unit": "Kg",
+            "station": "Butchery",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-006",
+            "recipeName": "Beef Paupiette 1 KG",
+            "quantity": 7,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-007",
+            "recipeName": "Beef Philadelphia Kg",
+            "quantity": 11.3,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-008",
+            "recipeName": "Chicken Shawarma Marinated Cooked Schools",
+            "quantity": 69.3,
+            "unit": "Kg",
+            "station": "Butchery",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-009",
+            "recipeName": "Creamy Mushroom Sauce Kg",
+            "quantity": 2.4,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-010",
+            "recipeName": "Lemon Juice Fresh",
+            "quantity": 45.7,
+            "unit": "Liter",
+            "station": "Pantry",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-011",
+            "recipeName": "Loaf English Banana Cake",
+            "quantity": 3.5,
+            "unit": "Unit",
+            "station": "Desserts",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-012",
+            "recipeName": "Loaf English Cake White",
+            "quantity": 5.8,
+            "unit": "Unit",
+            "station": "Desserts",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-013",
+            "recipeName": "Muffin Chocolate 1 KG",
+            "quantity": 58.6,
+            "unit": "Kg",
+            "station": "Desserts",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-014",
+            "recipeName": "Muffin Batter White 1 Kg",
+            "quantity": 36.6,
+            "unit": "Kg",
+            "station": "Desserts",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-015",
+            "recipeName": "Orange Juice L",
+            "quantity": 1.7,
+            "unit": "Liter",
+            "station": "Pantry",
+            "notes": "",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "date": "2024-12-03",
+        "dayName": "Tuesday",
+        "items": [
+          {
+            "itemId": "prod-016",
+            "recipeName": "Chicken Burger Patty 1 KG",
+            "quantity": 13.9,
+            "unit": "Kg",
+            "station": "Butchery",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-017",
+            "recipeName": "Chicken Kiev Kg",
+            "quantity": 6.5,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-018",
+            "recipeName": "Chicken Marinade Breast 1 Kg",
+            "quantity": 40.5,
+            "unit": "Kg",
+            "station": "Butchery",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-019",
+            "recipeName": "Chicken Pesto 1 Kg",
+            "quantity": 4.3,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-020",
+            "recipeName": "Mac & Cheese 1 KG",
+            "quantity": 28.8,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "date": "2024-12-04",
+        "dayName": "Wednesday",
+        "items": [
+          {
+            "itemId": "prod-021",
+            "recipeName": "Beef Kafta Dough 1 KG",
+            "quantity": 19,
+            "unit": "Kg",
+            "station": "Butchery",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-022",
+            "recipeName": "Beef Tacos 1 Kg",
+            "quantity": 36.9,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-023",
+            "recipeName": "Chicken Marinade (Strips) 1 Kg",
+            "quantity": 107.6,
+            "unit": "Kg",
+            "station": "Butchery",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-024",
+            "recipeName": "Chicken Oven Baked 1 KG",
+            "quantity": 42.5,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-025",
+            "recipeName": "Chicken Pie Hachwe KG",
+            "quantity": 34,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-026",
+            "recipeName": "Chickpeas Cooked 1 KG",
+            "quantity": 45.1,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-027",
+            "recipeName": "Croutons 1 KG",
+            "quantity": 3.7,
+            "unit": "Kg",
+            "station": "Pantry",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-028",
+            "recipeName": "Honey Mustard Sauce 1 KG",
+            "quantity": 12.9,
+            "unit": "Kg",
+            "station": "Pantry",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-029",
+            "recipeName": "Mexican Rice 1 KG",
+            "quantity": 25.9,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "date": "2024-12-05",
+        "dayName": "Thursday",
+        "items": [
+          {
+            "itemId": "prod-030",
+            "recipeName": "Beef Kafta Saynieh 1 KG",
+            "quantity": 38,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-031",
+            "recipeName": "Chicken Quarter Leg Marinade Sous Vide",
+            "quantity": 156,
+            "unit": "Unit",
+            "station": "Butchery",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-032",
+            "recipeName": "Date Sable 1 Kg",
+            "quantity": 31.6,
+            "unit": "Kg",
+            "station": "Desserts",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-033",
+            "recipeName": "Fish Curry Kg",
+            "quantity": 6,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-034",
+            "recipeName": "Mashed Potato 1 KG",
+            "quantity": 52,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "scheduleId": "week-2025-11-03",
+    "weekStart": "2025-11-03",
+    "weekEnd": "2025-11-08",
+    "createdBy": "Jeff",
+    "createdAt": "2025-12-01T09:51:12.267Z",
+    "days": [
+      {
+        "date": "2025-11-03",
+        "dayName": "Monday",
+        "items": [
+          {
+            "itemId": "prod-0",
+            "recipeName": "Beef Burger 1 KG ( 80 grams )",
+            "quantity": 8.5,
+            "unit": "Kg",
+            "station": "Butchery",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-1",
+            "recipeName": "Beef For Burrito",
+            "quantity": 16.7,
+            "unit": "Kg",
+            "station": "Butchery",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-2",
+            "recipeName": "Beef Paupiette 1 KG",
+            "quantity": 7,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-3",
+            "recipeName": "Beef Philadelphia Kg",
+            "quantity": 11.3,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-4",
+            "recipeName": "Chicken Shawarma Marinated Cooked Schools",
+            "quantity": 69.3,
+            "unit": "Kg",
+            "station": "Butchery",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-5",
+            "recipeName": "Creamy Mushroom Sauce Kg",
+            "quantity": 2.4,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-6",
+            "recipeName": "Lemon Juice Fresh",
+            "quantity": 45.7,
+            "unit": "Liter",
+            "station": "Pantry",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-7",
+            "recipeName": "Loaf English Banana Cake",
+            "quantity": 3.5,
+            "unit": "Unit",
+            "station": "Desserts",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-8",
+            "recipeName": "Loaf English Cake White",
+            "quantity": 5.8,
+            "unit": "Unit",
+            "station": "Desserts",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-9",
+            "recipeName": "Muffin Chocolate 1 KG",
+            "quantity": 58.6,
+            "unit": "Kg",
+            "station": "Desserts",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-10",
+            "recipeName": "Muffin Batter White 1 Kg",
+            "quantity": 36.6,
+            "unit": "Kg",
+            "station": "Desserts",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-11",
+            "recipeName": "Orange Juice L",
+            "quantity": 1.7,
+            "unit": "Liter",
+            "station": "Pantry",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-12",
+            "recipeName": "Sauce BBQ 1 KG",
+            "quantity": 19.6,
+            "unit": "Liter",
+            "station": "Pantry",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-13",
+            "recipeName": "Sauce Cheddar Cheese",
+            "quantity": 5.5,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-14",
+            "recipeName": "Sauce Chicken King 1 KG",
+            "quantity": 11.7,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-15",
+            "recipeName": "Sauce Creamy Cheese",
+            "quantity": 3.5,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-16",
+            "recipeName": "Sauce Creamy Pesto 1 KG",
+            "quantity": 15,
+            "unit": "Liter",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "date": "2025-11-04",
+        "dayName": "Tuesday",
+        "items": [
+          {
+            "itemId": "prod-17",
+            "recipeName": "Chicken Burger Patty 1 KG",
+            "quantity": 13.9,
+            "unit": "Kg",
+            "station": "Butchery",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-18",
+            "recipeName": "Chicken Fajitas 1 KG",
+            "quantity": 55.6,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-19",
+            "recipeName": "Chicken Fried Cubes 1 Kg",
+            "quantity": 16,
+            "unit": "Kg",
+            "station": "Butchery",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-20",
+            "recipeName": "Chicken Kiev Kg",
+            "quantity": 6.5,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-21",
+            "recipeName": "Chicken Marinade Breast 1 Kg",
+            "quantity": 40.5,
+            "unit": "Kg",
+            "station": "Butchery",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-22",
+            "recipeName": "Chicken Pesto 1 Kg",
+            "quantity": 4.3,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-23",
+            "recipeName": "Mac & Cheese 1 KG",
+            "quantity": 28.8,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-24",
+            "recipeName": "Sauce Tomato 1 KG",
+            "quantity": 167.2,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-25",
+            "recipeName": "Shrimp Fried Rice 1 KG",
+            "quantity": 10,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "date": "2025-11-05",
+        "dayName": "Wednesday",
+        "items": [
+          {
+            "itemId": "prod-26",
+            "recipeName": "Beef Kafta Dough 1 KG",
+            "quantity": 19,
+            "unit": "Kg",
+            "station": "Butchery",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-27",
+            "recipeName": "Beef Tacos 1 Kg",
+            "quantity": 36.9,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-28",
+            "recipeName": "Brownies 1 KG",
+            "quantity": 76.5,
+            "unit": "Kg",
+            "station": "Desserts",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-29",
+            "recipeName": "Chicken Marinade ( Strips ) 1 Kg",
+            "quantity": 107.6,
+            "unit": "Kg",
+            "station": "Butchery",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-30",
+            "recipeName": "Chicken Oven Baked 1 KG",
+            "quantity": 42.5,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-31",
+            "recipeName": "Chicken Pie Hachwe KG",
+            "quantity": 34,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-32",
+            "recipeName": "Chickpeas Cooked 1 KG",
+            "quantity": 45.1,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-33",
+            "recipeName": "Croutons 1 KG",
+            "quantity": 3.7,
+            "unit": "Kg",
+            "station": "Pantry",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-34",
+            "recipeName": "Honey Mustard Sauce 1 KG",
+            "quantity": 12.9,
+            "unit": "Kg",
+            "station": "Pantry",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-35",
+            "recipeName": "Mexican Rice 1 KG",
+            "quantity": 25.9,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-36",
+            "recipeName": "Rice Cantonese 1 Kg",
+            "quantity": 27,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-37",
+            "recipeName": "Sauce Bolognese 1 KG",
+            "quantity": 58.4,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-38",
+            "recipeName": "Sauce Cacciatore 1 KG",
+            "quantity": 12.8,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-39",
+            "recipeName": "SW Dough Cookies",
+            "quantity": 23.5,
+            "unit": "Kg",
+            "station": "Desserts",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-40",
+            "recipeName": "Sweet and Sour Sauce 1 KG",
+            "quantity": 31.2,
+            "unit": "Kg",
+            "station": "Desserts",
+            "notes": "",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "date": "2025-11-06",
+        "dayName": "Thursday",
+        "items": [
+          {
+            "itemId": "prod-41",
+            "recipeName": "Beef Kafta Saynieh 1 KG",
+            "quantity": 38,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-42",
+            "recipeName": "Chicken Quarter Leg  Marinade Sous Vide",
+            "quantity": 156,
+            "unit": "Unit",
+            "station": "Butchery",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-43",
+            "recipeName": "Date Sable 1 Kg",
+            "quantity": 31.6,
+            "unit": "Kg",
+            "station": "Desserts",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-44",
+            "recipeName": "Fish Curry Kg",
+            "quantity": 6,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-45",
+            "recipeName": "Mashed Potato 1 KG",
+            "quantity": 52,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-46",
+            "recipeName": "Potato Baked & Onions 1 KG",
+            "quantity": 42.5,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-47",
+            "recipeName": "Sauce Arrabbiata 1 KG",
+            "quantity": 36.4,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-48",
+            "recipeName": "Sauce Burger 1 KG",
+            "quantity": 7.3,
+            "unit": "Kg",
+            "station": "Pantry",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-49",
+            "recipeName": "Sauce Caesar 1 KG",
+            "quantity": 19.3,
+            "unit": "Kg",
+            "station": "Pantry",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-50",
+            "recipeName": "Sauce Pesto 1 KG",
+            "quantity": 5.8,
+            "unit": "Kg",
+            "station": "Pantry",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-51",
+            "recipeName": "SW Dough Sable Vanilla 1 KG",
+            "quantity": 0.8,
+            "unit": "Kg",
+            "station": "Desserts",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-52",
+            "recipeName": "SW Dough Shortcrust Sweet",
+            "quantity": 19,
+            "unit": "Kg",
+            "station": "Desserts",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-53",
+            "recipeName": "White Sauce 1 KG",
+            "quantity": 111.5,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "date": "2025-11-07",
+        "dayName": "Friday",
+        "items": [
+          {
+            "itemId": "prod-54",
+            "recipeName": "Cooked Vermicelli Rice 1 KG",
+            "quantity": 45.5,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-55",
+            "recipeName": "Dredge For Chicken",
+            "quantity": 36.4,
+            "unit": "Kg",
+            "station": "Pantry",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-56",
+            "recipeName": "Fish Brochette 1 Kg",
+            "quantity": 9.4,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-57",
+            "recipeName": "Grilled Fish Marination 1 Kg",
+            "quantity": 6.6,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-58",
+            "recipeName": "Lazy Cake Kg",
+            "quantity": 78,
+            "unit": "Kg",
+            "station": "Desserts",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-59",
+            "recipeName": "Mixed Cheese",
+            "quantity": 127,
+            "unit": "Kg",
+            "station": "Pantry",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-60",
+            "recipeName": "Oat & Raisins Energy Bar 1 Kg",
+            "quantity": 14.8,
+            "unit": "Kg",
+            "station": "Desserts",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-61",
+            "recipeName": "Potato Dauphinoise 1 Kg",
+            "quantity": 37.1,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-62",
+            "recipeName": "Potato Wedges 1 KG",
+            "quantity": 46.2,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-63",
+            "recipeName": "Saffron Rice 1 KG",
+            "quantity": 13.2,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-64",
+            "recipeName": "Sauce Fattouch",
+            "quantity": 4.4,
+            "unit": "Liter",
+            "station": "Pantry",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-65",
+            "recipeName": "Sauce Lemon",
+            "quantity": 7.8,
+            "unit": "Liter",
+            "station": "Pantry",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-66",
+            "recipeName": "Sauce Tartar 1 KG",
+            "quantity": 1.7,
+            "unit": "Kg",
+            "station": "Pantry",
+            "notes": "",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "date": "2025-11-08",
+        "dayName": "Saturday",
+        "items": [
+          {
+            "itemId": "prod-67",
+            "recipeName": "Garlic Paste 1 Kg",
+            "quantity": 102.2,
+            "unit": "Kg",
+            "station": "Pantry",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-68",
+            "recipeName": "Hummus Bi Tahini 1 KG",
+            "quantity": 60.1,
+            "unit": "Kg",
+            "station": "Pantry",
+            "notes": "",
+            "completed": false
+          },
+          {
+            "itemId": "prod-69",
+            "recipeName": "Steamed White Rice 1 KG",
+            "quantity": 42.2,
+            "unit": "Kg",
+            "station": "Hot Section",
+            "notes": "",
+            "completed": false
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -2,6 +2,8 @@ import branchesData from '@/data/branches.json'
 import rolesData from '@/data/roles.json'
 import recipesData from '@/data/recipes.json'
 import dispatchesData from '@/data/dispatches.json'
+import recipeInstructionsData from '@/data/recipe-instructions.json'
+import productionSchedulesData from '@/data/production-schedules.json'
 
 export interface Contact {
   name: string
@@ -31,6 +33,7 @@ export interface Branch {
   id: string
   slug: string
   name: string
+  branchType?: 'production' | 'service'  // production = Central Kitchen, service = regular branches
   school: string
   location: string
   manager: string
@@ -553,5 +556,191 @@ export function getDispatchStats() {
       bd.items.some(item => item.issue !== null)
     ).length,
   }
+}
+
+// ==========================================
+// Recipe Instructions (Branch Reheating/Assembly)
+// ==========================================
+
+export interface InstructionComponent {
+  componentId: string
+  subRecipeName: string
+  servingPerPortion: number
+  unit: string
+  reheatingSteps: string[]
+  quantityControlNotes: string
+  presentationGuidelines: string
+}
+
+export interface RecipeInstruction {
+  instructionId: string
+  dishName: string
+  linkedRecipeId?: string  // Links to Central Kitchen recipe if exists
+  category: string
+  daysAvailable: string[]
+  components: InstructionComponent[]
+  visualPresentation: string[]
+  branchManagerFeedback: string
+}
+
+/**
+ * Load all recipe instructions
+ */
+export function loadRecipeInstructions(): RecipeInstruction[] {
+  return recipeInstructionsData as RecipeInstruction[]
+}
+
+/**
+ * Get a single recipe instruction by ID
+ */
+export function getRecipeInstruction(instructionId: string): RecipeInstruction | undefined {
+  const instructions = loadRecipeInstructions()
+  return instructions.find(i => i.instructionId === instructionId)
+}
+
+/**
+ * Get recipe instructions available for a specific day
+ */
+export function getRecipeInstructionsForDay(day: string): RecipeInstruction[] {
+  const instructions = loadRecipeInstructions()
+  return instructions.filter(i => i.daysAvailable.includes(day))
+}
+
+/**
+ * Get recipe instructions by category
+ */
+export function getRecipeInstructionsByCategory(category: string): RecipeInstruction[] {
+  const instructions = loadRecipeInstructions()
+  return instructions.filter(i => i.category === category)
+}
+
+/**
+ * Get unique days from all recipe instructions
+ */
+export function getUniqueInstructionDays(): string[] {
+  const instructions = loadRecipeInstructions()
+  const daysSet = new Set<string>()
+  instructions.forEach(i => {
+    i.daysAvailable.forEach(day => daysSet.add(day))
+  })
+  return Array.from(daysSet).sort((a, b) => {
+    const dayOrder = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    return dayOrder.indexOf(a) - dayOrder.indexOf(b)
+  })
+}
+
+/**
+ * Get unique categories from all recipe instructions
+ */
+export function getUniqueInstructionCategories(): string[] {
+  const instructions = loadRecipeInstructions()
+  const categories = instructions.map(i => i.category)
+  return Array.from(new Set(categories)).sort()
+}
+
+// ==========================================
+// Production Schedule (Central Kitchen)
+// ==========================================
+
+export type ProductionStation = 'Butchery' | 'Hot Section' | 'Pantry' | 'Desserts'
+
+export interface ProductionItem {
+  itemId: string
+  recipeName: string
+  quantity: number
+  unit: string
+  station: ProductionStation
+  notes: string
+  completed: boolean
+}
+
+export interface ProductionDay {
+  date: string
+  dayName: string
+  items: ProductionItem[]
+}
+
+export interface ProductionSchedule {
+  scheduleId: string
+  weekStart: string
+  weekEnd: string
+  createdBy: string
+  createdAt: string
+  days: ProductionDay[]
+}
+
+/**
+ * Load all production schedules
+ */
+export function loadProductionSchedules(): ProductionSchedule[] {
+  return productionSchedulesData as ProductionSchedule[]
+}
+
+/**
+ * Get a single production schedule by ID
+ */
+export function getProductionSchedule(scheduleId: string): ProductionSchedule | undefined {
+  const schedules = loadProductionSchedules()
+  return schedules.find(s => s.scheduleId === scheduleId)
+}
+
+/**
+ * Get the current week's production schedule
+ */
+export function getCurrentWeekSchedule(): ProductionSchedule | undefined {
+  const schedules = loadProductionSchedules()
+  const today = new Date()
+  
+  return schedules.find(schedule => {
+    const weekStart = new Date(schedule.weekStart)
+    const weekEnd = new Date(schedule.weekEnd)
+    return today >= weekStart && today <= weekEnd
+  })
+}
+
+/**
+ * Get production items for a specific date
+ */
+export function getProductionItemsForDate(date: string): ProductionItem[] {
+  const schedules = loadProductionSchedules()
+  
+  for (const schedule of schedules) {
+    const day = schedule.days.find(d => d.date === date)
+    if (day) {
+      return day.items
+    }
+  }
+  
+  return []
+}
+
+/**
+ * Get production items by station for a specific date
+ */
+export function getProductionItemsByStation(date: string, station: ProductionStation): ProductionItem[] {
+  const items = getProductionItemsForDate(date)
+  return items.filter(item => item.station === station)
+}
+
+/**
+ * Get all unique stations from production schedules
+ */
+export function getUniqueStations(): ProductionStation[] {
+  return ['Butchery', 'Hot Section', 'Pantry', 'Desserts']
+}
+
+/**
+ * Check if a branch is Central Kitchen (production type)
+ */
+export function isCentralKitchen(branch: Branch): boolean {
+  return branch.branchType === 'production' || branch.slug === 'central-kitchen'
+}
+
+/**
+ * Get all service branches (excluding Central Kitchen)
+ */
+export function getServiceBranches(): Branch[] {
+  const branches = loadBranches()
+  return branches.filter(b => !isCentralKitchen(b))
 }
 

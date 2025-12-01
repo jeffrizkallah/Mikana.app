@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { notFound, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { 
@@ -15,11 +15,13 @@ import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { PrintHeader } from '@/components/PrintHeader'
 import { RecipeTabs } from '@/components/RecipeTabs'
+import { YieldScaler } from '@/components/YieldScaler'
 import { loadBranch } from '@/lib/data'
 import type { Recipe, Branch } from '@/lib/data'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
+import { formatNumber } from '@/lib/yield-utils'
 
 interface RecipePageProps {
   params: {
@@ -33,8 +35,16 @@ export default function RecipePage({ params }: RecipePageProps) {
   const [branch, setBranch] = useState<Branch | null | undefined>(undefined)
   const [recipe, setRecipe] = useState<Recipe | null | undefined>(undefined)
   const [isLoading, setIsLoading] = useState(true)
+  const [yieldMultiplier, setYieldMultiplier] = useState<number>(1)
+  const [targetYieldValue, setTargetYieldValue] = useState<number>(1)
 
   const isPrintMode = searchParams.get('print') === '1'
+
+  // Handle yield multiplier changes
+  const handleMultiplierChange = useCallback((multiplier: number, targetValue: number) => {
+    setYieldMultiplier(multiplier)
+    setTargetYieldValue(targetValue)
+  }, [])
 
   // Load branch data
   useEffect(() => {
@@ -154,21 +164,15 @@ export default function RecipePage({ params }: RecipePageProps) {
           </div>
         </div>
 
-        {/* Compact Recipe Info - Only if enhanced data exists */}
-        {(recipe.station || recipe.yield || recipe.recipeCode) && (
-          <Card className="mb-6 bg-primary/5">
+        {/* Compact Recipe Info - Station and Code */}
+        {(recipe.station || recipe.recipeCode) && (
+          <Card className="mb-4 bg-muted/30">
             <CardContent className="py-3">
               <div className="flex flex-wrap gap-6 text-sm">
                 {recipe.station && (
                   <div className="flex items-center gap-2">
                     <span className="text-muted-foreground">Station:</span>
                     <span className="font-semibold">{recipe.station}</span>
-                  </div>
-                )}
-                {recipe.yield && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-muted-foreground">Yield:</span>
-                    <span className="font-semibold">{recipe.yield}</span>
                   </div>
                 )}
                 {recipe.recipeCode && (
@@ -182,12 +186,26 @@ export default function RecipePage({ params }: RecipePageProps) {
           </Card>
         )}
 
+        {/* Yield Scaler - Only show if recipe has a yield */}
+        {recipe.yield && (
+          <YieldScaler
+            baseYield={recipe.yield}
+            onMultiplierChange={handleMultiplierChange}
+            className="mb-6"
+          />
+        )}
+
         {/* Main Content Tabs */}
-        <RecipeTabs recipe={recipe} />
+        <RecipeTabs recipe={recipe} yieldMultiplier={yieldMultiplier} />
 
         {/* Print Button */}
         {!isPrintMode && (
-          <div className="mt-8 flex justify-center">
+          <div className="mt-8 flex flex-col items-center gap-2">
+            {yieldMultiplier !== 1 && recipe.yield && (
+              <p className="text-sm text-muted-foreground">
+                Print will include scaled quantities ({formatNumber(targetYieldValue)} {recipe.yield.replace(/^[\d.]+\s*/, '')})
+              </p>
+            )}
             <Link href={`/branch/${branch.slug}/recipes/${recipe.recipeId}?print=1`} target="_blank">
               <Button variant="outline" size="lg">Print Recipe</Button>
             </Link>

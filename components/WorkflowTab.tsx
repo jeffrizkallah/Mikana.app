@@ -15,7 +15,8 @@ import {
   AlertTriangle,
   Tag,
   Thermometer,
-  ListChecks
+  ListChecks,
+  Scale
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -23,18 +24,23 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
 import type { Recipe, SubRecipe, MachineToolRequirement, PreparationStep } from '@/lib/data'
 import { QualitySpecsDisplay } from './QualitySpecsDisplay'
+import { ScaledQuantityTableCell } from './ScaledQuantity'
+import { parseYield, formatNumber, scaleQuantity } from '@/lib/yield-utils'
 
 interface WorkflowTabProps {
   recipe: Recipe
+  yieldMultiplier?: number
 }
 
 interface SubRecipeProgress {
   [subRecipeId: string]: boolean
 }
 
-export function WorkflowTab({ recipe }: WorkflowTabProps) {
+export function WorkflowTab({ recipe, yieldMultiplier = 1 }: WorkflowTabProps) {
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set())
   const [completedSubRecipes, setCompletedSubRecipes] = useState<SubRecipeProgress>({})
+  
+  const isScaled = yieldMultiplier !== 1
 
   // Calculate progress
   const totalSubRecipes = (recipe.subRecipes?.length || 0) + 1 // +1 for assembly
@@ -110,6 +116,20 @@ export function WorkflowTab({ recipe }: WorkflowTabProps) {
 
   return (
     <div className="space-y-6">
+      {/* Scaled Indicator */}
+      {isScaled && (
+        <Card className="border-2 border-primary bg-primary/5">
+          <CardContent className="py-3">
+            <div className="flex items-center gap-2">
+              <Scale className="h-5 w-5 text-primary" />
+              <p className="text-sm font-medium">
+                All quantities in this workflow are scaled by <span className="text-primary font-bold">×{yieldMultiplier}</span>
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Progress Indicator */}
       <Card className="bg-gradient-to-r from-primary/10 to-primary/5">
         <CardContent className="py-4">
@@ -145,6 +165,8 @@ export function WorkflowTab({ recipe }: WorkflowTabProps) {
         const isCompleted = completedSubRecipes[subRecipe.subRecipeId]
         const equipment = getEquipmentForSubRecipe(subRecipe.name)
         const prepSteps = getPrepStepsForSubRecipe(subRecipe)
+        const parsedYield = parseYield(subRecipe.yield)
+        const scaledYieldValue = scaleQuantity(parsedYield.value, yieldMultiplier)
 
         return (
           <Card 
@@ -152,7 +174,7 @@ export function WorkflowTab({ recipe }: WorkflowTabProps) {
             className={`border-l-4 ${
               isCompleted 
                 ? 'border-l-green-500 bg-green-50/50 dark:bg-green-950/20' 
-                : 'border-l-primary'
+                : isScaled ? 'border-l-primary bg-primary/5' : 'border-l-primary'
             }`}
           >
             <CardHeader className="cursor-pointer" onClick={() => toggleCard(subRecipe.subRecipeId)}>
@@ -181,7 +203,15 @@ export function WorkflowTab({ recipe }: WorkflowTabProps) {
                       )}
                     </CardTitle>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Yield: {subRecipe.yield} • {subRecipe.ingredients.length} ingredients
+                      {isScaled ? (
+                        <>
+                          Yield: <span className="font-semibold text-primary">{formatNumber(scaledYieldValue)} {parsedYield.unit}</span>
+                          <span className="text-xs ml-1">(base: {subRecipe.yield})</span>
+                        </>
+                      ) : (
+                        <>Yield: {subRecipe.yield}</>
+                      )}
+                      {' • '}{subRecipe.ingredients.length} ingredients
                     </p>
                   </div>
                 </div>
@@ -209,6 +239,7 @@ export function WorkflowTab({ recipe }: WorkflowTabProps) {
                   <h4 className="font-semibold text-sm flex items-center gap-2 mb-3">
                     <Package className="h-4 w-4 text-primary" />
                     Ingredients
+                    {isScaled && <span className="text-xs font-normal text-primary ml-1">(scaled ×{yieldMultiplier})</span>}
                   </h4>
                   <div className="rounded-md border">
                     <table className="w-full text-sm">
@@ -224,7 +255,12 @@ export function WorkflowTab({ recipe }: WorkflowTabProps) {
                         {subRecipe.ingredients.map((ing, idx) => (
                           <tr key={idx} className="border-t">
                             <td className="p-2">{ing.item}</td>
-                            <td className="p-2 text-right font-mono">{ing.quantity}</td>
+                            <td className="p-2 text-right">
+                              <ScaledQuantityTableCell 
+                                quantity={ing.quantity} 
+                                multiplier={yieldMultiplier}
+                              />
+                            </td>
                             <td className="p-2">{ing.unit || '—'}</td>
                             <td className="p-2 text-muted-foreground text-xs">{ing.notes || '—'}</td>
                           </tr>
@@ -463,6 +499,7 @@ export function WorkflowTab({ recipe }: WorkflowTabProps) {
                 <h4 className="font-semibold text-sm flex items-center gap-2 mb-3">
                   <Package className="h-4 w-4 text-primary" />
                   Main Ingredients
+                  {isScaled && <span className="text-xs font-normal text-primary ml-1">(scaled ×{yieldMultiplier})</span>}
                 </h4>
                 <div className="rounded-md border">
                   <table className="w-full text-sm">
@@ -478,7 +515,12 @@ export function WorkflowTab({ recipe }: WorkflowTabProps) {
                       {recipe.mainIngredients.map((ing, idx) => (
                         <tr key={idx} className="border-t">
                           <td className="p-2">{ing.name}</td>
-                          <td className="p-2 text-right font-mono">{ing.quantity}</td>
+                          <td className="p-2 text-right">
+                            <ScaledQuantityTableCell 
+                              quantity={ing.quantity} 
+                              multiplier={yieldMultiplier}
+                            />
+                          </td>
                           <td className="p-2">{ing.unit || '—'}</td>
                           <td className="p-2 text-muted-foreground text-xs">{ing.specifications || '—'}</td>
                         </tr>

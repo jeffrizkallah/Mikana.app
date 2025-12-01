@@ -1,5 +1,45 @@
 [
   {
+    "id": "0",
+    "slug": "central-kitchen",
+    "name": "Central Kitchen",
+    "branchType": "production",
+    "school": "Mikana Central Production Facility",
+    "location": "Dubai",
+    "manager": "Executive Chef",
+    "contacts": [
+      {
+        "name": "Executive Chef",
+        "role": "Head of Production",
+        "phone": "+971 50 000 0000",
+        "email": "kitchen@mikana.ae"
+      }
+    ],
+    "operatingHours": "Daily: 4:00 AM - 4:00 PM",
+    "deliverySchedule": [],
+    "kpis": {
+      "salesTarget": "",
+      "wastePct": "1.5%",
+      "hygieneScore": "98"
+    },
+    "roles": [
+      "executive-chef",
+      "sous-chef",
+      "hot-section",
+      "butchery",
+      "pantry",
+      "desserts",
+      "packing"
+    ],
+    "media": {
+      "photos": [
+        "https://picsum.photos/seed/central-kitchen1/800/600",
+        "https://picsum.photos/seed/central-kitchen2/800/600"
+      ],
+      "videos": []
+    }
+  },
+  {
     "id": "1",
     "slug": "isc-soufouh",
     "name": "ISC Soufouh",

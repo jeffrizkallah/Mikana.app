@@ -22,12 +22,14 @@ import { Recipe, SubRecipe } from '@/lib/data'
 import { SubRecipeAccordion } from './SubRecipeAccordion'
 import { WorkflowTab } from './WorkflowTab'
 import { QualitySpecsDisplay } from './QualitySpecsDisplay'
+import { ScaledQuantity } from './ScaledQuantity'
 
 interface RecipeTabsProps {
   recipe: Recipe
+  yieldMultiplier?: number
 }
 
-export function RecipeTabs({ recipe }: RecipeTabsProps) {
+export function RecipeTabs({ recipe, yieldMultiplier = 1 }: RecipeTabsProps) {
   // Check if recipe has sub-recipes to determine default tab
   const hasSubRecipes = recipe.subRecipes && recipe.subRecipes.length > 0
   const [activeTab, setActiveTab] = useState(hasSubRecipes ? 'workflow' : 'ingredients')
@@ -56,7 +58,7 @@ export function RecipeTabs({ recipe }: RecipeTabsProps) {
       {/* Workflow Tab */}
       {hasSubRecipes && (
         <TabsContent value="workflow">
-          <WorkflowTab recipe={recipe} />
+          <WorkflowTab recipe={recipe} yieldMultiplier={yieldMultiplier} />
         </TabsContent>
       )}
 
@@ -73,6 +75,9 @@ export function RecipeTabs({ recipe }: RecipeTabsProps) {
                 ? 'Main ingredients with detailed sub-recipe breakdowns'
                 : 'Complete ingredient list for this recipe'
               }
+              {yieldMultiplier !== 1 && (
+                <span className="ml-2 text-primary font-medium">(quantities scaled ×{yieldMultiplier})</span>
+              )}
             </p>
           </CardHeader>
           <CardContent>
@@ -96,14 +101,21 @@ export function RecipeTabs({ recipe }: RecipeTabsProps) {
                       )}
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      {ing.quantity} {ing.unit}
+                      <ScaledQuantity 
+                        quantity={ing.quantity} 
+                        multiplier={yieldMultiplier}
+                        unit={ing.unit}
+                      />
                       {ing.specifications && ` • ${ing.specifications}`}
                     </p>
                     
                     {/* Show sub-recipe details if linked */}
                     {ing.subRecipeId && getSubRecipe(ing.subRecipeId) && (
                       <div className="mt-3">
-                        <SubRecipeAccordion subRecipe={getSubRecipe(ing.subRecipeId)!} />
+                        <SubRecipeAccordion 
+                          subRecipe={getSubRecipe(ing.subRecipeId)!} 
+                          yieldMultiplier={yieldMultiplier}
+                        />
                       </div>
                     )}
                   </div>

@@ -5,22 +5,36 @@ import { ChevronDown, ChevronUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { SubRecipe } from '@/lib/data'
+import { ScaledQuantityTableCell } from './ScaledQuantity'
+import { parseYield, formatNumber, scaleQuantity } from '@/lib/yield-utils'
 
 interface SubRecipeAccordionProps {
   subRecipe: SubRecipe
+  yieldMultiplier?: number
 }
 
-export function SubRecipeAccordion({ subRecipe }: SubRecipeAccordionProps) {
+export function SubRecipeAccordion({ subRecipe, yieldMultiplier = 1 }: SubRecipeAccordionProps) {
   const [isExpanded, setIsExpanded] = useState(false)
+  const isScaled = yieldMultiplier !== 1
+  const parsedYield = parseYield(subRecipe.yield)
+  const scaledYieldValue = scaleQuantity(parsedYield.value, yieldMultiplier)
 
   return (
-    <Card className="border-l-4 border-l-primary">
+    <Card className={`border-l-4 border-l-primary ${isScaled ? 'bg-primary/5' : ''}`}>
       <CardHeader className="cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-base">{subRecipe.name}</CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
-              Yield: {subRecipe.yield} • {subRecipe.ingredients.length} ingredients
+              {isScaled ? (
+                <>
+                  Yield: <span className="font-semibold text-primary">{formatNumber(scaledYieldValue)} {parsedYield.unit}</span>
+                  <span className="text-xs ml-1">(base: {subRecipe.yield})</span>
+                </>
+              ) : (
+                <>Yield: {subRecipe.yield}</>
+              )}
+              {' • '}{subRecipe.ingredients.length} ingredients
             </p>
           </div>
           <Button variant="ghost" size="sm">
@@ -36,7 +50,10 @@ export function SubRecipeAccordion({ subRecipe }: SubRecipeAccordionProps) {
       {isExpanded && (
         <CardContent className="border-t pt-4">
           <div className="space-y-3">
-            <h4 className="font-semibold text-sm">Ingredients:</h4>
+            <h4 className="font-semibold text-sm">
+              Ingredients:
+              {isScaled && <span className="ml-2 text-xs font-normal text-primary">(scaled ×{yieldMultiplier})</span>}
+            </h4>
             <div className="rounded-md border">
               <table className="w-full text-sm">
                 <thead className="bg-muted/50">
@@ -51,7 +68,12 @@ export function SubRecipeAccordion({ subRecipe }: SubRecipeAccordionProps) {
                   {subRecipe.ingredients.map((ing, idx) => (
                     <tr key={idx} className="border-t">
                       <td className="p-2">{ing.item}</td>
-                      <td className="p-2 text-right font-mono">{ing.quantity}</td>
+                      <td className="p-2 text-right">
+                        <ScaledQuantityTableCell 
+                          quantity={ing.quantity} 
+                          multiplier={yieldMultiplier}
+                        />
+                      </td>
                       <td className="p-2">{ing.unit || '—'}</td>
                       <td className="p-2 text-muted-foreground text-xs">{ing.notes || '—'}</td>
                     </tr>
