@@ -106,8 +106,13 @@ export default function ProductionSchedulePage({ params }: ProductionSchedulePag
   }, [currentDay, selectedStation])
 
   // Group items by station for the overview
-  const itemsByStation = useMemo(() => {
-    if (!currentDay) return {}
+  const itemsByStation = useMemo((): Record<ProductionStation, typeof currentDay.items> => {
+    const empty = STATIONS.reduce((acc, station) => {
+      acc[station] = []
+      return acc
+    }, {} as Record<ProductionStation, typeof currentDay.items>)
+    
+    if (!currentDay) return empty
     return STATIONS.reduce((acc, station) => {
       acc[station] = currentDay.items.filter(item => item.station === station)
       return acc
