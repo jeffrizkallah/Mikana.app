@@ -405,6 +405,7 @@ Hm Oriental Chicken with Rice\tChicken Stuffed For Oriental Chicken 1 KG\t120\tG
                   <Button
                     variant="outline"
                     onClick={() => {
+                      if (selectedInstruction === null) return
                       const newParsed = [...parsedInstructions]
                       newParsed.splice(selectedInstruction, 1)
                       setParsedInstructions(newParsed)
