@@ -14,7 +14,9 @@
     "migrate:recipes": "tsx scripts/migrate-recipes-to-postgres.ts",
     "migrate:notifications": "tsx scripts/migrate-notifications.ts",
     "setup:odoo": "tsx scripts/create-odoo-tables.ts",
-    "sync:sales": "node scripts/sync-sharepoint-sales.js"
+    "setup:odoo:all": "tsx scripts/create-all-odoo-tables.ts",
+    "sync:sales": "node scripts/sync-sharepoint-sales.js",
+    "sync:all": "node scripts/sync-all-sharepoint.js"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
@@ -27,6 +29,7 @@
     "next": "^14.2.15",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "recharts": "^2.15.4",
     "tailwind-merge": "^2.5.0",
     "ws": "^8.18.3",
     "xlsx": "^0.18.5"

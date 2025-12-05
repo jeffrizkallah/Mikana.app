@@ -1,0 +1,74 @@
+name: Sync All Odoo Data
+
+on:
+  schedule:
+    # Runs at midnight Dubai time (8PM UTC)
+    # Dubai is UTC+4, so 00:00 Dubai = 20:00 UTC
+    - cron: '0 20 * * *'
+  
+  # Allow manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      files:
+        description: 'Files to sync (comma-separated: sales,inventory,manufacturing,purchase,recipe,transfer,waste)'
+        required: false
+        default: 'sales,inventory,manufacturing,purchase,recipe,transfer,waste'
+        type: string
+
+jobs:
+  sync-odoo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120  # Allow up to 2 hours for all files
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm install xlsx @neondatabase/serverless ws
+      
+      - name: Run Odoo data sync
+        env:
+          # SharePoint/Microsoft Graph credentials
+          SHAREPOINT_TENANT_ID: ${{ secrets.SHAREPOINT_TENANT_ID }}
+          SHAREPOINT_CLIENT_ID: ${{ secrets.SHAREPOINT_CLIENT_ID }}
+          SHAREPOINT_CLIENT_SECRET: ${{ secrets.SHAREPOINT_CLIENT_SECRET }}
+          SHAREPOINT_DRIVE_ID: ${{ secrets.SHAREPOINT_DRIVE_ID }}
+          
+          # File IDs for each Odoo export
+          SHAREPOINT_SALES_FILE_ID: ${{ secrets.SHAREPOINT_SALES_FILE_ID }}
+          SHAREPOINT_INVENTORY_FILE_ID: ${{ secrets.SHAREPOINT_INVENTORY_FILE_ID }}
+          SHAREPOINT_MANUFACTURING_FILE_ID: ${{ secrets.SHAREPOINT_MANUFACTURING_FILE_ID }}
+          SHAREPOINT_PURCHASE_FILE_ID: ${{ secrets.SHAREPOINT_PURCHASE_FILE_ID }}
+          SHAREPOINT_RECIPE_FILE_ID: ${{ secrets.SHAREPOINT_RECIPE_FILE_ID }}
+          SHAREPOINT_TRANSFER_FILE_ID: ${{ secrets.SHAREPOINT_TRANSFER_FILE_ID }}
+          SHAREPOINT_WASTE_FILE_ID: ${{ secrets.SHAREPOINT_WASTE_FILE_ID }}
+          
+          # Database connection
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          
+          # Files to sync (from workflow input or default)
+          SYNC_FILES: ${{ github.event.inputs.files || 'sales,inventory,manufacturing,purchase,recipe,transfer,waste' }}
+        run: node scripts/sync-all-sharepoint.js
+      
+      - name: Report success
+        if: success()
+        run: |
+          echo "✅ Odoo data sync completed successfully!"
+          echo "Time: $(date)"
+      
+      - name: Report failure
+        if: failure()
+        run: |
+          echo "❌ Odoo data sync failed!"
+          echo "Time: $(date)"
+          echo "Check the logs above for details."
+
