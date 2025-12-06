@@ -1,0 +1,346 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { useSession, signOut } from 'next-auth/react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import {
+  ChefHat,
+  Flame,
+  Factory,
+  Building2,
+  BarChart3,
+  Package,
+  ArrowRight,
+  Clock,
+  Users,
+  LogOut,
+  Bell,
+  Settings,
+  FileText,
+  Calendar,
+  TrendingUp,
+  CheckCircle2,
+  AlertTriangle,
+} from 'lucide-react'
+import { useAuth } from '@/hooks/useAuth'
+import { RoleSidebar } from '@/components/RoleSidebar'
+import { Footer } from '@/components/Footer'
+
+interface DashboardStats {
+  recipes: number
+  instructions: number
+  schedules: number
+  branches: number
+}
+
+export default function OperationsDashboardPage() {
+  const { user, loading: authLoading, canAccess } = useAuth({ 
+    required: true, 
+    allowedRoles: ['admin', 'operations_lead'] 
+  })
+  const [stats, setStats] = useState<DashboardStats>({
+    recipes: 0,
+    instructions: 0,
+    schedules: 0,
+    branches: 0
+  })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchStats()
+  }, [])
+
+  const fetchStats = async () => {
+    try {
+      const [recipesRes, instructionsRes, branchesRes] = await Promise.all([
+        fetch('/api/recipes'),
+        fetch('/api/recipe-instructions'),
+        fetch('/api/branches')
+      ])
+
+      const recipes = await recipesRes.json()
+      const instructions = await instructionsRes.json()
+      const branches = await branchesRes.json()
+
+      setStats({
+        recipes: Array.isArray(recipes) ? recipes.length : 0,
+        instructions: Array.isArray(instructions) ? instructions.length : 0,
+        schedules: 0, // Will be updated when we have schedules API
+        branches: Array.isArray(branches) ? branches.filter((b: any) => b.branchType !== 'production').length : 0
+      })
+    } catch (error) {
+      console.error('Error fetching stats:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (authLoading || loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="text-muted-foreground">Loading dashboard...</p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex min-h-screen">
+      <RoleSidebar />
+
+      <main className="flex-1 flex flex-col pt-16 md:pt-0">
+        <div className="flex-1 container mx-auto px-4 py-8 max-w-7xl">
+          {/* Header */}
+          <div className="mb-8">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-blue-100">
+                <Settings className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">Operations Dashboard</h1>
+                <p className="text-sm text-muted-foreground">
+                  Welcome back, {user?.firstName}!
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">CK Recipes</p>
+                    <p className="text-3xl font-bold text-foreground mt-1">{stats.recipes}</p>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-orange-100 text-orange-600">
+                    <ChefHat className="h-5 w-5" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Prep Instructions</p>
+                    <p className="text-3xl font-bold text-foreground mt-1">{stats.instructions}</p>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-rose-100 text-rose-600">
+                    <Flame className="h-5 w-5" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Active Schedules</p>
+                    <p className="text-3xl font-bold text-foreground mt-1">{stats.schedules}</p>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-violet-100 text-violet-600">
+                    <Calendar className="h-5 w-5" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Branches</p>
+                    <p className="text-3xl font-bold text-foreground mt-1">{stats.branches}</p>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-blue-100 text-blue-600">
+                    <Building2 className="h-5 w-5" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Management Section */}
+          <div className="space-y-4 mb-8">
+            <h2 className="text-lg font-semibold flex items-center gap-2">
+              <FileText className="h-4 w-4 text-primary" />
+              Content Management
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* CK Recipes */}
+              <Link href="/admin/recipes">
+                <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
+                  <CardContent className="pt-6">
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-orange-100 to-orange-50 text-orange-600 group-hover:scale-110 transition-transform duration-300">
+                        <ChefHat className="h-6 w-6" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-foreground">CK Recipes</h3>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Full recipes for Central Kitchen with cooking instructions
+                        </p>
+                        <Badge variant="secondary" className="mt-2 text-xs">
+                          {stats.recipes} recipes
+                        </Badge>
+                      </div>
+                      <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              {/* Prep Instructions */}
+              <Link href="/admin/recipe-instructions">
+                <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
+                  <CardContent className="pt-6">
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-rose-100 to-rose-50 text-rose-600 group-hover:scale-110 transition-transform duration-300">
+                        <Flame className="h-6 w-6" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-foreground">Prep Instructions</h3>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Reheating & assembly instructions for branches
+                        </p>
+                        <Badge variant="secondary" className="mt-2 text-xs">
+                          {stats.instructions} instructions
+                        </Badge>
+                      </div>
+                      <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              {/* Production Schedules */}
+              <Link href="/admin/production-schedules">
+                <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
+                  <CardContent className="pt-6">
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-violet-100 to-violet-50 text-violet-600 group-hover:scale-110 transition-transform duration-300">
+                        <Factory className="h-6 w-6" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-foreground">Production Schedules</h3>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Weekly production plans for Central Kitchen
+                        </p>
+                        <Badge variant="secondary" className="mt-2 text-xs">
+                          <Clock className="h-3 w-3 mr-1" />
+                          Weekly plans
+                        </Badge>
+                      </div>
+                      <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            </div>
+          </div>
+
+          {/* Quick Access Section */}
+          <div className="space-y-4 mb-8">
+            <h2 className="text-lg font-semibold flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-primary" />
+              Quick Access
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Dispatch */}
+              <Link href="/dispatch">
+                <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
+                  <CardContent className="pt-6">
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-purple-100 to-purple-50 text-purple-600 group-hover:scale-110 transition-transform duration-300">
+                        <Package className="h-6 w-6" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-foreground">Dispatch Management</h3>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Manage branch dispatches and deliveries
+                        </p>
+                      </div>
+                      <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              {/* Analytics */}
+              <Link href="/admin/analytics">
+                <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
+                  <CardContent className="pt-6">
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-50 text-emerald-600 group-hover:scale-110 transition-transform duration-300">
+                        <BarChart3 className="h-6 w-6" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-foreground">Sales Analytics</h3>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Revenue trends and performance insights
+                        </p>
+                      </div>
+                      <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              {/* All Branches */}
+              <Link href="/">
+                <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
+                  <CardContent className="pt-6">
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-blue-100 to-blue-50 text-blue-600 group-hover:scale-110 transition-transform duration-300">
+                        <Building2 className="h-6 w-6" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-foreground">All Branches</h3>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          View all branch information and details
+                        </p>
+                      </div>
+                      <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            </div>
+          </div>
+
+          {/* Future: Branch Orders Section */}
+          <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-dashed">
+            <CardContent className="py-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-primary/10">
+                  <Package className="h-6 w-6 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold">Branch Orders</h3>
+                    <Badge variant="secondary" className="text-xs">Coming Soon</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Review and approve weekly orders from branches. Generate production schedules automatically.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Footer />
+      </main>
+    </div>
+  )
+}
+

@@ -26,6 +26,7 @@ import {
   BarChart3,
   DollarSign,
   ShoppingCart,
+  Users,
 } from 'lucide-react'
 
 interface Branch {
@@ -814,27 +815,30 @@ export default function AdminDashboardPage() {
             </Card>
           </Link>
 
-          {/* Dispatch Control - Coming Soon */}
-          <Card className="h-full opacity-60 cursor-not-allowed">
-            <CardContent className="pt-6">
-              <div className="flex items-start gap-4">
-                <div className="p-3 rounded-xl bg-gray-100 text-gray-400">
-                  <Package className="h-6 w-6" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-muted-foreground">Dispatch Control</h3>
-                    <Badge variant="secondary" className="text-[10px] px-2 py-0.5">
-                      Soon
-                    </Badge>
+          {/* User Management */}
+          <Link href="/admin/users">
+            <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
+              <CardContent className="pt-6">
+                <div className="flex items-start gap-4">
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-100 to-indigo-50 text-indigo-600 group-hover:scale-110 transition-transform duration-300">
+                    <Users className="h-6 w-6" />
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                    Manage dispatch settings and archive
-                  </p>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-foreground">User Management</h3>
+                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                      Manage user accounts, roles, and permissions
+                    </p>
+                    <div className="flex items-center gap-2 mt-3">
+                      <Badge variant="secondary" className="text-xs bg-indigo-100 text-indigo-700 border-0">
+                        Role-Based Access
+                      </Badge>
+                    </div>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
       </div>
 

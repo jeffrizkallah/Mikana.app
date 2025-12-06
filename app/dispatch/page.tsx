@@ -3,19 +3,23 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Sidebar } from '@/components/Sidebar'
+import { RoleSidebar } from '@/components/RoleSidebar'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { PinProtection } from '@/components/PinProtection'
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Upload, Package, Clock, CheckCircle2, AlertTriangle, Trash2, FileText } from 'lucide-react'
+import { Upload, Package, Clock, CheckCircle2, AlertTriangle, Trash2, FileText, Loader2 } from 'lucide-react'
+import { useAuth } from '@/hooks/useAuth'
 import type { Dispatch } from '@/lib/data'
 
 export default function DispatchDashboardPage() {
   const router = useRouter()
+  const { user, loading: authLoading, canEdit } = useAuth({ 
+    required: true, 
+    allowedRoles: ['admin', 'operations_lead', 'dispatcher'] 
+  })
   const [dispatches, setDispatches] = useState<Dispatch[]>([])
   const [loading, setLoading] = useState(true)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -119,10 +123,24 @@ export default function DispatchDashboardPage() {
     })
   }
 
+  // Show loading while auth is checking
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  const canModify = canEdit('dispatch')
+
   return (
-    <PinProtection>
+    <>
       <div className="flex min-h-screen">
-        <Sidebar />
+        <RoleSidebar />
       
         <main className="flex-1 flex flex-col pt-16 md:pt-0">
           <div className="flex-1 container mx-auto px-4 py-8">
@@ -359,7 +377,7 @@ export default function DispatchDashboardPage() {
         branchCount={selectedDispatch?.branchDispatches.length || 0}
         isDeleting={isDeleting}
       />
-    </PinProtection>
+    </>
   )
 }
 

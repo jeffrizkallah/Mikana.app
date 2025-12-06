@@ -1,0 +1,372 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useSession, signOut } from 'next-auth/react'
+import { Button } from '@/components/ui/button'
+import { NotificationDropdown } from '@/components/NotificationDropdown'
+import { 
+  Home, 
+  Building2, 
+  Factory, 
+  Package, 
+  Settings, 
+  ChevronLeft, 
+  ChevronRight, 
+  Menu, 
+  X,
+  User,
+  ChefHat,
+  Users,
+  Bell,
+  BarChart3,
+  LogOut,
+  ChevronDown,
+  ChevronUp,
+} from 'lucide-react'
+import type { UserRole } from '@/lib/auth'
+
+interface NavItem {
+  href: string
+  label: string
+  icon: React.ComponentType<{ className?: string }>
+  subItems?: { href: string; label: string }[]
+}
+
+// Get navigation items based on user role
+function getNavItems(role: UserRole | null, userBranches?: string[]): NavItem[] {
+  if (!role) return []
+
+  switch (role) {
+    case 'admin':
+      return [
+        { href: '/admin', label: 'Home', icon: Home },
+        { href: '/', label: 'Branches', icon: Building2 },
+        { href: '/branch/central-kitchen', label: 'Central Kitchen', icon: Factory },
+        { href: '/dispatch', label: 'Dispatches', icon: Package },
+        { 
+          href: '/admin', 
+          label: 'Admin', 
+          icon: Settings,
+          subItems: [
+            { href: '/admin', label: 'Dashboard' },
+            { href: '/admin/users', label: 'User Management' },
+            { href: '/admin/recipes', label: 'Recipes' },
+            { href: '/admin/recipe-instructions', label: 'Prep Instructions' },
+            { href: '/admin/production-schedules', label: 'Production Schedules' },
+            { href: '/admin/branches', label: 'Branch Settings' },
+            { href: '/admin/notifications', label: 'Notifications' },
+            { href: '/admin/analytics', label: 'Analytics' },
+          ]
+        },
+      ]
+
+    case 'operations_lead':
+      return [
+        { href: '/operations', label: 'Home', icon: Home },
+        { href: '/', label: 'Branches', icon: Building2 },
+        { href: '/branch/central-kitchen', label: 'Central Kitchen', icon: Factory },
+      ]
+
+    case 'dispatcher':
+      return [
+        { href: '/dispatch', label: 'Home', icon: Home },
+        { href: '/', label: 'Branches', icon: Building2 },
+      ]
+
+    case 'central_kitchen':
+      return [
+        { href: '/kitchen', label: 'Home', icon: Home },
+        { href: '/branch/central-kitchen/recipes', label: 'Recipes', icon: ChefHat },
+      ]
+
+    case 'branch_manager':
+      return [
+        { href: '/dashboard', label: 'Home', icon: Home },
+        { 
+          href: '/dashboard', 
+          label: 'My Branches', 
+          icon: Building2,
+          subItems: userBranches?.map(slug => ({
+            href: `/branch/${slug}`,
+            label: slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+          })) || []
+        },
+      ]
+
+    case 'branch_staff':
+      // Branch staff has minimal/no sidebar - handled separately
+      return []
+
+    default:
+      return []
+  }
+}
+
+interface RoleSidebarProps {
+  className?: string
+}
+
+export function RoleSidebar({ className }: RoleSidebarProps) {
+  const { data: session } = useSession()
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const [expandedItems, setExpandedItems] = useState<string[]>([])
+  const pathname = usePathname()
+
+  const user = session?.user
+  const role = user?.role as UserRole | null
+  const branches = user?.branches || []
+
+  // Branch staff gets a special minimal header instead
+  if (role === 'branch_staff') {
+    return <BranchStaffHeader userName={`${user?.firstName} ${user?.lastName}`} />
+  }
+
+  const navItems = getNavItems(role, branches)
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileOpen(false)
+  }, [pathname])
+
+  const isActive = (href: string) => {
+    if (href === '/') return pathname === '/'
+    if (href === '/admin' && pathname === '/admin') return true
+    return pathname.startsWith(href) && href !== '/admin'
+  }
+
+  const toggleExpand = (label: string) => {
+    setExpandedItems(prev => 
+      prev.includes(label) 
+        ? prev.filter(item => item !== label)
+        : [...prev, label]
+    )
+  }
+
+  const handleSignOut = () => {
+    signOut({ callbackUrl: '/login' })
+  }
+
+  return (
+    <>
+      {/* Mobile Top Bar */}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 glass-nav border-b border-border no-print">
+        <div className="flex items-center justify-between px-4 py-3">
+          <Link href={role ? getNavItems(role)[0]?.href || '/' : '/'} className="flex items-center gap-2">
+            <span className="text-lg font-bold text-primary">Mikana</span>
+          </Link>
+          <div className="flex items-center gap-1">
+            <NotificationDropdown />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsMobileOpen(!isMobileOpen)}
+              aria-label="Toggle menu"
+            >
+              {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Backdrop */}
+      {isMobileOpen && (
+        <div
+          className="md:hidden fixed inset-0 bg-black/50 z-40 no-print"
+          onClick={() => setIsMobileOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={`
+          fixed top-0 left-0 h-screen z-50 glass-nav border-r border-border no-print
+          transition-all duration-300 ease-in-out
+          ${isCollapsed ? 'w-[80px]' : 'w-[280px]'}
+          ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
+          md:translate-x-0
+          flex flex-col
+          ${className || ''}
+        `}
+      >
+        {/* Logo Section */}
+        <div className={`px-4 py-3 border-b border-border flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
+          {!isCollapsed && (
+            <Link href={role ? getNavItems(role)[0]?.href || '/' : '/'} className="flex items-center gap-2">
+              <span className="text-lg font-bold text-primary">Mikana</span>
+            </Link>
+          )}
+          
+          <div className="hidden md:flex items-center gap-1">
+            {!isCollapsed && <NotificationDropdown />}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
+              {isCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+            </Button>
+          </div>
+        </div>
+
+        {/* Navigation Links */}
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+          {navItems.map((item) => {
+            const Icon = item.icon
+            const active = isActive(item.href)
+            const hasSubItems = item.subItems && item.subItems.length > 0
+            const isExpanded = expandedItems.includes(item.label)
+            
+            if (hasSubItems) {
+              return (
+                <div key={item.label}>
+                  <button
+                    onClick={() => toggleExpand(item.label)}
+                    className={`
+                      w-full flex items-center gap-3 px-4 py-3 rounded-lg
+                      text-sm font-medium transition-all duration-200
+                      ${active 
+                        ? 'bg-primary/10 text-primary' 
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                      }
+                      ${isCollapsed ? 'justify-center' : 'justify-between'}
+                    `}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Icon className="h-5 w-5 flex-shrink-0" />
+                      {!isCollapsed && <span>{item.label}</span>}
+                    </div>
+                    {!isCollapsed && (
+                      isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                    )}
+                  </button>
+                  
+                  {!isCollapsed && isExpanded && (
+                    <div className="ml-4 mt-1 space-y-1 border-l-2 border-border pl-4">
+                      {item.subItems?.map(subItem => (
+                        <Link
+                          key={subItem.href}
+                          href={subItem.href}
+                          onClick={() => setIsMobileOpen(false)}
+                          className={`
+                            block px-3 py-2 rounded-md text-sm
+                            ${pathname === subItem.href
+                              ? 'bg-primary text-primary-foreground'
+                              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                            }
+                          `}
+                        >
+                          {subItem.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            }
+            
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setIsMobileOpen(false)}
+                className={`
+                  flex items-center gap-3 px-4 py-3 rounded-lg
+                  text-sm font-medium transition-all duration-200
+                  ${active 
+                    ? 'bg-primary text-primary-foreground shadow-md' 
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                  }
+                  ${isCollapsed ? 'justify-center' : ''}
+                `}
+                title={isCollapsed ? item.label : undefined}
+              >
+                <Icon className="h-5 w-5 flex-shrink-0" />
+                {!isCollapsed && <span>{item.label}</span>}
+              </Link>
+            )
+          })}
+        </nav>
+
+        {/* Divider */}
+        <div className="mx-4 border-t border-border" />
+
+        {/* Profile Link */}
+        <div className="p-4">
+          <Link
+            href="/profile"
+            onClick={() => setIsMobileOpen(false)}
+            className={`
+              flex items-center gap-3 px-4 py-3 rounded-lg
+              text-sm font-medium transition-all duration-200
+              ${pathname === '/profile'
+                ? 'bg-primary text-primary-foreground shadow-md' 
+                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+              }
+              ${isCollapsed ? 'justify-center' : ''}
+            `}
+            title={isCollapsed ? 'Profile' : undefined}
+          >
+            <User className="h-5 w-5 flex-shrink-0" />
+            {!isCollapsed && <span>Profile</span>}
+          </Link>
+        </div>
+
+        {/* User Info & Sign Out */}
+        <div className={`p-4 border-t border-border ${isCollapsed ? 'text-center' : ''}`}>
+          {!isCollapsed && user && (
+            <div className="mb-3">
+              <p className="text-sm font-medium truncate">{user.firstName} {user.lastName}</p>
+              <p className="text-xs text-muted-foreground capitalize">{role?.replace('_', ' ')}</p>
+            </div>
+          )}
+          <Button
+            variant="ghost"
+            size={isCollapsed ? 'icon' : 'sm'}
+            className={`${isCollapsed ? '' : 'w-full justify-start'} text-muted-foreground hover:text-foreground`}
+            onClick={handleSignOut}
+            title={isCollapsed ? 'Sign Out' : undefined}
+          >
+            <LogOut className="h-4 w-4" />
+            {!isCollapsed && <span className="ml-2">Sign Out</span>}
+          </Button>
+        </div>
+      </aside>
+
+      {/* Spacer for desktop */}
+      <div 
+        className={`hidden md:block transition-all duration-300 ease-in-out flex-shrink-0 ${isCollapsed ? 'w-[80px]' : 'w-[280px]'}`}
+      />
+    </>
+  )
+}
+
+// Minimal header for branch staff (no sidebar)
+function BranchStaffHeader({ userName }: { userName: string }) {
+  const handleSignOut = () => {
+    signOut({ callbackUrl: '/login' })
+  }
+
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-b">
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-lg font-bold text-primary">Mikana</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-muted-foreground">{userName}</span>
+          <Button variant="outline" size="sm" onClick={handleSignOut}>
+            <LogOut className="h-4 w-4 mr-2" />
+            Sign Out
+          </Button>
+        </div>
+      </div>
+    </header>
+  )
+}
+
+export default RoleSidebar
+
