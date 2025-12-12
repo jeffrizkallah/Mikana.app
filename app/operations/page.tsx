@@ -119,7 +119,7 @@ export default function OperationsDashboardPage() {
                     <p className="text-sm font-medium text-muted-foreground">CK Recipes</p>
                     <p className="text-3xl font-bold text-foreground mt-1">{stats.recipes}</p>
                   </div>
-                  <div className="p-2.5 rounded-xl bg-orange-100 text-orange-600">
+                  <div className="p-2.5 rounded-xl bg-teal-500/10 text-teal-600">
                     <ChefHat className="h-5 w-5" />
                   </div>
                 </div>
@@ -133,7 +133,7 @@ export default function OperationsDashboardPage() {
                     <p className="text-sm font-medium text-muted-foreground">Prep Instructions</p>
                     <p className="text-3xl font-bold text-foreground mt-1">{stats.instructions}</p>
                   </div>
-                  <div className="p-2.5 rounded-xl bg-rose-100 text-rose-600">
+                  <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-600">
                     <Flame className="h-5 w-5" />
                   </div>
                 </div>
@@ -147,7 +147,7 @@ export default function OperationsDashboardPage() {
                     <p className="text-sm font-medium text-muted-foreground">Active Schedules</p>
                     <p className="text-3xl font-bold text-foreground mt-1">{stats.schedules}</p>
                   </div>
-                  <div className="p-2.5 rounded-xl bg-violet-100 text-violet-600">
+                  <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-600">
                     <Calendar className="h-5 w-5" />
                   </div>
                 </div>
@@ -161,7 +161,7 @@ export default function OperationsDashboardPage() {
                     <p className="text-sm font-medium text-muted-foreground">Branches</p>
                     <p className="text-3xl font-bold text-foreground mt-1">{stats.branches}</p>
                   </div>
-                  <div className="p-2.5 rounded-xl bg-blue-100 text-blue-600">
+                  <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-600">
                     <Building2 className="h-5 w-5" />
                   </div>
                 </div>
@@ -181,7 +181,7 @@ export default function OperationsDashboardPage() {
                 <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
                   <CardContent className="pt-6">
                     <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-xl bg-gradient-to-br from-orange-100 to-orange-50 text-orange-600 group-hover:scale-110 transition-transform duration-300">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-teal-500/10 to-teal-500/5 text-teal-600 group-hover:scale-110 transition-transform duration-300">
                         <ChefHat className="h-6 w-6" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -204,7 +204,7 @@ export default function OperationsDashboardPage() {
                 <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
                   <CardContent className="pt-6">
                     <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-xl bg-gradient-to-br from-rose-100 to-rose-50 text-rose-600 group-hover:scale-110 transition-transform duration-300">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-500/5 text-blue-600 group-hover:scale-110 transition-transform duration-300">
                         <Flame className="h-6 w-6" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -227,7 +227,7 @@ export default function OperationsDashboardPage() {
                 <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
                   <CardContent className="pt-6">
                     <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-xl bg-gradient-to-br from-violet-100 to-violet-50 text-violet-600 group-hover:scale-110 transition-transform duration-300">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-500/5 text-blue-600 group-hover:scale-110 transition-transform duration-300">
                         <Factory className="h-6 w-6" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -260,7 +260,7 @@ export default function OperationsDashboardPage() {
                 <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
                   <CardContent className="pt-6">
                     <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-xl bg-gradient-to-br from-purple-100 to-purple-50 text-purple-600 group-hover:scale-110 transition-transform duration-300">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500/10 to-amber-500/5 text-amber-600 group-hover:scale-110 transition-transform duration-300">
                         <Package className="h-6 w-6" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -280,7 +280,7 @@ export default function OperationsDashboardPage() {
                 <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
                   <CardContent className="pt-6">
                     <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-50 text-emerald-600 group-hover:scale-110 transition-transform duration-300">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-green-500/10 to-green-500/5 text-green-600 group-hover:scale-110 transition-transform duration-300">
                         <BarChart3 className="h-6 w-6" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -300,7 +300,7 @@ export default function OperationsDashboardPage() {
                 <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
                   <CardContent className="pt-6">
                     <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-xl bg-gradient-to-br from-blue-100 to-blue-50 text-blue-600 group-hover:scale-110 transition-transform duration-300">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-cyan-500/10 to-cyan-500/5 text-cyan-600 group-hover:scale-110 transition-transform duration-300">
                         <Building2 className="h-6 w-6" />
                       </div>
                       <div className="flex-1 min-w-0">

@@ -355,7 +355,6 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {/* Branches Stat */}
         <Card className="relative overflow-hidden group hover:shadow-md transition-all duration-300 animate-slide-up opacity-0 stagger-1" style={{ animationFillMode: 'forwards' }}>
-          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-500/10 to-transparent rounded-bl-full"></div>
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
               <div>
@@ -365,7 +364,7 @@ export default function AdminDashboardPage() {
                   {Object.keys(stats?.branches.byLocation || {}).length} locations
                 </p>
               </div>
-              <div className="p-2.5 rounded-xl bg-blue-100 text-blue-600">
+              <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-600 group-hover:scale-110 transition-transform duration-300">
                 <Building2 className="h-5 w-5" />
               </div>
             </div>
@@ -374,7 +373,6 @@ export default function AdminDashboardPage() {
 
         {/* Recipes Stat */}
         <Card className="relative overflow-hidden group hover:shadow-md transition-all duration-300 animate-slide-up opacity-0 stagger-2" style={{ animationFillMode: 'forwards' }}>
-          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-orange-500/10 to-transparent rounded-bl-full"></div>
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
               <div>
@@ -384,7 +382,7 @@ export default function AdminDashboardPage() {
                   {Object.keys(stats?.recipes.byCategory || {}).length} categories
                 </p>
               </div>
-              <div className="p-2.5 rounded-xl bg-orange-100 text-orange-600">
+              <div className="p-2.5 rounded-xl bg-teal-500/10 text-teal-600 group-hover:scale-110 transition-transform duration-300">
                 <ChefHat className="h-5 w-5" />
               </div>
             </div>
@@ -393,7 +391,6 @@ export default function AdminDashboardPage() {
 
         {/* Dispatches Stat */}
         <Card className="relative overflow-hidden group hover:shadow-md transition-all duration-300 animate-slide-up opacity-0 stagger-3" style={{ animationFillMode: 'forwards' }}>
-          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-500/10 to-transparent rounded-bl-full"></div>
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
               <div>
@@ -401,18 +398,18 @@ export default function AdminDashboardPage() {
                 <p className="text-3xl font-bold text-foreground mt-1">{stats?.dispatches.total || 0}</p>
                 <div className="flex items-center gap-1 mt-1">
                   {(stats?.dispatches.pending || 0) > 0 && (
-                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-amber-100 text-amber-700 border-0">
+                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
                       {stats?.dispatches.pending} pending
                     </Badge>
                   )}
                   {(stats?.dispatches.inProgress || 0) > 0 && (
-                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-blue-100 text-blue-700 border-0">
+                    <Badge variant="outline" className="text-[10px] px-1.5 py-0">
                       {stats?.dispatches.inProgress} active
                     </Badge>
                   )}
                 </div>
               </div>
-              <div className="p-2.5 rounded-xl bg-purple-100 text-purple-600">
+              <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 group-hover:scale-110 transition-transform duration-300">
                 <Truck className="h-5 w-5" />
               </div>
             </div>
@@ -421,7 +418,6 @@ export default function AdminDashboardPage() {
 
         {/* Hygiene Avg Stat */}
         <Card className="relative overflow-hidden group hover:shadow-md transition-all duration-300 animate-slide-up opacity-0 stagger-4" style={{ animationFillMode: 'forwards' }}>
-          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-emerald-500/10 to-transparent rounded-bl-full"></div>
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
               <div>
@@ -431,7 +427,7 @@ export default function AdminDashboardPage() {
                   {stats?.branches.lowHygieneCount || 0} below threshold
                 </p>
               </div>
-              <div className={`p-2.5 rounded-xl ${(stats?.branches.avgHygiene || 0) >= 93 ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'}`}>
+              <div className="p-2.5 rounded-xl bg-green-500/10 text-green-600 group-hover:scale-110 transition-transform duration-300">
                 <TrendingUp className="h-5 w-5" />
               </div>
             </div>
@@ -657,7 +653,7 @@ export default function AdminDashboardPage() {
             <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
               <CardContent className="pt-6">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-xl bg-gradient-to-br from-orange-100 to-orange-50 text-orange-600 group-hover:scale-110 transition-transform duration-300">
+                  <div className="p-3 rounded-xl bg-teal-500/10 text-teal-600 group-hover:scale-110 transition-transform duration-300">
                     <ChefHat className="h-6 w-6" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -685,7 +681,7 @@ export default function AdminDashboardPage() {
             <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
               <CardContent className="pt-6">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-xl bg-gradient-to-br from-rose-100 to-rose-50 text-rose-600 group-hover:scale-110 transition-transform duration-300">
+                  <div className="p-3 rounded-xl bg-blue-500/10 text-blue-600 group-hover:scale-110 transition-transform duration-300">
                     <Flame className="h-6 w-6" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -710,7 +706,7 @@ export default function AdminDashboardPage() {
             <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
               <CardContent className="pt-6">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-xl bg-gradient-to-br from-violet-100 to-violet-50 text-violet-600 group-hover:scale-110 transition-transform duration-300">
+                  <div className="p-3 rounded-xl bg-blue-500/10 text-blue-600 group-hover:scale-110 transition-transform duration-300">
                     <Factory className="h-6 w-6" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -736,7 +732,7 @@ export default function AdminDashboardPage() {
             <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
               <CardContent className="pt-6">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-xl bg-gradient-to-br from-blue-100 to-blue-50 text-blue-600 group-hover:scale-110 transition-transform duration-300">
+                  <div className="p-3 rounded-xl bg-cyan-500/10 text-cyan-600 group-hover:scale-110 transition-transform duration-300">
                     <Building2 className="h-6 w-6" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -764,7 +760,7 @@ export default function AdminDashboardPage() {
             <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
               <CardContent className="pt-6">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-xl bg-gradient-to-br from-amber-100 to-amber-50 text-amber-600 group-hover:scale-110 transition-transform duration-300">
+                  <div className="p-3 rounded-xl bg-amber-500/10 text-amber-600 group-hover:scale-110 transition-transform duration-300">
                     <Bell className="h-6 w-6" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -794,7 +790,7 @@ export default function AdminDashboardPage() {
             <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
               <CardContent className="pt-6">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-50 text-emerald-600 group-hover:scale-110 transition-transform duration-300">
+                  <div className="p-3 rounded-xl bg-green-500/10 text-green-600 group-hover:scale-110 transition-transform duration-300">
                     <BarChart3 className="h-6 w-6" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -820,7 +816,7 @@ export default function AdminDashboardPage() {
             <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
               <CardContent className="pt-6">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-100 to-indigo-50 text-indigo-600 group-hover:scale-110 transition-transform duration-300">
+                  <div className="p-3 rounded-xl bg-gray-500/10 text-gray-600 group-hover:scale-110 transition-transform duration-300">
                     <Users className="h-6 w-6" />
                   </div>
                   <div className="flex-1 min-w-0">
