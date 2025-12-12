@@ -26,6 +26,8 @@ import {
   ChevronUp,
 } from 'lucide-react'
 import type { UserRole } from '@/lib/auth'
+import { useRolePreview } from '@/lib/role-preview'
+import { ViewAsRoleSelector } from '@/components/ViewAsRoleSelector'
 
 interface NavItem {
   href: string
@@ -114,13 +116,19 @@ export function RoleSidebar({ className }: RoleSidebarProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const [expandedItems, setExpandedItems] = useState<string[]>([])
   const pathname = usePathname()
+  
+  // Get role preview state - use effective role for UI rendering
+  const { effectiveRole, canPreview, isPreviewMode } = useRolePreview()
 
   const user = session?.user
-  const role = user?.role as UserRole | null
+  const actualRole = user?.role as UserRole | null
   const branches = user?.branches || []
+  
+  // Use effective role (preview or actual) for navigation
+  const role = effectiveRole || actualRole
 
-  // Branch staff gets a special minimal header instead
-  if (role === 'branch_staff') {
+  // Branch staff gets a special minimal header instead (unless admin is previewing)
+  if (role === 'branch_staff' && !isPreviewMode) {
     return <BranchStaffHeader userName={`${user?.firstName} ${user?.lastName}`} />
   }
 
@@ -152,7 +160,7 @@ export function RoleSidebar({ className }: RoleSidebarProps) {
   return (
     <>
       {/* Mobile Top Bar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50 glass-nav border-b border-border no-print">
+      <div className={`md:hidden fixed left-0 right-0 z-50 glass-nav border-b border-border no-print ${isPreviewMode ? 'top-10' : 'top-0'}`}>
         <div className="flex items-center justify-between px-4 py-3">
           <Link href={role ? getNavItems(role)[0]?.href || '/' : '/'} className="flex items-center gap-2">
             <span className="text-lg font-bold text-primary">Mikana</span>
@@ -182,12 +190,13 @@ export function RoleSidebar({ className }: RoleSidebarProps) {
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-screen z-50 glass-nav border-r border-border no-print
+          fixed left-0 z-50 glass-nav border-r border-border no-print
           transition-all duration-300 ease-in-out
           ${isCollapsed ? 'w-[80px]' : 'w-[280px]'}
           ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
           md:translate-x-0
           flex flex-col
+          ${isPreviewMode ? 'top-10 h-[calc(100vh-40px)]' : 'top-0 h-screen'}
           ${className || ''}
         `}
       >
@@ -290,6 +299,13 @@ export function RoleSidebar({ className }: RoleSidebarProps) {
             )
           })}
         </nav>
+
+        {/* View As Role Selector (Admin only) */}
+        {canPreview && (
+          <div className={`px-4 pb-2 ${isCollapsed ? 'px-2' : ''}`}>
+            <ViewAsRoleSelector isCollapsed={isCollapsed} />
+          </div>
+        )}
 
         {/* Divider */}
         <div className="mx-4 border-t border-border" />

@@ -474,3 +474,35 @@ Customizable home page with:
 
 *Last updated: December 2024*
 
+Ideas for Using Each Table
+1. Inventory (odoo_inventory)
+Stock levels dashboard per branch
+Low stock alerts
+Inventory valuation reports
+Expiry date tracking (if using removal_date)
+
+2. Manufacturing (odoo_manufacturing)
+Production schedule integration with your existing kitchen view
+Link production orders to your recipes
+Track production status (draft, confirmed, done)
+
+3. Purchase (odoo_purchase)
+Supplier spending analysis
+Purchase history by branch
+Cost tracking for budgeting
+
+4. Recipe Costs (odoo_recipe)
+Display actual ingredient costs on recipe pages
+Cost per portion calculations
+Ingredient price tracking
+
+5. Transfers (odoo_transfer)
+Track inter-branch stock movements
+Central Kitchen → Branch distribution reports
+Transfer history on branch pages
+
+6. Waste (odoo_waste)
+Waste analytics dashboard
+Branch waste comparison
+Waste reason analysis
+Integrate with branch KPIs

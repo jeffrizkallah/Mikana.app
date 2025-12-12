@@ -6,6 +6,11 @@ export const metadata: Metadata = {
   title: 'Branch Guidebook | Mikana',
   description: 'Comprehensive operational guide for Mikana branch operations',
   keywords: ['branch operations', 'guidebook', 'Mikana', 'operational excellence'],
+  icons: {
+    icon: '/Add a heading.png',
+    shortcut: '/Add a heading.png',
+    apple: '/Add a heading.png',
+  },
   openGraph: {
     title: 'Branch Guidebook | Mikana',
     description: 'Comprehensive operational guide for Mikana branch operations',
