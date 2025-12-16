@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { Providers } from '@/components/Providers'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 export const metadata: Metadata = {
   title: 'Branch Guidebook | Mikana',
@@ -43,6 +44,7 @@ export default function RootLayout({
         <Providers>
           {children}
         </Providers>
+        <SpeedInsights />
       </body>
     </html>
   )
