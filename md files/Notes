@@ -17,6 +17,7 @@ CHANGES/ADDITIONS
 
 
 ---------------------------------------------------------------
+**EXTRA DETAILS FOR NOTES**
 
 Feature Note: AI-Powered Recipe Import (LLM Parser)
 This new feature introduces an AI-Powered Recipe Import to solve inconsistencies in our standard Excel templates. Instead of relying on rigid code that breaks when templates slightly shift (e.g., ingredients move rows), the system now uses a Large Language Model (LLM) service (like GPT-5.2). The LLM processes the raw Excel data, understands the context regardless of the layout, and reliably converts it into a clean, structured JSON format for direct database insertion. This drastically reduces the development time required for template exceptions and future-proofs our recipe intake process. (Check Gemini Chat)

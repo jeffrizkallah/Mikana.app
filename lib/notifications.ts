@@ -1,8 +1,10 @@
 // Notification types and utilities
 
+export type NotificationType = 'feature' | 'patch' | 'alert' | 'announcement' | 'urgent' | 'user_signup'
+
 export interface Notification {
   id: string
-  type: 'feature' | 'patch' | 'alert' | 'announcement' | 'urgent'
+  type: NotificationType
   priority: 'normal' | 'urgent'
   title: string
   preview: string
@@ -12,6 +14,9 @@ export interface Notification {
   created_by: string
   is_active: boolean
   is_read?: boolean
+  target_roles?: string[] | null
+  metadata?: Record<string, unknown> | null
+  related_user_id?: number | null
 }
 
 export interface NotificationRead {
@@ -99,8 +104,48 @@ export function getNotificationTypeConfig(type: Notification['type']) {
       textColor: 'text-red-600',
       bgLight: 'bg-red-50',
     },
+    user_signup: {
+      label: 'New Signup',
+      color: 'bg-purple-500',
+      borderColor: 'border-l-purple-500',
+      textColor: 'text-purple-600',
+      bgLight: 'bg-purple-50',
+    },
   }
 
   return configs[type] || configs.announcement
+}
+
+// Create admin notification for new user signup
+export interface CreateSignupNotificationParams {
+  userId: number
+  firstName: string
+  lastName: string
+  email: string
+}
+
+export function buildSignupNotificationContent(params: CreateSignupNotificationParams) {
+  return {
+    type: 'user_signup' as const,
+    priority: 'urgent' as const,
+    title: 'New User Signup',
+    preview: `${params.firstName} ${params.lastName} is waiting for approval`,
+    content: `## New User Registration
+
+**${params.firstName} ${params.lastName}** has signed up and is waiting for approval.
+
+**Email:** ${params.email}
+
+Please review and approve or reject this user in the Admin panel.`,
+    target_roles: ['admin'],
+    related_user_id: params.userId,
+    metadata: {
+      userId: params.userId,
+      email: params.email,
+      firstName: params.firstName,
+      lastName: params.lastName,
+    },
+    expires_in_days: 30, // Signup notifications last longer
+  }
 }
 

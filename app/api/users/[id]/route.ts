@@ -63,6 +63,20 @@ export async function PATCH(
     const body = await request.json()
     const { action, role, status, branches, reason, newPassword } = body
 
+    // Helper to delete signup notification for this user
+    const deleteSignupNotification = async (targetUserId: number) => {
+      try {
+        await sql`
+          DELETE FROM notifications 
+          WHERE type = 'user_signup' 
+            AND related_user_id = ${targetUserId}
+        `
+      } catch (error) {
+        console.error('Failed to delete signup notification:', error)
+        // Don't throw - this is not critical
+      }
+    }
+
     // Handle different actions
     switch (action) {
       case 'approve':
@@ -73,6 +87,8 @@ export async function PATCH(
         if (!approveResult.success) {
           return NextResponse.json({ error: approveResult.error }, { status: 400 })
         }
+        // Delete the signup notification since user is now approved
+        await deleteSignupNotification(userId)
         return NextResponse.json({ success: true, message: 'User approved successfully' })
 
       case 'reject':
@@ -80,6 +96,8 @@ export async function PATCH(
         if (!rejectResult.success) {
           return NextResponse.json({ error: rejectResult.error }, { status: 400 })
         }
+        // Delete the signup notification since user is now rejected
+        await deleteSignupNotification(userId)
         return NextResponse.json({ success: true, message: 'User rejected' })
 
       case 'reset_password':

@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useEffect, useState } from 'react'
-import { Sparkles, CheckCircle, AlertTriangle, Info, AlertCircle, ChevronDown, X } from 'lucide-react'
+import { Sparkles, CheckCircle, AlertTriangle, Info, AlertCircle, ChevronDown, X, UserPlus } from 'lucide-react'
 import { Notification, formatRelativeTime, getNotificationTypeConfig } from '@/lib/notifications'
 import { Button } from '@/components/ui/button'
 
@@ -18,6 +18,7 @@ const typeIcons = {
   alert: AlertTriangle,
   announcement: Info,
   urgent: AlertCircle,
+  user_signup: UserPlus,
 }
 
 // Simple markdown-like renderer for notification content
@@ -215,6 +216,20 @@ export function NotificationItem({ notification, isExpanded, onToggle, onMarkAsR
               {renderContent(notification.content)}
             </div>
           </div>
+
+          {/* Action Button for user_signup notifications */}
+          {notification.type === 'user_signup' && (
+            <div className="mt-4 pl-11">
+              <a
+                href="/admin/users"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-2 px-3 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-md hover:bg-primary/90 transition-colors"
+              >
+                <UserPlus className="h-3.5 w-3.5" />
+                Review in Admin Panel
+              </a>
+            </div>
+          )}
 
           {/* Footer */}
           <div className="flex items-center justify-between mt-4 pl-11 pt-3 border-t border-border">

@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 import { sql } from '@vercel/postgres'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth-options'
 
 // Force dynamic to prevent caching
 export const dynamic = 'force-dynamic'
@@ -9,8 +11,15 @@ export const revalidate = 0
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
-    const userId = searchParams.get('userId') || ''
+    const browserId = searchParams.get('userId') || ''
 
+    // Get the current user's session to check their role
+    const session = await getServerSession(authOptions)
+    const userRole = session?.user?.role || null
+
+    // Query notifications:
+    // - If target_roles is NULL, everyone can see it (broadcast)
+    // - If target_roles is set, only users with matching roles can see it
     const result = await sql`
       SELECT 
         n.*,
@@ -18,10 +27,16 @@ export async function GET(request: Request) {
       FROM notifications n
       LEFT JOIN notification_reads nr 
         ON n.id = nr.notification_id 
-        AND nr.user_identifier = ${userId}
+        AND nr.user_identifier = ${browserId}
       WHERE n.is_active = true 
         AND n.expires_at > NOW()
-      ORDER BY n.created_at DESC
+        AND (
+          n.target_roles IS NULL 
+          OR ${userRole}::TEXT = ANY(n.target_roles)
+        )
+      ORDER BY 
+        CASE WHEN n.priority = 'urgent' THEN 0 ELSE 1 END,
+        n.created_at DESC
       LIMIT 50
     `
 
@@ -39,7 +54,18 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { type, priority, title, preview, content, created_by, expires_in_days } = body
+    const { 
+      type, 
+      priority, 
+      title, 
+      preview, 
+      content, 
+      created_by, 
+      expires_in_days,
+      target_roles,
+      related_user_id,
+      metadata
+    } = body
 
     // Validate required fields
     if (!type || !title || !preview || !content) {
@@ -50,7 +76,7 @@ export async function POST(request: Request) {
     }
 
     // Validate type
-    const validTypes = ['feature', 'patch', 'alert', 'announcement', 'urgent']
+    const validTypes = ['feature', 'patch', 'alert', 'announcement', 'urgent', 'user_signup']
     if (!validTypes.includes(type)) {
       return NextResponse.json(
         { error: `Invalid type. Must be one of: ${validTypes.join(', ')}` },
@@ -61,6 +87,11 @@ export async function POST(request: Request) {
     // Calculate expiration date
     const expiresInDays = expires_in_days || 7
     
+    // Convert JavaScript array to PostgreSQL array format
+    const targetRolesArray = target_roles && Array.isArray(target_roles) && target_roles.length > 0
+      ? `{${target_roles.join(',')}}` 
+      : null
+    
     const result = await sql`
       INSERT INTO notifications (
         type, 
@@ -69,7 +100,10 @@ export async function POST(request: Request) {
         preview, 
         content, 
         created_by,
-        expires_at
+        expires_at,
+        target_roles,
+        related_user_id,
+        metadata
       ) VALUES (
         ${type},
         ${priority || 'normal'},
@@ -77,7 +111,10 @@ export async function POST(request: Request) {
         ${preview},
         ${content},
         ${created_by || 'admin'},
-        NOW() + INTERVAL '1 day' * ${expiresInDays}
+        NOW() + INTERVAL '1 day' * ${expiresInDays},
+        ${targetRolesArray}::TEXT[],
+        ${related_user_id || null},
+        ${metadata ? JSON.stringify(metadata) : null}
       )
       RETURNING *
     `
