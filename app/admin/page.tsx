@@ -352,7 +352,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Stats Overview - Bento Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4" data-tour-id="admin-stats">
         {/* Branches Stat */}
         <Card className="relative overflow-hidden group hover:shadow-md transition-all duration-300 animate-slide-up opacity-0 stagger-1" style={{ animationFillMode: 'forwards' }}>
           <CardContent className="pt-6">
@@ -642,7 +642,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Management Cards */}
-      <div className="space-y-3">
+      <div className="space-y-3" data-tour-id="admin-quick-actions">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-primary" />
           Quick Management

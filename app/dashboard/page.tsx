@@ -199,7 +199,7 @@ export default function BranchManagerDashboard() {
             </div>
           </div>
         {/* Today's Snapshot */}
-        <Card className="mb-8 border-l-4 border-l-primary">
+        <Card className="mb-8 border-l-4 border-l-primary" data-tour-id="today-snapshot">
           <CardContent className="pt-6">
             <div className="flex items-center gap-2 mb-4">
               <Calendar className="h-4 w-4 text-primary" />
@@ -254,7 +254,7 @@ export default function BranchManagerDashboard() {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" data-tour-id="branch-cards">
               {branches.map(branch => {
                 const analytics = getAnalyticsForBranch(branch.name)
                 const dispatchStatus = getDispatchStatusForBranch(branch.slug)
@@ -325,7 +325,7 @@ export default function BranchManagerDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="mb-8">
+        <div className="mb-8" data-tour-id="quick-actions">
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Clock className="h-4 w-4 text-primary" />
             Quick Actions
@@ -381,7 +381,7 @@ export default function BranchManagerDashboard() {
 
         {/* Recent Dispatches */}
         {dispatches.length > 0 && (
-          <Card>
+          <Card data-tour-id="recent-dispatches">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
                 <Truck className="h-4 w-4 text-primary" />

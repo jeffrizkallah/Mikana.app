@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { MapPin, Phone, Mail, Clock, Factory, Flame, ChefHat } from 'lucide-react'
-import { Sidebar } from '@/components/Sidebar'
+import { RoleSidebar } from '@/components/RoleSidebar'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { PrintHeader } from '@/components/PrintHeader'
@@ -41,7 +41,7 @@ export default function BranchPage({ params, searchParams }: BranchPageProps) {
 
   return (
     <div className={isPrintMode ? "min-h-screen flex flex-col" : "flex min-h-screen"}>
-      {!isPrintMode && <Sidebar />}
+      {!isPrintMode && <RoleSidebar />}
       <PrintHeader branchName={branch.name} />
 
       <main className={isPrintMode ? "flex-1 container mx-auto px-4 py-8" : "flex-1 flex flex-col pt-16 md:pt-0 overflow-x-hidden"}>
@@ -68,7 +68,7 @@ export default function BranchPage({ params, searchParams }: BranchPageProps) {
             </div>
 
             {/* Branch Information Card */}
-            <Card className="mb-4 md:mb-6">
+            <Card className="mb-4 md:mb-6" data-tour-id="branch-info">
               <CardHeader className="px-4 py-3 md:px-6 md:py-4">
                 <CardTitle className="text-base sm:text-lg md:text-xl">Branch Information</CardTitle>
               </CardHeader>
@@ -102,7 +102,7 @@ export default function BranchPage({ params, searchParams }: BranchPageProps) {
 
             {/* KPIs - Hidden for Central Kitchen */}
             {!isCK && (
-              <Card className="mb-4 md:mb-6">
+              <Card className="mb-4 md:mb-6" data-tour-id="kpi-badges">
                 <CardHeader className="px-4 py-3 md:px-6 md:py-4">
                   <CardTitle className="text-base sm:text-lg md:text-xl">Key Performance Indicators</CardTitle>
                 </CardHeader>
@@ -172,7 +172,7 @@ export default function BranchPage({ params, searchParams }: BranchPageProps) {
           </div>
 
           {/* Roles Section */}
-          <Card className="mb-4 md:mb-6">
+          <Card className="mb-4 md:mb-6" data-tour-id="role-tabs">
             <CardHeader className="px-4 py-3 md:px-6 md:py-4">
               <CardTitle className="text-base sm:text-lg md:text-xl">Operational Roles</CardTitle>
               <p className="text-xs sm:text-sm text-muted-foreground mt-1">
@@ -207,7 +207,7 @@ export default function BranchPage({ params, searchParams }: BranchPageProps) {
           )}
 
           {/* Recipes Section (Central Kitchen) or Recipe Instructions (Branches) */}
-          <Card className="mb-4 md:mb-6">
+          <Card className="mb-4 md:mb-6" data-tour-id="recipe-selector">
             <CardHeader className="px-4 py-3 md:px-6 md:py-4">
               <CardTitle className="text-base sm:text-lg md:text-xl flex items-center gap-2">
                 {isCK ? (

@@ -101,7 +101,7 @@ export function BranchDispatches({ branchSlug }: BranchDispatchesProps) {
   }
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden" data-tour-id="branch-dispatches">
       <CardHeader className="px-4 py-3 md:px-6 md:py-4">
         <CardTitle className="flex items-center gap-2 text-base sm:text-lg md:text-xl">
           <Package className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" />

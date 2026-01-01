@@ -13,6 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
 import { Plus, Trash2, Save, ArrowLeft, Loader2, Flame, GripVertical, ChefHat } from 'lucide-react'
 import type { RecipeInstruction, InstructionComponent, Recipe } from '@/lib/data'
+import { ImageUpload } from '@/components/ImageUpload'
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
@@ -506,32 +507,11 @@ export default function RecipeInstructionEditorPage({ params }: { params: { id: 
               <CardDescription>Add reference images for the final dish presentation</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Photo URLs (One per line)</Label>
-                <Textarea
-                  value={instruction.visualPresentation.join('\n')}
-                  onChange={e => updateField('visualPresentation', e.target.value.split('\n').filter(l => l.trim()))}
-                  placeholder="https://example.com/photo1.jpg&#10;https://example.com/photo2.jpg"
-                  rows={4}
-                />
-              </div>
-
-              {instruction.visualPresentation.length > 0 && (
-                <div className="grid grid-cols-3 gap-4 mt-4">
-                  {instruction.visualPresentation.map((url, idx) => (
-                    <div key={idx} className="relative aspect-video rounded-lg overflow-hidden border bg-muted">
-                      <img
-                        src={url}
-                        alt={`Presentation ${idx + 1}`}
-                        className="object-cover w-full h-full"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x300?text=Image+Not+Found'
-                        }}
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
+              <ImageUpload
+                images={instruction.visualPresentation}
+                onImagesChange={(images) => updateField('visualPresentation', images)}
+                maxImages={10}
+              />
             </CardContent>
           </Card>
 

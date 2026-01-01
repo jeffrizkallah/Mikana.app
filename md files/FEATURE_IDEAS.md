@@ -6,7 +6,7 @@ A comprehensive list of potential features to enhance the Mikana Branch Guideboo
 
 ## 🚀 High-Impact Features
 
-### 1. Analytics Dashboard
+### 1. Analytics Dashboard 
 A real-time analytics hub showing:
 - Branch performance comparisons (sales targets, waste %, hygiene scores)
 - Checklist completion rates by branch and role
@@ -20,7 +20,7 @@ A real-time analytics hub showing:
 
 ---
 
-### 2. User Authentication & Role-Based Access
+### 2. User Authentication & Role-Based Access (Done)
 Currently PIN-protected, but could be expanded to:
 - Individual staff logins (email/password or phone)
 - Role-based permissions (manager sees different admin features than kitchen staff)
@@ -472,7 +472,7 @@ Customizable home page with:
 
 ---
 
-*Last updated: December 2024*
+### Adding Features Using Data from Odoo:
 
 Ideas for Using Each Table
 1. Inventory (odoo_inventory)
@@ -506,3 +506,4 @@ Waste analytics dashboard
 Branch waste comparison
 Waste reason analysis
 Integrate with branch KPIs
+

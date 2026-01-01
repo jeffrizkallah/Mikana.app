@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Sidebar } from '@/components/Sidebar'
+import { RoleSidebar } from '@/components/RoleSidebar'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -334,7 +334,7 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar />
+      <RoleSidebar />
       
       <main className="flex-1 flex flex-col pt-16 md:pt-0">
         <div className="flex-1 container mx-auto px-3 md:px-4 py-4 md:py-8 max-w-4xl">

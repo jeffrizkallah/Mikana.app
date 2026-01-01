@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Upload, AlertCircle, CheckCircle2, Edit2, Trash2, Plus, ChevronDown, ChevronUp } from 'lucide-react'
+import { Upload, AlertCircle, CheckCircle2, Edit2, Trash2, Plus, ChevronDown, ChevronUp, Sparkles, Loader2 } from 'lucide-react'
 import type { Recipe, MainIngredient, SubRecipe, PreparationStep, MachineToolRequirement, QualitySpecification } from '@/lib/data'
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -22,6 +22,9 @@ export default function RecipeImportPage() {
   const [parsedRecipe, setParsedRecipe] = useState<ParsedRecipe | null>(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [parsing, setParsing] = useState(false)
+  const [parsingMethod, setParsingMethod] = useState<'ai' | 'regex' | null>(null)
+  const [parsingStatus, setParsingStatus] = useState('')
   const [success, setSuccess] = useState(false)
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     basic: true,
@@ -38,7 +41,122 @@ export default function RecipeImportPage() {
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }))
   }
 
-  const parseExcelData = () => {
+  // AI-powered parsing function
+  const parseWithAI = async (): Promise<boolean> => {
+    try {
+      setParsingStatus('🤖 AI is analyzing your recipe...')
+      
+      const response = await fetch('/api/recipes/parse-ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rawData: pastedData })
+      })
+      
+      const result = await response.json()
+      
+      if (!result.success) {
+        console.log('AI parsing failed:', result.error)
+        return false // Signal to use fallback
+      }
+      
+      // Convert AI response to ParsedRecipe format
+      const aiData = result.data
+      const recipe: ParsedRecipe = {
+        recipeId: aiData.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-') || '',
+        name: aiData.name || '',
+        category: 'Main Course',
+        station: aiData.station || '',
+        recipeCode: aiData.recipeCode || '',
+        yield: aiData.yield || '',
+        daysAvailable: [],
+        prepTime: '30 minutes',
+        cookTime: '30 minutes',
+        servings: aiData.yield || '1 portion',
+        ingredients: [],
+        mainIngredients: aiData.mainIngredients || [],
+        subRecipes: aiData.subRecipes?.map((sr: any) => ({
+          ...sr,
+          ingredients: sr.ingredients || [],
+          preparation: sr.preparation || [],
+          requiredMachinesTools: sr.requiredMachinesTools || [],
+          qualitySpecifications: sr.qualitySpecifications || [],
+          packingLabeling: sr.packingLabeling || {
+            packingType: '',
+            serviceItems: [],
+            labelRequirements: '',
+            storageCondition: '',
+            shelfLife: ''
+          }
+        })) || [],
+        preparation: aiData.preparation || [],
+        requiredMachinesTools: aiData.requiredMachinesTools || [],
+        qualitySpecifications: aiData.qualitySpecifications || [],
+        packingLabeling: aiData.packingLabeling || {
+          packingType: '',
+          serviceItems: [],
+          labelRequirements: '',
+          storageCondition: '',
+          shelfLife: ''
+        },
+        presentation: {
+          description: '',
+          instructions: [],
+          photos: aiData.name ? [
+            `https://picsum.photos/seed/${aiData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-1/800/600`,
+            `https://picsum.photos/seed/${aiData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-2/800/600`,
+            `https://picsum.photos/seed/${aiData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-3/800/600`
+          ] : []
+        },
+        sops: {
+          foodSafetyAndHygiene: [],
+          cookingStandards: [],
+          storageAndHolding: [],
+          qualityStandards: []
+        },
+        troubleshooting: [],
+        allergens: [],
+        storageInstructions: ''
+      }
+      
+      setParsedRecipe(recipe)
+      setParsingMethod('ai')
+      setParsingStatus(`✅ AI parsed successfully in ${result.parsingTime}ms`)
+      return true
+      
+    } catch (err) {
+      console.error('AI parsing error:', err)
+      return false
+    }
+  }
+
+  // Main parse handler - tries AI first, then falls back to regex
+  const handleParseRecipe = async () => {
+    setError('')
+    setParsedRecipe(null)
+    setParsing(true)
+    setParsingMethod(null)
+    
+    try {
+      // Try AI parsing first
+      const aiSuccess = await parseWithAI()
+      
+      if (!aiSuccess) {
+        // Fallback to regex parser
+        setParsingStatus('⚡ Using backup parser...')
+        parseExcelDataFallback()
+        setParsingMethod('regex')
+        setParsingStatus('✅ Parsed with backup parser')
+      }
+    } catch (err) {
+      setError('Error parsing recipe. Please check your data format.')
+      console.error(err)
+    } finally {
+      setParsing(false)
+    }
+  }
+
+  // Legacy regex-based parser (kept as fallback)
+  const parseExcelDataFallback = () => {
     setError('')
     setParsedRecipe(null)
 
@@ -707,13 +825,32 @@ export default function RecipeImportPage() {
                   />
                 </div>
 
-                <Button
-                  onClick={parseExcelData}
-                  disabled={!pastedData.trim()}
-                  size="lg"
-                >
-                  Parse Recipe Data
-                </Button>
+                <div className="flex items-center gap-4">
+                  <Button
+                    onClick={handleParseRecipe}
+                    disabled={!pastedData.trim() || parsing}
+                    size="lg"
+                    className="gap-2"
+                  >
+                    {parsing ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Parsing...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-4 w-4" />
+                        Parse with AI
+                      </>
+                    )}
+                  </Button>
+                  
+                  {parsingStatus && (
+                    <span className={`text-sm ${parsingMethod === 'ai' ? 'text-green-600' : 'text-blue-600'}`}>
+                      {parsingStatus}
+                    </span>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -722,8 +859,21 @@ export default function RecipeImportPage() {
           {parsedRecipe && (
             <Card>
               <CardHeader>
-                <CardTitle>Step 2: Review & Edit Recipe</CardTitle>
-                <p className="text-sm text-muted-foreground">Review the parsed data and make any necessary edits before saving</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Step 2: Review & Edit Recipe</CardTitle>
+                    <p className="text-sm text-muted-foreground">Review the parsed data and make any necessary edits before saving</p>
+                  </div>
+                  {parsingMethod && (
+                    <span className={`text-xs px-2 py-1 rounded-full ${
+                      parsingMethod === 'ai' 
+                        ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' 
+                        : 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                    }`}>
+                      {parsingMethod === 'ai' ? '🤖 AI Parsed' : '⚡ Regex Parsed'}
+                    </span>
+                  )}
+                </div>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Basic Information */}

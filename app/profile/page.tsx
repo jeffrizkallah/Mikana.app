@@ -20,7 +20,10 @@ import {
   CheckCircle2,
   AlertCircle,
   Building2,
+  GraduationCap,
+  RotateCcw,
 } from 'lucide-react'
+import { useOnboarding } from '@/lib/onboarding/context'
 import { roleDisplayNames, type UserRole } from '@/lib/auth'
 
 export default function ProfilePage() {
@@ -124,6 +127,18 @@ export default function ProfilePage() {
   }
 
   function ProfileContent() {
+    const { resetOnboarding, onboardingState } = useOnboarding()
+    const [isResettingTour, setIsResettingTour] = useState(false)
+
+    const handleReplayTour = async () => {
+      setIsResettingTour(true)
+      try {
+        await resetOnboarding()
+      } finally {
+        setIsResettingTour(false)
+      }
+    }
+
     return (
       <div className="space-y-6">
         {/* Header */}
@@ -138,7 +153,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Account Info */}
-        <Card>
+        <Card data-tour-id="profile-info">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <User className="h-4 w-4" />
@@ -199,7 +214,7 @@ export default function ProfilePage() {
         </Card>
 
         {/* Change Password */}
-        <Card>
+        <Card data-tour-id="security-section">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <Lock className="h-4 w-4" />
@@ -290,6 +305,48 @@ export default function ProfilePage() {
                 </div>
               </form>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Replay Tour Guide */}
+        <Card data-tour-id="replay-tour" className="border-dashed border-2 border-primary/30 bg-primary/5">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <GraduationCap className="h-4 w-4 text-primary" />
+              Tour Guide
+            </CardTitle>
+            <CardDescription>
+              Need a refresher on how to use the app?
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="text-sm text-muted-foreground">
+                {onboardingState?.toursCompleted && onboardingState.toursCompleted.length > 0 ? (
+                  <p>You&apos;ve completed {onboardingState.toursCompleted.length} tour{onboardingState.toursCompleted.length !== 1 ? 's' : ''}. Replay to see tips again.</p>
+                ) : (
+                  <p>Get a guided walkthrough of the app&apos;s features.</p>
+                )}
+              </div>
+              <Button 
+                variant="outline" 
+                onClick={handleReplayTour}
+                disabled={isResettingTour}
+                className="shrink-0"
+              >
+                {isResettingTour ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Resetting...
+                  </>
+                ) : (
+                  <>
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    Replay Tour
+                  </>
+                )}
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>

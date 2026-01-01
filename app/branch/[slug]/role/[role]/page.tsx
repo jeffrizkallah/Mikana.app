@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { CheckCircle2, XCircle, Mail } from 'lucide-react'
-import { Sidebar } from '@/components/Sidebar'
+import { RoleSidebar } from '@/components/RoleSidebar'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { PrintHeader } from '@/components/PrintHeader'
@@ -40,7 +40,7 @@ export default function RolePage({ params, searchParams }: RolePageProps) {
 
   return (
     <div className={isPrintMode ? "min-h-screen flex flex-col" : "flex min-h-screen"}>
-      {!isPrintMode && <Sidebar />}
+      {!isPrintMode && <RoleSidebar />}
       <PrintHeader branchName={branch.name} pageTitle={role.name} />
 
       <main className={isPrintMode ? "flex-1 container mx-auto px-4 py-8" : "flex-1 flex flex-col pt-16 md:pt-0"}>

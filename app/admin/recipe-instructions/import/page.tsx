@@ -1,11 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
@@ -17,149 +16,204 @@ import {
   Check,
   Loader2,
   Trash2,
-  Plus
+  Sparkles,
+  Brain,
+  ChevronDown,
+  ChevronUp,
+  Link as LinkIcon,
+  Unlink
 } from 'lucide-react'
-import type { RecipeInstruction, InstructionComponent } from '@/lib/data'
+import type { RecipeInstruction } from '@/lib/data'
+import type { ParsedInstruction, ParsedComponent } from '@/lib/reheating-instructions-schema'
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+const CATEGORIES = ['Main Course', 'Side', 'Appetizer', 'Dessert', 'Beverage']
 
-interface ParsedComponent {
-  subRecipeName: string
-  servingPerPortion: number
-  unit: string
-  reheatingSteps: string[]
-  quantityControlNotes: string
-  presentationGuidelines: string
-}
-
-interface ParsedInstruction {
-  dishName: string
-  components: ParsedComponent[]
+interface AvailableRecipe {
+  recipeId: string
+  name: string
 }
 
 export default function ImportRecipeInstructionsPage() {
   const router = useRouter()
   const [rawData, setRawData] = useState('')
   const [parsedInstructions, setParsedInstructions] = useState<ParsedInstruction[]>([])
-  const [selectedInstruction, setSelectedInstruction] = useState<number | null>(null)
-  const [category, setCategory] = useState('Main Course')
-  const [selectedDays, setSelectedDays] = useState<string[]>([])
+  const [selectedInstructions, setSelectedInstructions] = useState<Set<number>>(new Set())
+  const [expandedInstructions, setExpandedInstructions] = useState<Set<number>>(new Set())
+  const [daysMap, setDaysMap] = useState<Map<number, string[]>>(new Map())
+  const [categoryMap, setCategoryMap] = useState<Map<number, string>>(new Map())
+  const [linkedRecipeMap, setLinkedRecipeMap] = useState<Map<number, string>>(new Map())
+  const [availableRecipes, setAvailableRecipes] = useState<AvailableRecipe[]>([])
   const [isParsing, setIsParsing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [successCount, setSuccessCount] = useState(0)
+  const [parsingNotes, setParsingNotes] = useState<string>('')
+  const [isAIConfigured, setIsAIConfigured] = useState<boolean | null>(null)
 
-  const parseExcelData = () => {
+  // Check if AI is configured on mount
+  useEffect(() => {
+    async function checkAI() {
+      try {
+        const res = await fetch('/api/recipe-instructions/parse-ai')
+        const data = await res.json()
+        setIsAIConfigured(data.configured)
+      } catch {
+        setIsAIConfigured(false)
+      }
+    }
+    checkAI()
+  }, [])
+
+  // Fetch available recipes for linking
+  useEffect(() => {
+    async function fetchRecipes() {
+      try {
+        const res = await fetch('/api/recipes')
+        const data = await res.json()
+        setAvailableRecipes(data.map((r: any) => ({ recipeId: r.recipeId, name: r.name })))
+      } catch (error) {
+        console.error('Failed to fetch recipes:', error)
+      }
+    }
+    fetchRecipes()
+  }, [])
+
+  const parseWithAI = async () => {
+    if (!rawData.trim()) {
+      setError('Please paste some data from Excel first')
+      return
+    }
+
     setIsParsing(true)
     setError(null)
+    setParsingNotes('')
+    setParsedInstructions([])
+    setSelectedInstructions(new Set())
+    setExpandedInstructions(new Set())
+    setDaysMap(new Map())
+    setCategoryMap(new Map())
+    setLinkedRecipeMap(new Map())
 
     try {
-      const lines = rawData.trim().split('\n')
-      if (lines.length < 2) {
-        throw new Error('Please paste at least 2 rows of data (header + data)')
-      }
-
-      // Parse header row to find column indices
-      const header = lines[0].split('\t').map(h => h.trim().toLowerCase())
-      
-      const dishNameIdx = header.findIndex(h => 
-        h.includes('dish name') || h.includes('counter') || h.includes('recipe')
-      )
-      const subRecipeIdx = header.findIndex(h => 
-        h.includes('sub-recipe') || h.includes('sub recipe') || h.includes('component')
-      )
-      const servingIdx = header.findIndex(h => 
-        h.includes('serving') || h.includes('portion') || h.includes('qty')
-      )
-      const unitIdx = header.findIndex(h => 
-        h.includes('unit') || h.includes('uom')
-      )
-      const step1Idx = header.findIndex(h => 
-        h.includes('step 1') || h.includes('procedure') && h.includes('1')
-      )
-      const step2Idx = header.findIndex(h => 
-        h.includes('step 2') || h.includes('procedure') && h.includes('2')
-      )
-      const step3Idx = header.findIndex(h => 
-        h.includes('step 3') || h.includes('procedure') && h.includes('3')
-      )
-      const qualityIdx = header.findIndex(h => 
-        h.includes('quality') || h.includes('control') || h.includes('notes')
-      )
-      const presentationIdx = header.findIndex(h => 
-        h.includes('presentation') || h.includes('guideline')
-      )
-
-      // Group rows by dish name
-      const instructionMap = new Map<string, ParsedComponent[]>()
-      
-      for (let i = 1; i < lines.length; i++) {
-        const cols = lines[i].split('\t').map(c => c.trim())
-        if (!cols[0]) continue
-
-        const dishName = dishNameIdx >= 0 ? cols[dishNameIdx] || '' : cols[0] || ''
-        if (!dishName) continue
-
-        const component: ParsedComponent = {
-          subRecipeName: subRecipeIdx >= 0 ? cols[subRecipeIdx] || '' : cols[1] || '',
-          servingPerPortion: servingIdx >= 0 ? parseFloat(cols[servingIdx]) || 0 : parseFloat(cols[2]) || 0,
-          unit: unitIdx >= 0 ? cols[unitIdx] || 'Gr' : cols[3] || 'Gr',
-          reheatingSteps: [
-            step1Idx >= 0 ? cols[step1Idx] || '' : cols[4] || '',
-            step2Idx >= 0 ? cols[step2Idx] || '' : cols[5] || '',
-            step3Idx >= 0 ? cols[step3Idx] || '' : cols[6] || ''
-          ].filter(s => s),
-          quantityControlNotes: qualityIdx >= 0 ? cols[qualityIdx] || '' : cols[7] || '',
-          presentationGuidelines: presentationIdx >= 0 ? cols[presentationIdx] || '' : cols[8] || ''
-        }
-
-        if (!instructionMap.has(dishName)) {
-          instructionMap.set(dishName, [])
-        }
-        instructionMap.get(dishName)!.push(component)
-      }
-
-      const parsed: ParsedInstruction[] = []
-      instructionMap.forEach((components, dishName) => {
-        parsed.push({ dishName, components })
+      const res = await fetch('/api/recipe-instructions/parse-ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rawData })
       })
 
-      if (parsed.length === 0) {
-        throw new Error('No valid data found. Make sure your Excel data follows the expected format.')
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to parse with AI')
       }
 
-      setParsedInstructions(parsed)
-      setSelectedInstruction(0)
+      if (!data.success || !data.data?.instructions) {
+        throw new Error('No instructions parsed from the data')
+      }
+
+      const instructions = data.data.instructions as ParsedInstruction[]
+      setParsedInstructions(instructions)
+      
+      if (data.data.parsingNotes) {
+        setParsingNotes(data.data.parsingNotes)
+      }
+
+      // Select all by default
+      setSelectedInstructions(new Set(instructions.map((_, i) => i)))
+      
+      // Expand first instruction
+      if (instructions.length > 0) {
+        setExpandedInstructions(new Set([0]))
+      }
+
+      // Initialize days map (default to weekdays)
+      const newDaysMap = new Map<number, string[]>()
+      instructions.forEach((_, idx) => {
+        newDaysMap.set(idx, ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'])
+      })
+      setDaysMap(newDaysMap)
+
+      // Initialize category map from parsed data
+      const newCategoryMap = new Map<number, string>()
+      instructions.forEach((inst, idx) => {
+        newCategoryMap.set(idx, inst.category || 'Main Course')
+      })
+      setCategoryMap(newCategoryMap)
+
+      // Initialize linked recipe map from AI suggestions
+      const newLinkedMap = new Map<number, string>()
+      instructions.forEach((inst, idx) => {
+        if (inst.suggestedRecipeId) {
+          newLinkedMap.set(idx, inst.suggestedRecipeId)
+        }
+      })
+      setLinkedRecipeMap(newLinkedMap)
+
     } catch (err: any) {
-      setError(err.message || 'Failed to parse data')
+      setError(err.message || 'Failed to parse data with AI')
     } finally {
       setIsParsing(false)
     }
   }
 
-  const toggleDay = (day: string) => {
-    setSelectedDays(prev =>
-      prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
-    )
+  const toggleInstructionSelection = (idx: number) => {
+    const newSet = new Set(selectedInstructions)
+    if (newSet.has(idx)) {
+      newSet.delete(idx)
+    } else {
+      newSet.add(idx)
+    }
+    setSelectedInstructions(newSet)
   }
 
-  const saveInstruction = async () => {
-    if (selectedInstruction === null) return
-    
-    const parsed = parsedInstructions[selectedInstruction]
-    
-    if (!parsed.dishName) {
-      setError('Dish name is required')
+  const toggleInstructionExpanded = (idx: number) => {
+    const newSet = new Set(expandedInstructions)
+    if (newSet.has(idx)) {
+      newSet.delete(idx)
+    } else {
+      newSet.add(idx)
+    }
+    setExpandedInstructions(newSet)
+  }
+
+  const toggleDay = (idx: number, day: string) => {
+    const currentDays = daysMap.get(idx) || []
+    const newDays = currentDays.includes(day)
+      ? currentDays.filter(d => d !== day)
+      : [...currentDays, day]
+    setDaysMap(new Map(daysMap).set(idx, newDays))
+  }
+
+  const selectAllInstructions = () => {
+    setSelectedInstructions(new Set(parsedInstructions.map((_, i) => i)))
+  }
+
+  const deselectAllInstructions = () => {
+    setSelectedInstructions(new Set())
+  }
+
+  const saveSelectedInstructions = async () => {
+    if (selectedInstructions.size === 0) {
+      setError('Please select at least one instruction to save')
       return
     }
-    if (selectedDays.length === 0) {
-      setError('Please select at least one day')
-      return
+
+    // Validate that all selected instructions have days
+    for (const idx of selectedInstructions) {
+      const days = daysMap.get(idx) || []
+      if (days.length === 0) {
+        setError(`Please select at least one day for "${parsedInstructions[idx].dishName}"`)
+        return
+      }
     }
 
     setIsSaving(true)
     setError(null)
+    setSuccessCount(0)
 
-    try {
+    const instructionsToSave = Array.from(selectedInstructions).map(idx => {
+      const parsed = parsedInstructions[idx]
       const instructionId = parsed.dishName
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
@@ -168,62 +222,87 @@ export default function ImportRecipeInstructionsPage() {
       const instruction: RecipeInstruction = {
         instructionId,
         dishName: parsed.dishName,
-        linkedRecipeId: '',
-        category,
-        daysAvailable: selectedDays,
-        components: parsed.components.map((c, idx) => ({
-          componentId: `${instructionId}-${idx}`,
+        linkedRecipeId: linkedRecipeMap.get(idx) || '',
+        category: categoryMap.get(idx) || 'Main Course',
+        daysAvailable: daysMap.get(idx) || [],
+        components: parsed.components.map((c, cidx) => ({
+          componentId: `${instructionId}-${cidx}`,
           subRecipeName: c.subRecipeName,
           servingPerPortion: c.servingPerPortion,
           unit: c.unit,
-          reheatingSteps: c.reheatingSteps.length > 0 ? c.reheatingSteps : ['', '', ''],
-          quantityControlNotes: c.quantityControlNotes,
-          presentationGuidelines: c.presentationGuidelines
+          reheatingSteps: c.reheatingSteps.length > 0 ? c.reheatingSteps : [''],
+          quantityControlNotes: c.quantityControlNotes || '',
+          presentationGuidelines: c.presentationGuidelines || ''
         })),
         visualPresentation: [`https://picsum.photos/seed/${instructionId}/800/600`],
         branchManagerFeedback: ''
       }
+      return { idx, instruction }
+    })
 
-      const res = await fetch('/api/recipe-instructions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(instruction)
-      })
+    let savedCount = 0
+    const failedInstructions: string[] = []
 
-      if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.error || 'Failed to save')
+    for (const { idx, instruction } of instructionsToSave) {
+      try {
+        const res = await fetch('/api/recipe-instructions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(instruction)
+        })
+
+        if (!res.ok) {
+          const data = await res.json()
+          throw new Error(data.error || 'Failed to save')
+        }
+
+        savedCount++
+        setSuccessCount(savedCount)
+      } catch (err: any) {
+        failedInstructions.push(`${parsedInstructions[idx].dishName}: ${err.message}`)
       }
+    }
 
-      // Remove saved instruction from list
-      const newParsed = [...parsedInstructions]
-      newParsed.splice(selectedInstruction, 1)
+    setIsSaving(false)
+
+    if (failedInstructions.length > 0) {
+      setError(`Failed to save ${failedInstructions.length} instruction(s):\n${failedInstructions.join('\n')}`)
+    }
+
+    if (savedCount > 0) {
+      // Remove saved instructions from the list
+      const newParsed = parsedInstructions.filter((_, idx) => !selectedInstructions.has(idx))
       setParsedInstructions(newParsed)
+      setSelectedInstructions(new Set())
       
-      if (newParsed.length > 0) {
-        setSelectedInstruction(0)
-        setSelectedDays([])
-      } else {
+      if (newParsed.length === 0 && failedInstructions.length === 0) {
+        // All saved successfully, redirect
         router.push('/admin/recipe-instructions')
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to save instruction')
-    } finally {
-      setIsSaving(false)
     }
   }
-
-  const currentInstruction = selectedInstruction !== null ? parsedInstructions[selectedInstruction] : null
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-primary flex items-center gap-2">
-          <Upload className="h-8 w-8" />
-          Import Recipe Instructions
+          <Sparkles className="h-8 w-8 text-yellow-500" />
+          AI-Powered Import
         </h1>
-        <p className="text-muted-foreground">Paste data from Excel to import recipe instructions</p>
+        <p className="text-muted-foreground">Import reheating instructions from Excel using AI parsing</p>
       </div>
+
+      {/* AI Status Banner */}
+      {isAIConfigured === false && (
+        <Card className="border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
+          <CardContent className="py-4">
+            <div className="flex items-center gap-2 text-yellow-700 dark:text-yellow-300">
+              <AlertCircle className="h-5 w-5" />
+              <span>OpenAI API key is not configured. Please add OPENAI_API_KEY to your environment variables.</span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Step 1: Paste Data */}
       <Card>
@@ -233,200 +312,293 @@ export default function ImportRecipeInstructionsPage() {
             Step 1: Paste Excel Data
           </CardTitle>
           <CardDescription>
-            Copy and paste your reheating instructions table from Excel. Include headers.
+            Copy cells from your reheating instructions Excel file and paste them here. 
+            Include the header row for best results.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <Textarea
-            placeholder={`Dish Name / Counter Pri...\tSub-recipes\tServing per por...\tUnit\tReheating Procedures Step 1\tReheating Procedures Step 2\tReheating Procedures Step 3\tQuantity Control Notes\tPresentation Guidelines
-Hm Oriental Chicken with Rice\tChicken Stuffed For Oriental Chicken 1 KG\t120\tGr\tPut the Vacuum bag of chicken in a hot pot\tWhen Heated take out the chicken and Slice it 2 cm / pc\tAdd it on top of the Oriental Rice\tApply Oriental Sauce over the Slices\tSprinkle cinnamon powder`}
+            placeholder={`Paste your Excel data here...
+
+Example format:
+Dish Name / Counter Price\tSub-recipes\tServing QTY\tUnit\tReheating Step 1\tReheating Step 2\tQuantity Control Notes\tPresentation Guidelines
+Hm Oriental Chicken with Rice\tChicken Stuffed For Oriental Chicken 1 KG\t120\tGr\tPut the Vacuum bag of chicken in a hot pot\tWhen Heated take out the chicken...\tApply Oriental Sauce...\tSprinkle cinnamon powder...`}
             value={rawData}
             onChange={(e) => setRawData(e.target.value)}
-            rows={10}
+            rows={12}
             className="font-mono text-xs"
           />
           
-          <Button 
-            onClick={parseExcelData} 
-            disabled={!rawData.trim() || isParsing}
-            className="gap-2"
-          >
-            {isParsing ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <FileSpreadsheet className="h-4 w-4" />
+          <div className="flex items-center gap-4">
+            <Button 
+              onClick={parseWithAI} 
+              disabled={!rawData.trim() || isParsing || isAIConfigured === false}
+              className="gap-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700"
+            >
+              {isParsing ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Parsing with AI...
+                </>
+              ) : (
+                <>
+                  <Brain className="h-4 w-4" />
+                  Parse with AI
+                </>
+              )}
+            </Button>
+            
+            {rawData.trim() && (
+              <span className="text-xs text-muted-foreground">
+                ~{Math.ceil(rawData.length / 4).toLocaleString()} tokens
+              </span>
             )}
-            Parse Data
-          </Button>
+          </div>
 
           {error && (
-            <div className="flex items-center gap-2 text-red-500 text-sm">
-              <AlertCircle className="h-4 w-4" />
-              {error}
+            <div className="flex items-start gap-2 text-red-500 text-sm p-3 bg-red-50 dark:bg-red-950 rounded-md">
+              <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+              <span className="whitespace-pre-wrap">{error}</span>
+            </div>
+          )}
+
+          {parsingNotes && (
+            <div className="flex items-start gap-2 text-blue-600 dark:text-blue-400 text-sm p-3 bg-blue-50 dark:bg-blue-950 rounded-md">
+              <Sparkles className="h-4 w-4 mt-0.5 shrink-0" />
+              <span>{parsingNotes}</span>
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Step 2: Review & Edit */}
+      {/* Step 2: Review & Select */}
       {parsedInstructions.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Instruction List */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Parsed Instructions ({parsedInstructions.length})</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2 max-h-[400px] overflow-y-auto">
-                {parsedInstructions.map((inst, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() => {
-                      setSelectedInstruction(idx)
-                      setSelectedDays([])
-                    }}
-                    className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                      selectedInstruction === idx 
-                        ? 'bg-orange-100 dark:bg-orange-900 border-2 border-orange-500' 
-                        : 'bg-muted hover:bg-muted/80'
-                    }`}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <Flame className="h-5 w-5 text-orange-500" />
+                Step 2: Review & Select Instructions
+              </span>
+              <Badge variant="outline" className="text-lg px-3 py-1">
+                {parsedInstructions.length} parsed
+              </Badge>
+            </CardTitle>
+            <CardDescription>
+              Review the AI-parsed instructions, configure days and categories, then save selected items.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Selection Controls */}
+            <div className="flex items-center gap-2 pb-4 border-b">
+              <Button variant="outline" size="sm" onClick={selectAllInstructions}>
+                Select All
+              </Button>
+              <Button variant="outline" size="sm" onClick={deselectAllInstructions}>
+                Deselect All
+              </Button>
+              <span className="text-sm text-muted-foreground ml-2">
+                {selectedInstructions.size} of {parsedInstructions.length} selected
+              </span>
+            </div>
+
+            {/* Instructions List */}
+            <div className="space-y-3 max-h-[600px] overflow-y-auto">
+              {parsedInstructions.map((instruction, idx) => (
+                <div
+                  key={idx}
+                  className={`border rounded-lg transition-all ${
+                    selectedInstructions.has(idx) 
+                      ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/30' 
+                      : 'border-border bg-muted/30'
+                  }`}
+                >
+                  {/* Instruction Header */}
+                  <div 
+                    className="p-4 flex items-center gap-3 cursor-pointer"
+                    onClick={() => toggleInstructionExpanded(idx)}
                   >
-                    <div className="font-medium text-sm">{inst.dishName}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {inst.components.length} component{inst.components.length !== 1 ? 's' : ''}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Edit Form */}
-          {currentInstruction && (
-            <Card className="lg:col-span-2">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Flame className="h-5 w-5 text-orange-500" />
-                  {currentInstruction.dishName}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Category & Days */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Category</Label>
-                    <select
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                    >
-                      <option>Main Course</option>
-                      <option>Side</option>
-                      <option>Appetizer</option>
-                      <option>Dessert</option>
-                      <option>Beverage</option>
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Days Available *</Label>
-                    <div className="flex flex-wrap gap-2 p-2 border rounded-md">
-                      {DAYS.map(day => (
-                        <div key={day} className="flex items-center gap-1">
-                          <Checkbox
-                            id={`day-${day}`}
-                            checked={selectedDays.includes(day)}
-                            onCheckedChange={() => toggleDay(day)}
-                          />
-                          <label htmlFor={`day-${day}`} className="text-xs cursor-pointer">
-                            {day.slice(0, 3)}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Components */}
-                <div className="space-y-4">
-                  <Label>Components ({currentInstruction.components.length})</Label>
-                  <div className="space-y-4 max-h-[400px] overflow-y-auto">
-                    {currentInstruction.components.map((comp, idx) => (
-                      <div key={idx} className="p-4 border rounded-lg bg-muted/30">
-                        <div className="flex items-center justify-between mb-3">
-                          <h4 className="font-medium text-sm flex items-center gap-2">
-                            <Badge variant="outline">{idx + 1}</Badge>
-                            {comp.subRecipeName || 'Unnamed Component'}
-                          </h4>
-                          <span className="text-xs text-muted-foreground">
-                            {comp.servingPerPortion} {comp.unit} / portion
-                          </span>
-                        </div>
-                        
-                        {comp.reheatingSteps.length > 0 && (
-                          <div className="mb-2">
-                            <span className="text-xs font-medium text-orange-600">Steps:</span>
-                            <ol className="text-xs text-muted-foreground mt-1 space-y-1">
-                              {comp.reheatingSteps.map((step, sIdx) => (
-                                <li key={sIdx} className="flex gap-2">
-                                  <span className="text-orange-500">{sIdx + 1}.</span>
-                                  {step}
-                                </li>
-                              ))}
-                            </ol>
-                          </div>
-                        )}
-                        
-                        {comp.quantityControlNotes && (
-                          <div className="text-xs">
-                            <span className="font-medium text-yellow-600">Quality Notes:</span>
-                            <p className="text-muted-foreground">{comp.quantityControlNotes}</p>
-                          </div>
+                    <Checkbox
+                      checked={selectedInstructions.has(idx)}
+                      onCheckedChange={() => toggleInstructionSelection(idx)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold truncate">{instruction.dishName}</h3>
+                        <Badge variant="secondary" className="shrink-0">
+                          {instruction.components.length} component{instruction.components.length !== 1 ? 's' : ''}
+                        </Badge>
+                        {linkedRecipeMap.get(idx) ? (
+                          <Badge variant="default" className="shrink-0 bg-green-500">
+                            <LinkIcon className="h-3 w-3 mr-1" />
+                            Linked
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="shrink-0 text-muted-foreground">
+                            <Unlink className="h-3 w-3 mr-1" />
+                            Unlinked
+                          </Badge>
                         )}
                       </div>
-                    ))}
-                  </div>
-                </div>
+                    </div>
 
-                {/* Save Button */}
-                <div className="flex gap-2">
-                  <Button 
-                    onClick={saveInstruction}
-                    disabled={isSaving || selectedDays.length === 0}
-                    className="gap-2 bg-orange-500 hover:bg-orange-600"
-                  >
-                    {isSaving ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                    {expandedInstructions.has(idx) ? (
+                      <ChevronUp className="h-5 w-5 text-muted-foreground" />
                     ) : (
-                      <Check className="h-4 w-4" />
+                      <ChevronDown className="h-5 w-5 text-muted-foreground" />
                     )}
-                    Save Instruction
-                  </Button>
-                  
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      if (selectedInstruction === null) return
-                      const newParsed = [...parsedInstructions]
-                      newParsed.splice(selectedInstruction, 1)
-                      setParsedInstructions(newParsed)
-                      if (newParsed.length > 0) {
-                        setSelectedInstruction(0)
-                      } else {
-                        setSelectedInstruction(null)
-                      }
-                    }}
-                    className="gap-2"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    Skip
-                  </Button>
+                  </div>
+
+                  {/* Expanded Content */}
+                  {expandedInstructions.has(idx) && (
+                    <div className="px-4 pb-4 space-y-4 border-t pt-4">
+                      {/* Category & Days */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Category</Label>
+                          <select
+                            value={categoryMap.get(idx) || 'Main Course'}
+                            onChange={(e) => setCategoryMap(new Map(categoryMap).set(idx, e.target.value))}
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                          >
+                            {CATEGORIES.map(cat => (
+                              <option key={cat} value={cat}>{cat}</option>
+                            ))}
+                          </select>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label>Link to Recipe (optional)</Label>
+                          <select
+                            value={linkedRecipeMap.get(idx) || ''}
+                            onChange={(e) => {
+                              const newMap = new Map(linkedRecipeMap)
+                              if (e.target.value) {
+                                newMap.set(idx, e.target.value)
+                              } else {
+                                newMap.delete(idx)
+                              }
+                              setLinkedRecipeMap(newMap)
+                            }}
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                          >
+                            <option value="">-- No link --</option>
+                            {availableRecipes.map(recipe => (
+                              <option key={recipe.recipeId} value={recipe.recipeId}>
+                                {recipe.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Days Available *</Label>
+                        <div className="flex flex-wrap gap-2 p-3 border rounded-md bg-background">
+                          {DAYS.map(day => (
+                            <div key={day} className="flex items-center gap-1.5">
+                              <Checkbox
+                                id={`day-${idx}-${day}`}
+                                checked={(daysMap.get(idx) || []).includes(day)}
+                                onCheckedChange={() => toggleDay(idx, day)}
+                              />
+                              <label htmlFor={`day-${idx}-${day}`} className="text-sm cursor-pointer">
+                                {day.slice(0, 3)}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Components */}
+                      <div className="space-y-3">
+                        <Label>Components</Label>
+                        {instruction.components.map((comp, cidx) => (
+                          <div key={cidx} className="p-3 border rounded-lg bg-background">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-medium text-sm flex items-center gap-2">
+                                <Badge variant="outline">{cidx + 1}</Badge>
+                                {comp.subRecipeName || 'Unnamed Component'}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                {comp.servingPerPortion} {comp.unit} / portion
+                              </span>
+                            </div>
+                            
+                            {comp.reheatingSteps.length > 0 && (
+                              <div className="mb-2">
+                                <span className="text-xs font-medium text-orange-600">Reheating Steps:</span>
+                                <ol className="text-xs text-muted-foreground mt-1 space-y-1 ml-4">
+                                  {comp.reheatingSteps.map((step, sidx) => (
+                                    <li key={sidx} className="list-decimal">
+                                      {step}
+                                    </li>
+                                  ))}
+                                </ol>
+                              </div>
+                            )}
+                            
+                            {comp.quantityControlNotes && (
+                              <div className="text-xs mb-1">
+                                <span className="font-medium text-yellow-600">Quality Notes:</span>
+                                <span className="text-muted-foreground ml-1">{comp.quantityControlNotes}</span>
+                              </div>
+                            )}
+                            
+                            {comp.presentationGuidelines && (
+                              <div className="text-xs">
+                                <span className="font-medium text-green-600">Presentation:</span>
+                                <span className="text-muted-foreground ml-1">{comp.presentationGuidelines}</span>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+              ))}
+            </div>
+
+            {/* Save Button */}
+            <div className="flex items-center gap-4 pt-4 border-t">
+              <Button 
+                onClick={saveSelectedInstructions}
+                disabled={isSaving || selectedInstructions.size === 0}
+                className="gap-2 bg-orange-500 hover:bg-orange-600"
+              >
+                {isSaving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Saving... ({successCount}/{selectedInstructions.size})
+                  </>
+                ) : (
+                  <>
+                    <Check className="h-4 w-4" />
+                    Save {selectedInstructions.size} Instruction{selectedInstructions.size !== 1 ? 's' : ''}
+                  </>
+                )}
+              </Button>
+              
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setParsedInstructions([])
+                  setSelectedInstructions(new Set())
+                  setRawData('')
+                  setError(null)
+                }}
+                className="gap-2"
+              >
+                <Trash2 className="h-4 w-4" />
+                Clear All
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   )
 }
-

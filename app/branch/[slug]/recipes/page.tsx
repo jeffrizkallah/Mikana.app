@@ -3,14 +3,16 @@
 import { useState, useEffect, useMemo } from 'react'
 import { notFound, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { TopNav } from '@/components/TopNav'
+import { RoleSidebar } from '@/components/RoleSidebar'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { RecipeCard } from '@/components/RecipeCard'
 import { loadBranch } from '@/lib/data'
 import type { Recipe, Branch } from '@/lib/data'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ChefHat, Loader2 } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { ChefHat, Loader2, Search, X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 const DAY_ORDER = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
@@ -27,6 +29,7 @@ export default function RecipesPage({ params }: RecipesPageProps) {
   const [branch, setBranch] = useState<Branch | null | undefined>(undefined)
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState('')
 
   // Load branch data
   useEffect(() => {
@@ -61,11 +64,27 @@ export default function RecipesPage({ params }: RecipesPageProps) {
     )
   }, [recipes])
 
-  // Filter recipes based on selected day
+  // Filter recipes based on selected day and search query
   const filteredRecipes = useMemo(() => {
-    if (!dayParam) return recipes
-    return recipes.filter(recipe => recipe.daysAvailable?.includes(dayParam))
-  }, [recipes, dayParam])
+    let filtered = recipes
+
+    // Filter by day
+    if (dayParam) {
+      filtered = filtered.filter(recipe => recipe.daysAvailable?.includes(dayParam))
+    }
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase()
+      filtered = filtered.filter(recipe => 
+        recipe.name.toLowerCase().includes(query) ||
+        recipe.category?.toLowerCase().includes(query) ||
+        recipe.description?.toLowerCase().includes(query)
+      )
+    }
+
+    return filtered
+  }, [recipes, dayParam, searchQuery])
 
   // Handle branch not found after loading
   if (branch === null) {
@@ -75,21 +94,21 @@ export default function RecipesPage({ params }: RecipesPageProps) {
   // Show loading while branch is being loaded
   if (branch === undefined || isLoading) {
     return (
-      <div className="min-h-screen flex flex-col">
-        <TopNav />
-        <main className="flex-1 flex items-center justify-center">
+      <div className="flex min-h-screen">
+        <RoleSidebar />
+        <main className="flex-1 flex flex-col pt-16 md:pt-0 items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </main>
-        <Footer />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <TopNav />
+    <div className="flex min-h-screen">
+      <RoleSidebar />
 
-      <main className="flex-1 container mx-auto px-4 py-8">
+      <main className="flex-1 flex flex-col pt-16 md:pt-0">
+        <div className="flex-1 container mx-auto px-4 py-8">
         <Breadcrumbs
           items={[
             { label: 'Home', href: '/' },
@@ -110,6 +129,37 @@ export default function RecipesPage({ params }: RecipesPageProps) {
             {branch.name} - Daily Recipe Guide
           </p>
         </div>
+
+        {/* Search Bar */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Search Recipes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Search by name, category, or description..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              {searchQuery && (
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setSearchQuery('')}
+                  title="Clear search"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Day Filter Tabs */}
         <Card className="mb-6">
@@ -149,9 +199,25 @@ export default function RecipesPage({ params }: RecipesPageProps) {
         {/* Recipe Grid */}
         {filteredRecipes.length > 0 ? (
           <>
-            <h2 className="text-2xl font-semibold mb-4">
-              {filteredRecipes.length} Recipe{filteredRecipes.length !== 1 ? 's' : ''} Available
-            </h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-semibold">
+                {filteredRecipes.length} Recipe{filteredRecipes.length !== 1 ? 's' : ''} Available
+              </h2>
+              {(searchQuery || dayParam) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setSearchQuery('')
+                    window.location.href = `/branch/${branch.slug}/recipes`
+                  }}
+                  className="gap-2"
+                >
+                  <X className="h-4 w-4" />
+                  Clear All Filters
+                </Button>
+              )}
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredRecipes.map(recipe => (
                 <RecipeCard key={recipe.recipeId} recipe={recipe} branchSlug={branch.slug} />
@@ -164,14 +230,29 @@ export default function RecipesPage({ params }: RecipesPageProps) {
               <ChefHat className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
               <h3 className="text-xl font-semibold mb-2">No Recipes Found</h3>
               <p className="text-muted-foreground">
-                There are no recipes available for {dayParam || 'this selection'}.
+                {searchQuery 
+                  ? `No recipes match "${searchQuery}". Try a different search term.`
+                  : `There are no recipes available for ${dayParam || 'this selection'}.`
+                }
               </p>
+              {(searchQuery || dayParam) && (
+                <Button
+                  variant="outline"
+                  className="mt-4"
+                  onClick={() => {
+                    setSearchQuery('')
+                    window.location.href = `/branch/${branch.slug}/recipes`
+                  }}
+                >
+                  Clear Filters
+                </Button>
+              )}
             </CardContent>
           </Card>
         )}
+        </div>
+        <Footer />
       </main>
-
-      <Footer />
     </div>
   )
 }

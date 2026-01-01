@@ -86,6 +86,19 @@ export default withAuth(
         }
       }
       
+      // Allow dispatch pages for their assigned branches (packing/receiving)
+      // Path format: /dispatch/[id]/branch/[slug]
+      if (path.startsWith('/dispatch/')) {
+        const pathParts = path.split('/')
+        // Check if it's a branch-specific dispatch page
+        if (pathParts[3] === 'branch' && pathParts[4]) {
+          const branchSlug = pathParts[4]
+          if (userBranches.includes(branchSlug)) {
+            return NextResponse.next()
+          }
+        }
+      }
+      
       // Redirect to their branch
       if (userBranches.length > 0) {
         return NextResponse.redirect(new URL(`/branch/${userBranches[0]}`, req.url))
@@ -98,10 +111,22 @@ export default withAuth(
     // Central kitchen special handling - can only access kitchen-related pages
     if (userRole === 'central_kitchen') {
       // Allow their pages
-      if (path === '/kitchen' || 
+      if (path === '/' ||
+          path === '/kitchen' || 
           path === '/profile' || 
-          path.startsWith('/branch/central-kitchen')) {
+          path.startsWith('/branch/central-kitchen') ||
+          path.startsWith('/branch/')) {
         return NextResponse.next()
+      }
+      
+      // Allow dispatch pages for packing (central kitchen packs items for all branches)
+      // Path format: /dispatch/[id]/branch/[slug]
+      if (path.startsWith('/dispatch/')) {
+        const pathParts = path.split('/')
+        // Check if it's a branch-specific dispatch page (packing checklist)
+        if (pathParts[3] === 'branch' && pathParts[4]) {
+          return NextResponse.next()
+        }
       }
       
       // Redirect to kitchen dashboard
@@ -122,6 +147,21 @@ export default withAuth(
           return NextResponse.next()
         }
         // Redirect to dashboard if trying to access other branches
+        return NextResponse.redirect(new URL('/dashboard', req.url))
+      }
+      
+      // Allow dispatch pages for their assigned branches (packing/receiving)
+      // Path format: /dispatch/[id]/branch/[slug]
+      if (path.startsWith('/dispatch/')) {
+        const pathParts = path.split('/')
+        // Check if it's a branch-specific dispatch page
+        if (pathParts[3] === 'branch' && pathParts[4]) {
+          const branchSlug = pathParts[4]
+          if (userBranches.includes(branchSlug)) {
+            return NextResponse.next()
+          }
+        }
+        // Redirect to dashboard if trying to access other branches' dispatches
         return NextResponse.redirect(new URL('/dashboard', req.url))
       }
       

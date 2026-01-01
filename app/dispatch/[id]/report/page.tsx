@@ -3,10 +3,9 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Sidebar } from '@/components/Sidebar'
+import { RoleSidebar } from '@/components/RoleSidebar'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { PinProtection } from '@/components/PinProtection'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -143,43 +142,39 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
 
   if (loading) {
     return (
-      <PinProtection>
-        <div className="flex min-h-screen">
-          <Sidebar />
-          <main className="flex-1 flex flex-col pt-16 md:pt-0">
-            <div className="flex-1 container mx-auto px-4 py-8">
-              <div className="text-center py-12">
-                <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50 animate-pulse" />
-                <p className="text-muted-foreground">Loading dispatch report...</p>
-              </div>
+      <div className="flex min-h-screen">
+        <RoleSidebar />
+        <main className="flex-1 flex flex-col pt-16 md:pt-0">
+          <div className="flex-1 container mx-auto px-4 py-8">
+            <div className="text-center py-12">
+              <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50 animate-pulse" />
+              <p className="text-muted-foreground">Loading dispatch report...</p>
             </div>
-            <Footer />
-          </main>
-        </div>
-      </PinProtection>
+          </div>
+          <Footer />
+        </main>
+      </div>
     )
   }
 
   if (!dispatch) {
     return (
-      <PinProtection>
-        <div className="flex min-h-screen">
-          <Sidebar />
-          <main className="flex-1 flex flex-col pt-16 md:pt-0">
-            <div className="flex-1 container mx-auto px-4 py-8">
-              <div className="text-center py-12">
-                <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-                <h3 className="text-lg font-semibold mb-2">Dispatch not found</h3>
-                <p className="text-muted-foreground mb-4">The requested dispatch could not be found</p>
-                <Link href="/dispatch">
-                  <Button>Back to Dispatch Dashboard</Button>
-                </Link>
-              </div>
+      <div className="flex min-h-screen">
+        <RoleSidebar />
+        <main className="flex-1 flex flex-col pt-16 md:pt-0">
+          <div className="flex-1 container mx-auto px-4 py-8">
+            <div className="text-center py-12">
+              <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
+              <h3 className="text-lg font-semibold mb-2">Dispatch not found</h3>
+              <p className="text-muted-foreground mb-4">The requested dispatch could not be found</p>
+              <Link href="/dispatch">
+                <Button>Back to Dispatch Dashboard</Button>
+              </Link>
             </div>
-            <Footer />
-          </main>
-        </div>
-      </PinProtection>
+          </div>
+          <Footer />
+        </main>
+      </div>
     )
   }
 
@@ -265,9 +260,8 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
   }
 
   return (
-    <PinProtection>
-      <div className={isPrintMode ? "min-h-screen flex flex-col" : "flex min-h-screen"}>
-        {!isPrintMode && <Sidebar />}
+    <div className={isPrintMode ? "min-h-screen flex flex-col" : "flex min-h-screen"}>
+      {!isPrintMode && <RoleSidebar />}
         
         {/* Print Header */}
         {isPrintMode && (
@@ -823,10 +817,9 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
             )}
           </div>
 
-          {!isPrintMode && <Footer />}
-        </main>
-      </div>
-    </PinProtection>
+        {!isPrintMode && <Footer />}
+      </main>
+    </div>
   )
 }
 

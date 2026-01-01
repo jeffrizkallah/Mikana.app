@@ -255,46 +255,6 @@ export default function OperationsDashboardPage() {
               Quick Access
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {/* Dispatch */}
-              <Link href="/dispatch">
-                <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
-                  <CardContent className="pt-6">
-                    <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500/10 to-amber-500/5 text-amber-600 group-hover:scale-110 transition-transform duration-300">
-                        <Package className="h-6 w-6" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-foreground">Dispatch Management</h3>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Manage branch dispatches and deliveries
-                        </p>
-                      </div>
-                      <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-
-              {/* Analytics */}
-              <Link href="/admin/analytics">
-                <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
-                  <CardContent className="pt-6">
-                    <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-xl bg-gradient-to-br from-green-500/10 to-green-500/5 text-green-600 group-hover:scale-110 transition-transform duration-300">
-                        <BarChart3 className="h-6 w-6" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-foreground">Sales Analytics</h3>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Revenue trends and performance insights
-                        </p>
-                      </div>
-                      <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-
               {/* All Branches */}
               <Link href="/">
                 <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">

@@ -10,7 +10,7 @@ import {
   AlertTriangle,
   Loader2
 } from 'lucide-react'
-import { TopNav } from '@/components/TopNav'
+import { RoleSidebar } from '@/components/RoleSidebar'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { PrintHeader } from '@/components/PrintHeader'
@@ -73,12 +73,12 @@ export default function RecipePage({ params }: RecipePageProps) {
   // Show loading state
   if (branch === undefined || recipe === undefined || isLoading) {
     return (
-      <div className="min-h-screen flex flex-col">
-        {!isPrintMode && <TopNav />}
-        <main className="flex-1 flex items-center justify-center">
+      <div className={isPrintMode ? "min-h-screen flex flex-col" : "flex min-h-screen"}>
+        {!isPrintMode && <RoleSidebar />}
+        <main className={isPrintMode ? "flex-1 flex items-center justify-center" : "flex-1 flex flex-col pt-16 md:pt-0 items-center justify-center"}>
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </main>
-        <Footer />
+        {isPrintMode && <Footer />}
       </div>
     )
   }
@@ -89,11 +89,12 @@ export default function RecipePage({ params }: RecipePageProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {!isPrintMode && <TopNav />}
+    <div className={isPrintMode ? "min-h-screen flex flex-col" : "flex min-h-screen"}>
+      {!isPrintMode && <RoleSidebar />}
       <PrintHeader branchName={`${branch.name} - ${recipe.name}`} />
 
-      <main className="flex-1 container mx-auto px-4 py-8">
+      <main className={isPrintMode ? "flex-1 container mx-auto px-4 py-8" : "flex-1 flex flex-col pt-16 md:pt-0"}>
+        <div className={isPrintMode ? "" : "flex-1 container mx-auto px-4 py-8"}>
         <Breadcrumbs
           items={[
             { label: 'Home', href: '/' },
@@ -211,9 +212,10 @@ export default function RecipePage({ params }: RecipePageProps) {
             </Link>
           </div>
         )}
+        </div>
+        {!isPrintMode && <Footer />}
       </main>
-
-      <Footer />
+      {isPrintMode && <Footer />}
     </div>
   )
 }

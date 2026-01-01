@@ -15,7 +15,7 @@ import {
   Sparkles,
   MessageSquare
 } from 'lucide-react'
-import { TopNav } from '@/components/TopNav'
+import { RoleSidebar } from '@/components/RoleSidebar'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { PrintHeader } from '@/components/PrintHeader'
@@ -100,12 +100,12 @@ export default function RecipeInstructionPage({ params }: RecipeInstructionPageP
   // Show loading state
   if (branch === undefined || instruction === undefined || isLoading) {
     return (
-      <div className="min-h-screen flex flex-col">
-        {!isPrintMode && <TopNav />}
-        <main className="flex-1 flex items-center justify-center">
+      <div className={isPrintMode ? "min-h-screen flex flex-col" : "flex min-h-screen"}>
+        {!isPrintMode && <RoleSidebar />}
+        <main className={isPrintMode ? "flex-1 flex items-center justify-center" : "flex-1 flex flex-col pt-16 md:pt-0 items-center justify-center"}>
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </main>
-        <Footer />
+        {isPrintMode && <Footer />}
       </div>
     )
   }
@@ -116,11 +116,12 @@ export default function RecipeInstructionPage({ params }: RecipeInstructionPageP
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {!isPrintMode && <TopNav />}
+    <div className={isPrintMode ? "min-h-screen flex flex-col" : "flex min-h-screen"}>
+      {!isPrintMode && <RoleSidebar />}
       <PrintHeader branchName={`${branch.name} - ${instruction.dishName}`} />
 
-      <main className="flex-1 container mx-auto px-4 py-8">
+      <main className={isPrintMode ? "flex-1 container mx-auto px-4 py-8" : "flex-1 flex flex-col pt-16 md:pt-0"}>
+        <div className={isPrintMode ? "" : "flex-1 container mx-auto px-4 py-8"}>
         <Breadcrumbs
           items={[
             { label: 'Home', href: '/' },
@@ -183,10 +184,10 @@ export default function RecipeInstructionPage({ params }: RecipeInstructionPageP
         <div className="space-y-6 mb-8">
           {instruction.components.map((component, componentIndex) => (
             <Card key={component.componentId} className="overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30">
+              <CardHeader className="bg-secondary border-b border-orange-200/60">
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold text-sm">
+                    <div className="w-8 h-8 rounded-full bg-primary/20 text-primary border border-primary/30 flex items-center justify-center font-bold text-sm">
                       {componentIndex + 1}
                     </div>
                     <span>{component.subRecipeName}</span>
@@ -209,11 +210,11 @@ export default function RecipeInstructionPage({ params }: RecipeInstructionPageP
                       {component.reheatingSteps
                         .filter(step => step.trim())
                         .map((step, stepIndex) => (
-                          <div key={stepIndex} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                            <div className="w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-900 text-orange-600 dark:text-orange-300 flex items-center justify-center font-medium text-sm shrink-0">
+                          <div key={stepIndex} className="flex items-start gap-3 p-4 rounded-lg bg-secondary border border-orange-200/60">
+                            <div className="w-8 h-8 rounded-full bg-primary/20 text-primary border border-primary/30 flex items-center justify-center font-medium text-sm shrink-0">
                               {stepIndex + 1}
                             </div>
-                            <p className="text-sm leading-relaxed pt-0.5">{step}</p>
+                            <p className="text-sm leading-relaxed pt-1">{step}</p>
                           </div>
                         ))}
                     </div>
@@ -224,11 +225,11 @@ export default function RecipeInstructionPage({ params }: RecipeInstructionPageP
                 {component.quantityControlNotes && (
                   <div className="mb-6">
                     <h4 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                      <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                      <AlertTriangle className="h-5 w-5 text-orange-600" />
                       Quality Control Notes
                     </h4>
-                    <div className="p-4 rounded-lg bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-800">
-                      <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                    <div className="p-4 rounded-lg bg-orange-50 dark:bg-orange-950 border border-orange-200 dark:border-orange-800">
+                      <p className="text-sm">
                         {component.quantityControlNotes}
                       </p>
                     </div>
@@ -239,11 +240,11 @@ export default function RecipeInstructionPage({ params }: RecipeInstructionPageP
                 {component.presentationGuidelines && (
                   <div>
                     <h4 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                      <Sparkles className="h-5 w-5 text-purple-500" />
+                      <Sparkles className="h-5 w-5 text-primary" />
                       Presentation Guidelines
                     </h4>
-                    <div className="p-4 rounded-lg bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800">
-                      <p className="text-sm text-purple-800 dark:text-purple-200">
+                    <div className="p-4 rounded-lg bg-primary/10 dark:bg-primary/20 border border-primary/30 dark:border-primary/40">
+                      <p className="text-sm">
                         {component.presentationGuidelines}
                       </p>
                     </div>
@@ -301,9 +302,10 @@ export default function RecipeInstructionPage({ params }: RecipeInstructionPageP
             </Link>
           </div>
         )}
+        </div>
+        {!isPrintMode && <Footer />}
       </main>
-
-      <Footer />
+      {isPrintMode && <Footer />}
     </div>
   )
 }

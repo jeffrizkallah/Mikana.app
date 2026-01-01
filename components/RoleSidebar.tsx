@@ -81,6 +81,7 @@ function getNavItems(role: UserRole | null, userBranches?: string[]): NavItem[] 
       return [
         { href: '/kitchen', label: 'Home', icon: Home },
         { href: '/branch/central-kitchen/recipes', label: 'Recipes', icon: ChefHat },
+        { href: '/', label: 'Branches', icon: Building2 },
       ]
 
     case 'branch_manager':
@@ -98,8 +99,12 @@ function getNavItems(role: UserRole | null, userBranches?: string[]): NavItem[] 
       ]
 
     case 'branch_staff':
-      // Branch staff has minimal/no sidebar - handled separately
-      return []
+      // Branch staff gets a simple Home button to their assigned branch
+      // If no branch is assigned (e.g., during admin preview), use first non-CK branch as fallback
+      const branchSlug = userBranches?.[0] || 'isc-soufouh'
+      return [
+        { href: `/branch/${branchSlug}`, label: 'Home', icon: Home }
+      ]
 
     default:
       return []
@@ -126,11 +131,6 @@ export function RoleSidebar({ className }: RoleSidebarProps) {
   
   // Use effective role (preview or actual) for navigation
   const role = effectiveRole || actualRole
-
-  // Branch staff gets a special minimal header instead (unless admin is previewing)
-  if (role === 'branch_staff' && !isPreviewMode) {
-    return <BranchStaffHeader userName={`${user?.firstName} ${user?.lastName}`} />
-  }
 
   const navItems = getNavItems(role, branches)
 
@@ -357,30 +357,6 @@ export function RoleSidebar({ className }: RoleSidebarProps) {
         className={`hidden md:block transition-all duration-300 ease-in-out flex-shrink-0 ${isCollapsed ? 'w-[80px]' : 'w-[280px]'}`}
       />
     </>
-  )
-}
-
-// Minimal header for branch staff (no sidebar)
-function BranchStaffHeader({ userName }: { userName: string }) {
-  const handleSignOut = () => {
-    signOut({ callbackUrl: '/login' })
-  }
-
-  return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-b">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-lg font-bold text-primary">Mikana</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-muted-foreground">{userName}</span>
-          <Button variant="outline" size="sm" onClick={handleSignOut}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Sign Out
-          </Button>
-        </div>
-      </div>
-    </header>
   )
 }
 

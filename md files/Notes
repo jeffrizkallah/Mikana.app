@@ -1,0 +1,26 @@
+CHANGES/ADDITIONS
+
+- **(DONE)** For Central Kitchen role, add all Branches on the side menu (for packing). Right now we have Home and Recipes
+- **(DONE)** Remove "create dispatch" from dashbaod fro Central Kitchen, they can pack orderes from the Branches section on the left , Show the available dispatches and what's been completed and packed on the Central Kitchen dashboard, but they cannot access the dispatches and the reports of the dispatches. They can only see what has been packed and what has not been packed.
+- **(DONE)** Add a Home button on the left Nav Bar for the branch staff role
+- **(DONE)** AI-Powered Recipe Import (LLM Parser) (Check Notes)
+- **(DONE)** AI-Powered Reheating Guidelines Import (LLM Parser) (Check Notes)
+- **(DONE)** Add a search bar in the Recipes Page, so its easier to find a recipe 
+- **(DONE)** Guided onboarding for different roles, for first time users. (check ###26)
+- **(DONE)** Make the visual presentation in the reheating edit section a drop or upload, not a URL for the image 
+- **(DONE)** Remove Dispatch and Sales Analysis from Operations Lead dashboard (she should not need them)
+- Make sure all the color tones of the icons accross all the software are the same (Branch Manager)
+- Add Regional Manager role with its dashbaord and tools
+- Add Ordering section for branches 
+- Breakdown of orders into recipes, sub-recipes, and ingredients
+- Add Inventory System
+
+
+---------------------------------------------------------------
+
+Feature Note: AI-Powered Recipe Import (LLM Parser)
+This new feature introduces an AI-Powered Recipe Import to solve inconsistencies in our standard Excel templates. Instead of relying on rigid code that breaks when templates slightly shift (e.g., ingredients move rows), the system now uses a Large Language Model (LLM) service (like GPT-5.2). The LLM processes the raw Excel data, understands the context regardless of the layout, and reliably converts it into a clean, structured JSON format for direct database insertion. This drastically reduces the development time required for template exceptions and future-proofs our recipe intake process. (Check Gemini Chat)
+
+
+Feature Note: AI-Powered Reheating Guidelines Import
+The AI-Powered Import feature is extended to handle the "Reheating Guidelines & Quality Control Standards" file. This process uses the same LLM parsing strategy but is configured with a specific JSON schema tailored for branch operations (focusing on item_name, equipment, reheating_temp, reheating_time, and quality_standards). The LLM successfully interprets the visual matrix layout, including merged cells and section headers, to create a structured list of standards for the software, requiring no manual coding for layout changes. 

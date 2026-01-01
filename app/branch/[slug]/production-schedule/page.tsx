@@ -13,7 +13,7 @@ import {
   Calendar,
   ClipboardList
 } from 'lucide-react'
-import { TopNav } from '@/components/TopNav'
+import { RoleSidebar } from '@/components/RoleSidebar'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { loadBranch, isCentralKitchen } from '@/lib/data'
@@ -174,21 +174,21 @@ export default function ProductionSchedulePage({ params }: ProductionSchedulePag
 
   if (branch === undefined || isLoading) {
     return (
-      <div className="min-h-screen flex flex-col">
-        <TopNav />
-        <main className="flex-1 flex items-center justify-center">
+      <div className="flex min-h-screen">
+        <RoleSidebar />
+        <main className="flex-1 flex flex-col pt-16 md:pt-0 items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </main>
-        <Footer />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <TopNav />
+    <div className="flex min-h-screen">
+      <RoleSidebar />
 
-      <main className="flex-1 container mx-auto px-4 py-8">
+      <main className="flex-1 flex flex-col pt-16 md:pt-0">
+        <div className="flex-1 container mx-auto px-4 py-8">
         <Breadcrumbs
           items={[
             { label: 'Home', href: '/' },
@@ -403,9 +403,9 @@ export default function ProductionSchedulePage({ params }: ProductionSchedulePag
             )}
           </>
         )}
+        </div>
+        <Footer />
       </main>
-
-      <Footer />
     </div>
   )
 }

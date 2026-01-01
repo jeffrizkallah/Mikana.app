@@ -157,7 +157,7 @@ export default function DispatchDashboardPage() {
               <h1 className="text-4xl font-bold mb-2">Dispatch Management</h1>
               <p className="text-muted-foreground">Monitor and manage all branch dispatches</p>
             </div>
-            <Link href="/dispatch/upload">
+            <Link href="/dispatch/upload" data-tour-id="create-dispatch-btn">
               <Button size="lg" className="flex items-center gap-2">
                 <Upload className="h-5 w-5" />
                 Create Dispatch
@@ -215,7 +215,7 @@ export default function DispatchDashboardPage() {
             </div>
 
             {/* Dispatch List */}
-            <Card>
+            <Card data-tour-id="dispatch-list">
           <CardHeader>
             <CardTitle>All Dispatches</CardTitle>
           </CardHeader>

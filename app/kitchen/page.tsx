@@ -18,7 +18,6 @@ import {
   CheckCircle2,
   Building2,
   ClipboardList,
-  Play,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 
@@ -199,17 +198,17 @@ export default function CentralKitchenDashboard() {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <Link href="/dispatch">
+          <Link href="/">
             <Card className="hover:shadow-lg transition-all cursor-pointer group h-full">
               <CardContent className="pt-6">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-xl bg-gradient-to-br from-purple-100 to-purple-50 text-purple-600 group-hover:scale-110 transition-transform">
-                    <Truck className="h-6 w-6" />
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-blue-100 to-blue-50 text-blue-600 group-hover:scale-110 transition-transform">
+                    <Building2 className="h-6 w-6" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold">Create Dispatch</h3>
+                    <h3 className="font-semibold">All Branches</h3>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Create and manage branch dispatches
+                      View all branches for packing
                     </p>
                   </div>
                   <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
@@ -263,7 +262,7 @@ export default function CentralKitchenDashboard() {
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-rose-500" />
-                Today&apos;s Dispatches
+                Today&apos;s Dispatches - Packing Status
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -281,30 +280,15 @@ export default function CentralKitchenDashboard() {
                           <p className="text-sm text-muted-foreground">
                             {bd.items?.length || 0} items
                           </p>
+                          {bd.packedBy && bd.packedAt && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Packed by {bd.packedBy} at {new Date(bd.packedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                          )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div>
                         {getStatusBadge(bd.status)}
-                        <Link href={`/dispatch/${dispatch.id}/branch/${bd.branchSlug}`}>
-                          <Button size="sm" variant="outline">
-                            {bd.status === 'pending' ? (
-                              <>
-                                <Play className="h-4 w-4 mr-1" />
-                                Start
-                              </>
-                            ) : bd.status === 'packing' ? (
-                              <>
-                                <Package className="h-4 w-4 mr-1" />
-                                Continue
-                              </>
-                            ) : (
-                              <>
-                                <ArrowRight className="h-4 w-4 mr-1" />
-                                View
-                              </>
-                            )}
-                          </Button>
-                        </Link>
                       </div>
                     </div>
                   ))
@@ -317,18 +301,10 @@ export default function CentralKitchenDashboard() {
         {/* Active Dispatches */}
         <Card>
           <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base flex items-center gap-2">
-                <ClipboardList className="h-4 w-4 text-primary" />
-                All Active Dispatches
-              </CardTitle>
-              <Link href="/dispatch">
-                <Button variant="ghost" size="sm">
-                  View All
-                  <ArrowRight className="h-4 w-4 ml-1" />
-                </Button>
-              </Link>
-            </div>
+            <CardTitle className="text-base flex items-center gap-2">
+              <ClipboardList className="h-4 w-4 text-primary" />
+              All Active Dispatches - Packing Overview
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {activeDispatches.length === 0 ? (
@@ -340,37 +316,33 @@ export default function CentralKitchenDashboard() {
               <div className="space-y-4">
                 {activeDispatches.slice(0, 5).map(dispatch => (
                   <div key={dispatch.id} className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div>
-                        <p className="font-semibold">
-                          Delivery: {formatDate(dispatch.deliveryDate)}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {dispatch.branchDispatches.length} branches
-                        </p>
-                      </div>
-                      <Link href={`/dispatch/${dispatch.id}/report`}>
-                        <Button variant="outline" size="sm">
-                          View Report
-                        </Button>
-                      </Link>
+                    <div className="mb-3">
+                      <p className="font-semibold">
+                        Delivery: {formatDate(dispatch.deliveryDate)}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {dispatch.branchDispatches.length} branches • {dispatch.branchDispatches.filter(bd => bd.status === 'completed').length} completed
+                      </p>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                       {dispatch.branchDispatches.slice(0, 4).map(bd => (
-                        <Link 
+                        <div 
                           key={bd.branchSlug}
-                          href={`/dispatch/${dispatch.id}/branch/${bd.branchSlug}`}
+                          className="p-2 bg-muted/50 rounded"
                         >
-                          <div className="p-2 bg-muted/50 rounded hover:bg-muted transition-colors cursor-pointer">
-                            <p className="font-medium text-sm truncate">{bd.branchName}</p>
-                            <div className="flex items-center justify-between mt-1">
-                              <span className="text-xs text-muted-foreground">
-                                {bd.items?.length || 0} items
-                              </span>
-                              {getStatusBadge(bd.status)}
-                            </div>
+                          <p className="font-medium text-sm truncate">{bd.branchName}</p>
+                          <div className="flex items-center justify-between mt-1">
+                            <span className="text-xs text-muted-foreground">
+                              {bd.items?.length || 0} items
+                            </span>
+                            {getStatusBadge(bd.status)}
                           </div>
-                        </Link>
+                          {bd.packedBy && (
+                            <p className="text-xs text-muted-foreground mt-1 truncate">
+                              By: {bd.packedBy}
+                            </p>
+                          )}
+                        </div>
                       ))}
                     </div>
                     {dispatch.branchDispatches.length > 4 && (
