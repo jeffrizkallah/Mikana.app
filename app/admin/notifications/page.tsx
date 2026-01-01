@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Plus, Trash2, Edit, Eye, EyeOff, Sparkles, CheckCircle, AlertTriangle, Info, AlertCircle } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Edit, Eye, EyeOff, Sparkles, CheckCircle, AlertTriangle, Info, AlertCircle, UserPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -11,12 +11,13 @@ import { Notification, formatRelativeTime, getNotificationTypeConfig } from '@/l
 import { AdminProtection } from '@/components/AdminProtection'
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog'
 
-const typeIcons = {
+const typeIcons: Record<string, typeof Info> = {
   feature: Sparkles,
   patch: CheckCircle,
   alert: AlertTriangle,
   announcement: Info,
   urgent: AlertCircle,
+  user_signup: UserPlus,
 }
 
 interface AdminNotification extends Notification {
