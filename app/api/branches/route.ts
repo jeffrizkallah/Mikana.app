@@ -1,33 +1,40 @@
 import { NextResponse } from 'next/server'
-import fs from 'fs/promises'
-import path from 'path'
-import { Branch } from '@/lib/data'
+import { sql } from '@vercel/postgres'
+import type { Branch } from '@/lib/data'
 
-const dataFilePath = path.join(process.cwd(), 'data', 'branches.json')
-
-async function getBranches(): Promise<Branch[]> {
-  try {
-    const fileContent = await fs.readFile(dataFilePath, 'utf-8')
-    return JSON.parse(fileContent)
-  } catch (error) {
-    console.error('Error reading branches file:', error)
-    return []
-  }
-}
-
-async function saveBranches(branches: Branch[]) {
-  try {
-    await fs.writeFile(dataFilePath, JSON.stringify(branches, null, 2), 'utf-8')
-    return true
-  } catch (error) {
-    console.error('Error writing branches file:', error)
-    return false
+// Helper to convert database row to Branch type
+function rowToBranch(row: any): Branch {
+  return {
+    id: String(row.id),
+    slug: row.slug,
+    name: row.name,
+    branchType: row.branch_type,
+    school: row.school || '',
+    location: row.location,
+    manager: row.manager,
+    contacts: row.contacts || [],
+    operatingHours: row.operating_hours || '',
+    deliverySchedule: row.delivery_schedule || [],
+    kpis: row.kpis || { salesTarget: '', wastePct: '', hygieneScore: '' },
+    roles: row.roles || [],
+    media: row.media || { photos: [], videos: [] }
   }
 }
 
 export async function GET() {
-  const branches = await getBranches()
-  return NextResponse.json(branches)
+  try {
+    const result = await sql`
+      SELECT * FROM branches ORDER BY name ASC
+    `
+    const branches = result.rows.map(rowToBranch)
+    return NextResponse.json(branches)
+  } catch (error) {
+    console.error('Error fetching branches:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch branches' },
+      { status: 500 }
+    )
+  }
 }
 
 export async function POST(request: Request) {
@@ -35,40 +42,46 @@ export async function POST(request: Request) {
     const newBranch = await request.json()
     
     // Basic validation
-    if (!newBranch.slug || !newBranch.name) {
+    if (!newBranch.slug || !newBranch.name || !newBranch.location || !newBranch.manager) {
       return NextResponse.json(
-        { error: 'Missing required fields: slug, name' },
+        { error: 'Missing required fields: slug, name, location, manager' },
         { status: 400 }
       )
     }
 
-    const branches = await getBranches()
-    
     // Check if slug exists
-    if (branches.some(b => b.slug === newBranch.slug)) {
+    const existing = await sql`SELECT slug FROM branches WHERE slug = ${newBranch.slug}`
+    if (existing.rows.length > 0) {
       return NextResponse.json(
         { error: 'Branch slug already exists' },
         { status: 409 }
       )
     }
 
-    // Generate ID if not provided
-    if (!newBranch.id) {
-      const maxId = branches.reduce((max, b) => {
-        const id = parseInt(b.id)
-        return id > max ? id : max
-      }, 0)
-      newBranch.id = String(maxId + 1)
-    }
+    // Insert new branch
+    const result = await sql`
+      INSERT INTO branches (
+        slug, name, branch_type, school, location, manager,
+        contacts, operating_hours, delivery_schedule, kpis, roles, media
+      )
+      VALUES (
+        ${newBranch.slug},
+        ${newBranch.name},
+        ${newBranch.branchType || 'service'},
+        ${newBranch.school || ''},
+        ${newBranch.location},
+        ${newBranch.manager},
+        ${JSON.stringify(newBranch.contacts || [])}::jsonb,
+        ${newBranch.operatingHours || ''},
+        ${JSON.stringify(newBranch.deliverySchedule || [])}::jsonb,
+        ${JSON.stringify(newBranch.kpis || { salesTarget: '', wastePct: '', hygieneScore: '' })}::jsonb,
+        ${JSON.stringify(newBranch.roles || ['manager', 'supervisor', 'kitchen', 'counter', 'cleaner'])}::jsonb,
+        ${JSON.stringify(newBranch.media || { photos: [], videos: [] })}::jsonb
+      )
+      RETURNING *
+    `
 
-    branches.push(newBranch)
-    const success = await saveBranches(branches)
-
-    if (!success) {
-      throw new Error('Failed to save file')
-    }
-
-    return NextResponse.json(newBranch, { status: 201 })
+    return NextResponse.json(rowToBranch(result.rows[0]), { status: 201 })
   } catch (error) {
     console.error('Error creating branch:', error)
     return NextResponse.json(
@@ -77,4 +90,3 @@ export async function POST(request: Request) {
     )
   }
 }
-
