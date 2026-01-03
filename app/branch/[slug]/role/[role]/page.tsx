@@ -64,7 +64,7 @@ export default async function RolePage({ params, searchParams }: RolePageProps) 
 
             {!isPrintMode && (
               <div className="flex justify-end gap-2 mb-4">
-                <Link href={`/branch/${branch.slug}/role/${params.role}?print=1`} target="_blank">
+                <Link href={`/branch/${branch.slug}/role/${roleId}?print=1`} target="_blank">
                   <Button variant="outline">Print View</Button>
                 </Link>
                 <a href={`mailto:operations@mikana.ae?subject=Issue Report: ${branch.name} - ${role.name}`}>
