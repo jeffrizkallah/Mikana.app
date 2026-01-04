@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
-import { existsSync } from 'fs'
+import { put } from '@vercel/blob'
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,12 +11,6 @@ export async function POST(request: NextRequest) {
         { error: 'No files provided' },
         { status: 400 }
       )
-    }
-
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = join(process.cwd(), 'public', 'uploads', 'recipe-instructions')
-    if (!existsSync(uploadsDir)) {
-      await mkdir(uploadsDir, { recursive: true })
     }
 
     const urls: string[] = []
@@ -41,17 +33,14 @@ export async function POST(request: NextRequest) {
       const timestamp = Date.now()
       const randomStr = Math.random().toString(36).substring(2, 8)
       const extension = file.name.split('.').pop()
-      const filename = `${timestamp}-${randomStr}.${extension}`
+      const filename = `recipe-instructions/${timestamp}-${randomStr}.${extension}`
 
-      // Convert file to buffer and save
-      const bytes = await file.arrayBuffer()
-      const buffer = Buffer.from(bytes)
+      // Upload to Vercel Blob
+      const blob = await put(filename, file, {
+        access: 'public',
+      })
 
-      const filepath = join(uploadsDir, filename)
-      await writeFile(filepath, buffer)
-
-      // Return public URL
-      urls.push(`/uploads/recipe-instructions/${filename}`)
+      urls.push(blob.url)
     }
 
     return NextResponse.json({ urls, count: urls.length })
@@ -63,4 +52,3 @@ export async function POST(request: NextRequest) {
     )
   }
 }
-
