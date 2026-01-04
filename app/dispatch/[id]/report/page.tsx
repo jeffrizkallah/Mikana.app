@@ -458,6 +458,53 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
             </Card>
           )}
 
+          {/* All Branches Status */}
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold">All Branches Status</h2>
+            
+            <Card>
+              <CardContent className="pt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {dispatch.branchDispatches.map(bd => {
+                    const issueCount = bd.items.filter(item => item.issue !== null).length
+                    return (
+                      <div
+                        key={bd.branchSlug}
+                        className={`p-4 border rounded-lg ${
+                          issueCount > 0 ? 'border-red-300 bg-red-50' : 'border-green-300 bg-green-50'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="font-semibold">{bd.branchName}</div>
+                          {getStatusBadge(bd.status)}
+                        </div>
+                        <div className="text-sm space-y-1">
+                          <div className="text-muted-foreground">
+                            {bd.items.length} items total
+                          </div>
+                          {issueCount > 0 ? (
+                            <div className="text-red-600 font-medium">
+                              ⚠️ {issueCount} issue{issueCount > 1 ? 's' : ''}
+                            </div>
+                          ) : (
+                            <div className="text-green-600 font-medium">
+                              ✓ No issues
+                            </div>
+                          )}
+                          {bd.receivedBy && (
+                            <div className="text-xs text-muted-foreground mt-2">
+                              By: {bd.receivedBy}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Issues by Branch */}
           {itemsWithIssues.length > 0 ? (
             <div className="space-y-6 mb-6">
@@ -627,53 +674,6 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
               </CardContent>
             </Card>
           )}
-
-          {/* All Branches Status */}
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold">All Branches Status</h2>
-            
-            <Card>
-              <CardContent className="pt-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {dispatch.branchDispatches.map(bd => {
-                    const issueCount = bd.items.filter(item => item.issue !== null).length
-                    return (
-                      <div
-                        key={bd.branchSlug}
-                        className={`p-4 border rounded-lg ${
-                          issueCount > 0 ? 'border-red-300 bg-red-50' : 'border-green-300 bg-green-50'
-                        }`}
-                      >
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="font-semibold">{bd.branchName}</div>
-                          {getStatusBadge(bd.status)}
-                        </div>
-                        <div className="text-sm space-y-1">
-                          <div className="text-muted-foreground">
-                            {bd.items.length} items total
-                          </div>
-                          {issueCount > 0 ? (
-                            <div className="text-red-600 font-medium">
-                              ⚠️ {issueCount} issue{issueCount > 1 ? 's' : ''}
-                            </div>
-                          ) : (
-                            <div className="text-green-600 font-medium">
-                              ✓ No issues
-                            </div>
-                          )}
-                          {bd.receivedBy && (
-                            <div className="text-xs text-muted-foreground mt-2">
-                              By: {bd.receivedBy}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
 
           {/* Complete Branch Dispatch Details - Hidden in print mode */}
           {!isPrintMode && (
