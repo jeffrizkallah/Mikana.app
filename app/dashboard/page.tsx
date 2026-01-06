@@ -637,40 +637,46 @@ export default function BranchManagerDashboard() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       {dispatches.slice(0, 3).map(dispatch => {
                         const relevantBranches = dispatch.branchDispatches.filter(bd =>
                           branches.some(b => b.slug === bd.branchSlug)
                         )
                         
                         return (
-                          <div key={dispatch.id} className="flex items-center justify-between text-sm p-2 bg-muted/50 rounded-lg">
-                            <div>
-                              <p className="font-medium">
+                          <div key={dispatch.id} className="border rounded-lg overflow-hidden">
+                            {/* Date Header */}
+                            <div className="bg-muted/50 px-3 py-1.5 border-b">
+                              <p className="text-xs font-medium text-muted-foreground">
                                 {new Date(dispatch.deliveryDate).toLocaleDateString('en-US', {
-                                  weekday: 'short',
+                                  weekday: 'long',
                                   month: 'short',
                                   day: 'numeric'
                                 })}
                               </p>
-                              <p className="text-xs text-muted-foreground truncate max-w-[120px]">
-                                {relevantBranches.map(bd => bd.branchName).join(', ')}
-                              </p>
                             </div>
-                            <div className="flex flex-wrap gap-1 justify-end">
+                            {/* Branch Status List */}
+                            <div className="divide-y">
                               {relevantBranches.map(bd => (
-                                <Badge 
+                                <div 
                                   key={bd.branchSlug}
-                                  className={cn(
-                                    "text-xs",
-                                    bd.status === 'completed' ? 'bg-green-100 text-green-700' :
-                                    bd.status === 'dispatched' || bd.status === 'receiving' ? 'bg-blue-100 text-blue-700' :
-                                    'bg-amber-100 text-amber-700',
-                                    "border-0"
-                                  )}
+                                  className="flex items-center justify-between px-3 py-2 text-sm"
                                 >
-                                  {bd.status}
-                                </Badge>
+                                  <span className="truncate flex-1 mr-2">{bd.branchName}</span>
+                                  <Badge 
+                                    className={cn(
+                                      "text-xs shrink-0",
+                                      bd.status === 'completed' ? 'bg-green-100 text-green-700' :
+                                      bd.status === 'dispatched' ? 'bg-blue-100 text-blue-700' :
+                                      bd.status === 'receiving' ? 'bg-purple-100 text-purple-700' :
+                                      'bg-amber-100 text-amber-700',
+                                      "border-0"
+                                    )}
+                                  >
+                                    {bd.status === 'completed' && <CheckCircle2 className="h-3 w-3 mr-1" />}
+                                    {bd.status}
+                                  </Badge>
+                                </div>
                               ))}
                             </div>
                           </div>

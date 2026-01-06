@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Upload, AlertCircle, CheckCircle2 } from 'lucide-react'
 import type { Branch } from '@/lib/data'
+import { getItemUnit } from '@/lib/dispatch-unit-mappings'
 
 interface ParsedBranchData {
   branchSlug: string
@@ -294,9 +295,12 @@ export default function DispatchUploadPage() {
           
           // Get unit from column C (index 2) - or use the unit column we found
           const rawUnit = cells[unitColumnIndex]?.trim() || 'Kg'
-          const unit = rawUnit.toLowerCase() === 'unit' ? 'unit' : 
+          // First check if item has a special unit mapping, otherwise use Excel data
+          const excelUnit = rawUnit.toLowerCase() === 'unit' ? 'unit' : 
                        rawUnit.toLowerCase() === 'liter' || rawUnit.toLowerCase() === 'litre' ? 'Liter' :
                        rawUnit // Keep original unit (Kg, etc.)
+          // Apply special unit mappings for specific items (overrides Excel data if item has a mapping)
+          const unit = getItemUnit(itemName, excelUnit)
           
           // For each branch, get quantity from its column
           Object.entries(branchColumns).forEach(([branchName, columnIndex]) => {
@@ -366,8 +370,8 @@ export default function DispatchUploadPage() {
               quantity = 0
             }
             
-            // Determine unit: "KG" by default, "unit" if quantity > 150
-            const unit = quantity > 150 ? 'unit' : 'KG'
+            // Determine unit using the item unit mapping (defaults to KG if no mapping)
+            const unit = getItemUnit(itemName, 'KG')
             
             // Only add if quantity > 0
             if (quantity > 0) {
