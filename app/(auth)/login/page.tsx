@@ -214,7 +214,7 @@ export default function LoginPage() {
               className="rounded-xl shadow-lg"
             />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Branch Guidebook</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Mikana App</h1>
           <p className="text-muted-foreground mt-1">Sign in to your account</p>
         </div>
 
