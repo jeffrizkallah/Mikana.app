@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { RoleSidebar } from '@/components/RoleSidebar'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { QualityCheckForm } from '@/components/QualityCheckForm'
+import { QualityCheckFormQuick } from '@/components/QualityCheckFormQuick'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -57,12 +57,15 @@ export default function QualityCheckPage() {
     if (user) {
       fetchData()
     }
-  }, [user, slug])
+  }, [user, slug, showForm])
 
   const fetchData = async () => {
+    setLoading(true)
     try {
       // Fetch branch info
-      const branchRes = await fetch(`/api/branches/${slug}`)
+      const branchRes = await fetch(`/api/branches/${slug}`, {
+        cache: 'no-store'
+      })
       if (branchRes.ok) {
         const branchData = await branchRes.json()
         setBranch(branchData)
@@ -70,10 +73,26 @@ export default function QualityCheckPage() {
 
       // Fetch today's quality checks for this branch
       const today = new Date().toISOString().split('T')[0]
-      const checksRes = await fetch(`/api/quality-checks?branch=${slug}&startDate=${today}&endDate=${today}`)
+      const apiUrl = `/api/quality-checks?branch=${slug}&startDate=${today}&endDate=${today}`
+      console.log('Fetching quality checks from:', apiUrl)
+      console.log('Today date:', today)
+      
+      const checksRes = await fetch(apiUrl, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
+      })
+      console.log('Response status:', checksRes.status)
+      
       if (checksRes.ok) {
         const checksData = await checksRes.json()
+        console.log('Fetched quality checks:', checksData)
+        console.log('Number of checks:', checksData.length)
         setTodayChecks(checksData)
+      } else {
+        const errorData = await checksRes.json()
+        console.error('Error fetching quality checks:', errorData)
       }
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -83,12 +102,22 @@ export default function QualityCheckPage() {
   }
 
   const handleFormSuccess = () => {
+    console.log('🔄 Form submitted successfully, refreshing data...')
     setShowForm(false)
-    fetchData() // Refresh the list
+    // Force immediate refresh
+    setTimeout(() => {
+      console.log('🔄 Triggering fetchData...')
+      fetchData()
+    }, 100)
   }
 
-  const hasBreakfastCheck = todayChecks.some(c => c.mealService === 'breakfast')
-  const hasLunchCheck = todayChecks.some(c => c.mealService === 'lunch')
+  const breakfastChecks = todayChecks.filter(c => c.mealService === 'breakfast')
+  const lunchChecks = todayChecks.filter(c => c.mealService === 'lunch')
+  const hasBreakfastCheck = breakfastChecks.length > 0
+  const hasLunchCheck = lunchChecks.length > 0
+
+  console.log('Today checks:', todayChecks)
+  console.log('Breakfast checks:', breakfastChecks.length, 'Lunch checks:', lunchChecks.length)
 
   if (authLoading || loading) {
     return (
@@ -128,10 +157,24 @@ export default function QualityCheckPage() {
                 </div>
               </div>
               {!showForm && (
-                <Button onClick={() => router.push(`/branch/${slug}`)}>
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => fetchData()}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-primary"></div>
+                    ) : (
+                      'Refresh'
+                    )}
+                  </Button>
+                  <Button onClick={() => router.push('/dashboard')}>
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Back
+                  </Button>
+                </div>
               )}
             </div>
           </div>
@@ -144,9 +187,10 @@ export default function QualityCheckPage() {
                 className="mb-4"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Cancel
+                Back
               </Button>
-              <QualityCheckForm 
+
+              <QualityCheckFormQuick 
                 branchSlug={slug}
                 branchName={branch?.name || slug}
                 onSuccess={handleFormSuccess}
@@ -154,88 +198,48 @@ export default function QualityCheckPage() {
             </div>
           ) : (
             <div className="space-y-6">
-              {/* Today's Status */}
-              <Card className="border-l-4 border-l-green-500">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Clock className="h-5 w-5" />
-                    Today&apos;s Status
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className={cn(
-                      "p-4 rounded-lg flex items-center gap-3",
-                      hasBreakfastCheck ? "bg-green-50" : "bg-amber-50"
-                    )}>
-                      <div className={cn(
-                        "p-2 rounded-full",
-                        hasBreakfastCheck ? "bg-green-100" : "bg-amber-100"
-                      )}>
-                        <Coffee className={cn(
-                          "h-5 w-5",
-                          hasBreakfastCheck ? "text-green-600" : "text-amber-600"
-                        )} />
-                      </div>
-                      <div>
-                        <p className="font-medium">Breakfast</p>
-                        <p className={cn(
-                          "text-sm",
-                          hasBreakfastCheck ? "text-green-600" : "text-amber-600"
-                        )}>
-                          {hasBreakfastCheck ? 'Completed' : 'Pending'}
-                        </p>
-                      </div>
-                      {hasBreakfastCheck ? (
-                        <CheckCircle2 className="h-5 w-5 text-green-500 ml-auto" />
-                      ) : (
-                        <XCircle className="h-5 w-5 text-amber-500 ml-auto" />
-                      )}
+              {/* Summary Stats */}
+              <Card className="border-l-4 border-l-blue-500">
+                <CardContent className="py-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">Total Submissions Today</p>
+                      <p className="text-4xl font-bold text-blue-600">{todayChecks.length}</p>
                     </div>
-
-                    <div className={cn(
-                      "p-4 rounded-lg flex items-center gap-3",
-                      hasLunchCheck ? "bg-green-50" : "bg-amber-50"
-                    )}>
-                      <div className={cn(
-                        "p-2 rounded-full",
-                        hasLunchCheck ? "bg-green-100" : "bg-amber-100"
-                      )}>
-                        <Sun className={cn(
-                          "h-5 w-5",
-                          hasLunchCheck ? "text-green-600" : "text-amber-600"
-                        )} />
-                      </div>
-                      <div>
-                        <p className="font-medium">Lunch</p>
-                        <p className={cn(
-                          "text-sm",
-                          hasLunchCheck ? "text-green-600" : "text-amber-600"
+                    <div className="flex gap-6">
+                      <div className="text-center">
+                        <div className={cn(
+                          "w-16 h-16 rounded-full flex items-center justify-center mb-2",
+                          hasBreakfastCheck ? "bg-green-100" : "bg-gray-100"
                         )}>
-                          {hasLunchCheck ? 'Completed' : 'Pending'}
-                        </p>
+                          <Coffee className={cn(
+                            "h-7 w-7",
+                            hasBreakfastCheck ? "text-green-600" : "text-gray-400"
+                          )} />
+                        </div>
+                        <p className="text-xs font-medium text-muted-foreground">Breakfast</p>
+                        <p className="text-lg font-bold">{breakfastChecks.length}</p>
                       </div>
-                      {hasLunchCheck ? (
-                        <CheckCircle2 className="h-5 w-5 text-green-500 ml-auto" />
-                      ) : (
-                        <XCircle className="h-5 w-5 text-amber-500 ml-auto" />
-                      )}
+                      <div className="text-center">
+                        <div className={cn(
+                          "w-16 h-16 rounded-full flex items-center justify-center mb-2",
+                          hasLunchCheck ? "bg-green-100" : "bg-gray-100"
+                        )}>
+                          <Sun className={cn(
+                            "h-7 w-7",
+                            hasLunchCheck ? "text-green-600" : "text-gray-400"
+                          )} />
+                        </div>
+                        <p className="text-xs font-medium text-muted-foreground">Lunch</p>
+                        <p className="text-lg font-bold">{lunchChecks.length}</p>
+                      </div>
                     </div>
                   </div>
-
-                  <Button 
-                    onClick={() => setShowForm(true)}
-                    className="w-full mt-4 bg-green-600 hover:bg-green-700"
-                    size="lg"
-                  >
-                    <ClipboardCheck className="h-4 w-4 mr-2" />
-                    Start Quality Check
-                  </Button>
                 </CardContent>
               </Card>
 
               {/* Today's Submissions */}
-              {todayChecks.length > 0 && (
+              {todayChecks.length > 0 ? (
                 <Card>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center gap-2">
@@ -244,17 +248,17 @@ export default function QualityCheckPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-3">
+                    <div className="space-y-3 mb-4">
                       {todayChecks.map((check) => (
                         <div 
                           key={check.id}
-                          className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
+                          className="flex items-center justify-between p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors"
                         >
                           <div className="flex items-center gap-3">
                             {check.mealService === 'breakfast' ? (
-                              <Coffee className="h-4 w-4 text-amber-600" />
+                              <Coffee className="h-5 w-5 text-amber-600" />
                             ) : (
-                              <Sun className="h-4 w-4 text-orange-500" />
+                              <Sun className="h-5 w-5 text-orange-500" />
                             )}
                             <div>
                               <p className="font-medium">{check.productName}</p>
@@ -279,7 +283,25 @@ export default function QualityCheckPage() {
                     </div>
                   </CardContent>
                 </Card>
+              ) : (
+                <Card className="border-dashed">
+                  <CardContent className="py-12 text-center">
+                    <ClipboardCheck className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+                    <p className="text-muted-foreground">No quality checks submitted yet today</p>
+                    <p className="text-sm text-muted-foreground mt-1">Click below to start your first check</p>
+                  </CardContent>
+                </Card>
               )}
+
+              {/* Start Quality Check Button */}
+              <Button 
+                onClick={() => setShowForm(true)}
+                className="w-full bg-green-600 hover:bg-green-700 h-14"
+                size="lg"
+              >
+                <ClipboardCheck className="h-5 w-5 mr-2" />
+                Start Quality Check
+              </Button>
             </div>
           )}
         </div>

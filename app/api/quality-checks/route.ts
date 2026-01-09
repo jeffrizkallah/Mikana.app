@@ -80,13 +80,13 @@ export async function GET(request: Request) {
     }
 
     if (startDate) {
-      query += ` AND qc.submission_date >= $${paramIndex}`
+      query += ` AND DATE(qc.submission_date) >= $${paramIndex}`
       params.push(startDate)
       paramIndex++
     }
 
     if (endDate) {
-      query += ` AND qc.submission_date <= $${paramIndex}`
+      query += ` AND DATE(qc.submission_date) <= $${paramIndex}`
       params.push(endDate)
       paramIndex++
     }

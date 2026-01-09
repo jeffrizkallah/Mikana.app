@@ -97,7 +97,7 @@ export default function BranchManagerDashboard() {
   const [todayRevenue, setTodayRevenue] = useState(0)
   const [todayOrders, setTodayOrders] = useState(0)
   const [revenueChange, setRevenueChange] = useState(0)
-  const [alertsExpanded, setAlertsExpanded] = useState(true)
+  const [alertsExpanded, setAlertsExpanded] = useState(false)
   const [qualityCompliance, setQualityCompliance] = useState<QualityCompliance[]>([])
   const [inventorySummary, setInventorySummary] = useState<InventorySummary | null>(null)
   const [sortBy, setSortBy] = useState<'revenue' | 'name' | 'hygiene'>('revenue')
@@ -106,6 +106,27 @@ export default function BranchManagerDashboard() {
     if (user) {
       fetchData()
     }
+  }, [user])
+
+  // Poll for quality compliance updates every 30 seconds
+  useEffect(() => {
+    if (!user) return
+    
+    const interval = setInterval(() => {
+      // Only refresh quality compliance data
+      const refreshQuality = async () => {
+        try {
+          const qualityRes = await fetch('/api/quality-checks/summary?period=today')
+          const qualityData = await qualityRes.json()
+          setQualityCompliance(qualityData.todayCompliance || [])
+        } catch (e) {
+          console.error('Error refreshing quality compliance:', e)
+        }
+      }
+      refreshQuality()
+    }, 30000) // Refresh every 30 seconds
+
+    return () => clearInterval(interval)
   }, [user])
 
   const fetchData = async () => {
@@ -282,16 +303,33 @@ export default function BranchManagerDashboard() {
         <div className="flex-1 container mx-auto px-4 py-6 max-w-7xl">
           {/* Header */}
           <div className="mb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-primary/10">
-                <Building2 className="h-5 w-5 text-primary" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-primary/10">
+                  <Building2 className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+                  <p className="text-sm text-muted-foreground">
+                    Welcome back, {user?.firstName}!
+                  </p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-                <p className="text-sm text-muted-foreground">
-                  Welcome back, {user?.firstName}!
-                </p>
-              </div>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => fetchData()}
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-primary mr-2"></div>
+                    Refreshing...
+                  </>
+                ) : (
+                  'Refresh'
+                )}
+              </Button>
             </div>
           </div>
 
