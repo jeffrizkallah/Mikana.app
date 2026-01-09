@@ -1,0 +1,9 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/weekly-quality-analysis",
+      "schedule": "0 2 * * 1"
+    }
+  ]
+}
+

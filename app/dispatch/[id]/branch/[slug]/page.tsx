@@ -449,7 +449,7 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
                           
                           {mode === 'packing' ? (
                             <div className="text-xs md:text-sm text-muted-foreground">
-                              Ordered: {item.orderedQty} {item.orderedQty > 150 ? 'unit' : 'KG'}
+                              Ordered: {item.orderedQty} {item.unit}
                             </div>
                           ) : (
                             <div className="text-xs md:text-sm">
@@ -459,7 +459,7 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
                                 <span className={item.packedQty !== item.orderedQty ? 'text-orange-600 font-semibold' : ''}>
                                   Packed: {item.packedQty ?? item.orderedQty}
                                 </span>
-                                <span className="text-xs">({item.orderedQty > 150 ? 'unit' : 'KG'})</span>
+                                <span className="text-xs">({item.unit})</span>
                               </div>
                               {item.packedQty !== null && item.packedQty < item.orderedQty && (
                                 <div className="text-xs text-orange-600 mt-1">
@@ -532,7 +532,7 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
                                   onChange={(e) => handleQuantityChange(item.id, e.target.value)}
                                   className="w-24 md:w-32 h-9 text-sm"
                                 />
-                                <span className="text-xs md:text-sm text-muted-foreground">{item.orderedQty > 150 ? 'unit' : 'KG'}</span>
+                                <span className="text-xs md:text-sm text-muted-foreground">{item.unit}</span>
                               </div>
                             </div>
                           )}
@@ -584,7 +584,7 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
                           <Badge variant="destructive">
                             {item.issue.toUpperCase()}
                             {item.issue === 'partial' && item.receivedQty && 
-                              ` - Received: ${item.receivedQty} ${item.orderedQty > 150 ? 'unit' : 'KG'}`
+                              ` - Received: ${item.receivedQty} ${item.unit}`
                             }
                           </Badge>
                           {item.notes && (

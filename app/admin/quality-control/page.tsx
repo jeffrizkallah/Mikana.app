@@ -31,6 +31,8 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
+import { QualityImportModal } from '@/components/QualityImportModal'
+import { QualityAnalytics } from '@/components/QualityAnalytics'
 
 interface QualityCheck {
   id: number
@@ -90,6 +92,11 @@ export default function QualityControlPage() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'overview' | 'submissions' | 'analytics'>('overview')
   const [selectedCheck, setSelectedCheck] = useState<QualityCheck | null>(null)
+  const [showImportModal, setShowImportModal] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage] = useState(50)
+  const [sortField, setSortField] = useState<'date' | 'branch' | 'product' | 'section' | 'taste' | 'appearance' | 'status'>('date')
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
   const [filters, setFilters] = useState({
     branch: '',
     section: '',
@@ -130,7 +137,7 @@ export default function QualityControlPage() {
       }
 
       const submissionsRes = await fetch(
-        `/api/quality-checks?startDate=${startDate.toISOString()}&limit=100`
+        `/api/quality-checks?startDate=${startDate.toISOString()}&limit=1000`
       )
       if (submissionsRes.ok) {
         const data = await submissionsRes.json()
@@ -164,6 +171,82 @@ export default function QualityControlPage() {
     if (filters.search && !s.productName.toLowerCase().includes(filters.search.toLowerCase())) return false
     return true
   })
+
+  // Sorting logic
+  const sortedSubmissions = [...filteredSubmissions].sort((a, b) => {
+    let aValue: any, bValue: any
+
+    switch (sortField) {
+      case 'date':
+        aValue = new Date(a.submissionDate).getTime()
+        bValue = new Date(b.submissionDate).getTime()
+        break
+      case 'branch':
+        aValue = a.branchName.toLowerCase()
+        bValue = b.branchName.toLowerCase()
+        break
+      case 'product':
+        aValue = a.productName.toLowerCase()
+        bValue = b.productName.toLowerCase()
+        break
+      case 'section':
+        aValue = a.section.toLowerCase()
+        bValue = b.section.toLowerCase()
+        break
+      case 'taste':
+        aValue = a.tasteScore
+        bValue = b.tasteScore
+        break
+      case 'appearance':
+        aValue = a.appearanceScore
+        bValue = b.appearanceScore
+        break
+      case 'status':
+        aValue = a.status.toLowerCase()
+        bValue = b.status.toLowerCase()
+        break
+      default:
+        return 0
+    }
+
+    if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1
+    if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1
+    return 0
+  })
+
+  // Pagination calculations
+  const totalPages = Math.ceil(sortedSubmissions.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedSubmissions = sortedSubmissions.slice(startIndex, endIndex)
+
+  // Handle sort column click
+  const handleSort = (field: typeof sortField) => {
+    if (sortField === field) {
+      // Toggle direction if clicking same column
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+    } else {
+      // New column, default to descending
+      setSortField(field)
+      setSortDirection('desc')
+    }
+    setCurrentPage(1) // Reset to first page when sorting
+  }
+
+  // Sort indicator component
+  const SortIndicator = ({ field }: { field: typeof sortField }) => {
+    if (sortField !== field) return null
+    return (
+      <span className="ml-1">
+        {sortDirection === 'asc' ? '↑' : '↓'}
+      </span>
+    )
+  }
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [filters.branch, filters.section, filters.mealService, filters.search, filters.period])
 
   const exportToCSV = () => {
     const headers = ['Date', 'Branch', 'Meal', 'Product', 'Section', 'Taste', 'Appearance', 'Portion(g)', 'Temp(°C)', 'Remarks']
@@ -229,6 +312,10 @@ export default function QualityControlPage() {
                 Form Fields
               </Button>
             </Link>
+            <Button variant="outline" onClick={() => setShowImportModal(true)}>
+              <Download className="h-4 w-4 mr-2 rotate-180" />
+              Import
+            </Button>
             <Button variant="outline" onClick={exportToCSV}>
               <Download className="h-4 w-4 mr-2" />
               Export
@@ -411,6 +498,26 @@ export default function QualityControlPage() {
         {/* Submissions Tab */}
         {activeTab === 'submissions' && (
           <div className="space-y-4">
+            {/* Stats Bar */}
+            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+              <div className="flex items-center gap-4 text-sm">
+                <span className="font-medium text-blue-900">
+                  Showing {startIndex + 1}-{Math.min(endIndex, sortedSubmissions.length)} of {sortedSubmissions.length} submissions
+                </span>
+                {sortedSubmissions.length !== submissions.length && (
+                  <span className="text-blue-600">
+                    (filtered from {submissions.length} total)
+                  </span>
+                )}
+                <span className="text-muted-foreground">
+                  Sorted by: {sortField} {sortDirection === 'asc' ? '↑' : '↓'}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Page {currentPage} of {totalPages}</span>
+              </div>
+            </div>
+
             {/* Filters */}
             <div className="flex flex-wrap gap-3 p-4 bg-muted/50 rounded-lg">
               <div className="flex items-center gap-2">
@@ -450,18 +557,53 @@ export default function QualityControlPage() {
               <table className="w-full">
                 <thead className="bg-muted/50">
                   <tr>
-                    <th className="text-left p-3 text-sm font-medium">Date/Time</th>
-                    <th className="text-left p-3 text-sm font-medium">Branch</th>
-                    <th className="text-left p-3 text-sm font-medium">Product</th>
-                    <th className="text-left p-3 text-sm font-medium">Section</th>
-                    <th className="text-center p-3 text-sm font-medium">Taste</th>
-                    <th className="text-center p-3 text-sm font-medium">Appearance</th>
-                    <th className="text-center p-3 text-sm font-medium">Status</th>
+                    <th 
+                      className="text-left p-3 text-sm font-medium cursor-pointer hover:bg-muted transition-colors select-none"
+                      onClick={() => handleSort('date')}
+                    >
+                      Date/Time <SortIndicator field="date" />
+                    </th>
+                    <th 
+                      className="text-left p-3 text-sm font-medium cursor-pointer hover:bg-muted transition-colors select-none"
+                      onClick={() => handleSort('branch')}
+                    >
+                      Branch <SortIndicator field="branch" />
+                    </th>
+                    <th 
+                      className="text-left p-3 text-sm font-medium cursor-pointer hover:bg-muted transition-colors select-none"
+                      onClick={() => handleSort('product')}
+                    >
+                      Product <SortIndicator field="product" />
+                    </th>
+                    <th 
+                      className="text-left p-3 text-sm font-medium cursor-pointer hover:bg-muted transition-colors select-none"
+                      onClick={() => handleSort('section')}
+                    >
+                      Section <SortIndicator field="section" />
+                    </th>
+                    <th 
+                      className="text-center p-3 text-sm font-medium cursor-pointer hover:bg-muted transition-colors select-none"
+                      onClick={() => handleSort('taste')}
+                    >
+                      Taste <SortIndicator field="taste" />
+                    </th>
+                    <th 
+                      className="text-center p-3 text-sm font-medium cursor-pointer hover:bg-muted transition-colors select-none"
+                      onClick={() => handleSort('appearance')}
+                    >
+                      Appearance <SortIndicator field="appearance" />
+                    </th>
+                    <th 
+                      className="text-center p-3 text-sm font-medium cursor-pointer hover:bg-muted transition-colors select-none"
+                      onClick={() => handleSort('status')}
+                    >
+                      Status <SortIndicator field="status" />
+                    </th>
                     <th className="text-center p-3 text-sm font-medium">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredSubmissions.map((check) => (
+                  {paginatedSubmissions.map((check) => (
                     <tr key={check.id} className="border-t hover:bg-muted/30">
                       <td className="p-3 text-sm">
                         <div>{new Date(check.submissionDate).toLocaleDateString()}</div>
@@ -526,22 +668,98 @@ export default function QualityControlPage() {
                   ))}
                 </tbody>
               </table>
-              {filteredSubmissions.length === 0 && (
+              {sortedSubmissions.length === 0 && (
                 <div className="p-8 text-center text-muted-foreground">
                   No quality checks found for the selected filters.
                 </div>
               )}
             </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+                <Button
+                  variant="outline"
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+
+                <div className="flex items-center gap-2">
+                  {/* Show page numbers */}
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum: number
+                    if (totalPages <= 5) {
+                      pageNum = i + 1
+                    } else if (currentPage <= 3) {
+                      pageNum = i + 1
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i
+                    } else {
+                      pageNum = currentPage - 2 + i
+                    }
+
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setCurrentPage(pageNum)}
+                        className={cn(
+                          "w-10 h-10 rounded-lg text-sm font-medium transition-colors",
+                          currentPage === pageNum
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-background hover:bg-muted"
+                        )}
+                      >
+                        {pageNum}
+                      </button>
+                    )
+                  })}
+                </div>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            )}
           </div>
         )}
 
         {/* Analytics Tab */}
         {activeTab === 'analytics' && (
-          <div className="text-center py-12 text-muted-foreground">
-            <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>Analytics charts coming soon</p>
-            <p className="text-sm">Trends, comparisons, and insights</p>
-          </div>
+          <QualityAnalytics 
+            startDate={(() => {
+              const today = new Date()
+              let start = new Date()
+              if (filters.period === 'today') {
+                start = new Date(today.setHours(0, 0, 0, 0))
+              } else if (filters.period === 'week') {
+                start.setDate(start.getDate() - 7)
+              } else {
+                start.setDate(start.getDate() - 30)
+              }
+              return start.toISOString()
+            })()}
+            endDate={new Date().toISOString()}
+            period={filters.period}
+          />
+        )}
+
+        {/* Import Modal */}
+        {showImportModal && (
+          <QualityImportModal 
+            onClose={() => setShowImportModal(false)}
+            onSuccess={() => {
+              setShowImportModal(false)
+              fetchData() // Refresh data after import
+            }}
+          />
         )}
 
         {/* Detail Modal */}

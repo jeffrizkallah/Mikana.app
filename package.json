@@ -18,7 +18,8 @@
     "sync:sales": "node scripts/sync-sharepoint-sales.js",
     "sync:all": "node scripts/sync-all-sharepoint.js",
     "migrate:onboarding": "tsx scripts/add-onboarding-fields.ts",
-    "setup:chat": "tsx scripts/create-chat-tables.ts"
+    "setup:chat": "tsx scripts/create-chat-tables.ts",
+    "setup:quality-analytics": "tsx scripts/create-quality-analytics-table.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
