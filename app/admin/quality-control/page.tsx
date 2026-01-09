@@ -33,6 +33,7 @@ import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { QualityImportModal } from '@/components/QualityImportModal'
 import { QualityAnalytics } from '@/components/QualityAnalytics'
+import { QualityCheckDetailModal } from '@/components/QualityCheckDetailModal'
 
 interface QualityCheck {
   id: number
@@ -92,6 +93,7 @@ export default function QualityControlPage() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'overview' | 'submissions' | 'analytics'>('overview')
   const [selectedCheck, setSelectedCheck] = useState<QualityCheck | null>(null)
+  const [selectedSubmissionId, setSelectedSubmissionId] = useState<number | null>(null)
   const [showImportModal, setShowImportModal] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage] = useState(50)
@@ -448,8 +450,12 @@ export default function QualityControlPage() {
                 <CardContent>
                   <div className="space-y-2">
                     {summary.lowScores.map((item: any) => (
-                      <div key={item.id} className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
-                        <div>
+                      <button
+                        key={item.id}
+                        onClick={() => setSelectedSubmissionId(item.id)}
+                        className="w-full flex items-center justify-between p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors cursor-pointer"
+                      >
+                        <div className="text-left">
                           <p className="font-medium">{item.productName}</p>
                           <p className="text-sm text-muted-foreground">{item.branchName}</p>
                         </div>
@@ -461,7 +467,7 @@ export default function QualityControlPage() {
                             Look: {item.appearanceScore}/5
                           </Badge>
                         </div>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </CardContent>
@@ -946,6 +952,12 @@ export default function QualityControlPage() {
             </div>
           </div>
         )}
+
+        {/* Quality Check Detail Modal */}
+        <QualityCheckDetailModal
+          submissionId={selectedSubmissionId}
+          onClose={() => setSelectedSubmissionId(null)}
+        />
       </div>
   )
 }

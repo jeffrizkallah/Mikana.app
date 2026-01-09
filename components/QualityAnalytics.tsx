@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { QualityCheckDetailModal } from '@/components/QualityCheckDetailModal'
 import {
   LineChart,
   Line,
@@ -117,6 +118,7 @@ export function QualityAnalytics({ startDate, endDate, period }: QualityAnalytic
   const [aiAnalysis, setAiAnalysis] = useState<AIAnalysis | null>(null)
   const [loading, setLoading] = useState(true)
   const [generatingAI, setGeneratingAI] = useState(false)
+  const [selectedSubmissionId, setSelectedSubmissionId] = useState<number | null>(null)
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     insights: true,
     charts: true,
@@ -629,6 +631,9 @@ export function QualityAnalytics({ startDate, endDate, period }: QualityAnalytic
                         </div>
                       ))}
                     </div>
+                    <p className="text-xs text-muted-foreground mt-3 italic">
+                      Note: These are average scores across multiple submissions. See the Quality Control page for individual submissions.
+                    </p>
                   </CardContent>
                 </Card>
               ) : (
@@ -654,6 +659,12 @@ export function QualityAnalytics({ startDate, endDate, period }: QualityAnalytic
           </div>
         )}
       </div>
+
+      {/* Quality Check Detail Modal */}
+      <QualityCheckDetailModal
+        submissionId={selectedSubmissionId}
+        onClose={() => setSelectedSubmissionId(null)}
+      />
     </div>
   )
 }

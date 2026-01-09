@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { QualityCheckDetailModal } from '@/components/QualityCheckDetailModal'
 import { 
   ChefHat, 
   Building2, 
@@ -158,6 +159,7 @@ export default function AdminDashboardPage() {
   const [salesData, setSalesData] = useState<SalesData | null>(null)
   const [qualitySummary, setQualitySummary] = useState<QualitySummary | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [selectedSubmissionId, setSelectedSubmissionId] = useState<number | null>(null)
 
   useEffect(() => {
     fetchDashboardData()
@@ -626,9 +628,13 @@ export default function AdminDashboardPage() {
                 </p>
                 <div className="space-y-1">
                   {qualitySummary.lowScores.slice(0, 3).map((item) => (
-                    <div key={item.id} className="text-xs text-red-600">
+                    <button
+                      key={item.id}
+                      onClick={() => setSelectedSubmissionId(item.id)}
+                      className="w-full text-left text-xs text-red-600 hover:text-red-800 hover:bg-red-100 p-1 rounded transition-colors"
+                    >
                       {item.productName} at {item.branchName} - Taste: {item.tasteScore}/5, Look: {item.appearanceScore}/5
-                    </div>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -906,6 +912,12 @@ export default function AdminDashboardPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Quality Check Detail Modal */}
+      <QualityCheckDetailModal
+        submissionId={selectedSubmissionId}
+        onClose={() => setSelectedSubmissionId(null)}
+      />
     </div>
   )
 }
