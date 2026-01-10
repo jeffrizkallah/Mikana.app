@@ -133,9 +133,10 @@ export async function POST(request: Request) {
 
     const user = session.user
     
-    // Only managers can submit quality checks
-    if (user.role !== 'branch_manager' && user.role !== 'admin' && user.role !== 'operations_lead') {
-      return NextResponse.json({ error: 'Only branch managers can submit quality checks' }, { status: 403 })
+    // Managers and branch staff can submit quality checks
+    const canSubmitQualityChecks = ['branch_manager', 'branch_staff', 'admin', 'operations_lead'].includes(user.role)
+    if (!canSubmitQualityChecks) {
+      return NextResponse.json({ error: 'You do not have permission to submit quality checks' }, { status: 403 })
     }
 
     const data = await request.json()
@@ -152,8 +153,9 @@ export async function POST(request: Request) {
       }
     }
 
-    // Validate user has access to this branch (unless admin)
-    if (user.role === 'branch_manager' && !user.branches?.includes(data.branchSlug)) {
+    // Validate user has access to this branch (unless admin/operations)
+    const requiresBranchAccess = ['branch_manager', 'branch_staff'].includes(user.role)
+    if (requiresBranchAccess && !user.branches?.includes(data.branchSlug)) {
       return NextResponse.json({ error: 'You do not have access to this branch' }, { status: 403 })
     }
 
