@@ -134,7 +134,7 @@ export async function POST(request: Request) {
     const user = session.user
     
     // Managers and branch staff can submit quality checks
-    const canSubmitQualityChecks = ['branch_manager', 'branch_staff', 'admin', 'operations_lead'].includes(user.role)
+    const canSubmitQualityChecks = user.role && ['branch_manager', 'branch_staff', 'admin', 'operations_lead'].includes(user.role)
     if (!canSubmitQualityChecks) {
       return NextResponse.json({ error: 'You do not have permission to submit quality checks' }, { status: 403 })
     }
