@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Plus, Trash2, Edit, Eye, EyeOff, Sparkles, CheckCircle, AlertTriangle, Info, AlertCircle, UserPlus } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Edit, Eye, EyeOff, Sparkles, CheckCircle, AlertTriangle, Info, AlertCircle, UserPlus, Wand2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Notification, formatRelativeTime, getNotificationTypeConfig } from '@/lib/notifications'
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog'
+import { AINotificationComposer, GeneratedNotification } from '@/components/AINotificationComposer'
 
 const typeIcons: Record<string, typeof Info> = {
   feature: Sparkles,
@@ -27,6 +28,7 @@ export default function NotificationsAdminPage() {
   const [notifications, setNotifications] = useState<AdminNotification[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [showCreateForm, setShowCreateForm] = useState(false)
+  const [showAIComposer, setShowAIComposer] = useState(false)
   const [editingNotification, setEditingNotification] = useState<AdminNotification | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<AdminNotification | null>(null)
 
@@ -72,6 +74,21 @@ export default function NotificationsAdminPage() {
     })
     setEditingNotification(null)
     setShowCreateForm(false)
+  }
+
+  // Handle AI-generated notification
+  const handleAIGenerated = (notification: GeneratedNotification) => {
+    setFormData({
+      type: notification.type,
+      priority: notification.priority,
+      title: notification.title,
+      preview: notification.preview,
+      content: notification.content,
+      expires_in_days: notification.expires_in_days,
+    })
+    setEditingNotification(null)
+    setShowCreateForm(true)
+    setShowAIComposer(false)
   }
 
   // Handle create/update
@@ -171,10 +188,20 @@ export default function NotificationsAdminPage() {
               <p className="text-muted-foreground">Manage announcements and updates</p>
             </div>
           </div>
-          <Button onClick={() => setShowCreateForm(true)} className="gap-2">
-            <Plus className="h-4 w-4" />
-            New Notification
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button 
+              onClick={() => setShowAIComposer(true)} 
+              variant="outline"
+              className="gap-2 border-sky-300 dark:border-sky-700 text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950"
+            >
+              <Wand2 className="h-4 w-4" />
+              AI Compose
+            </Button>
+            <Button onClick={() => setShowCreateForm(true)} className="gap-2">
+              <Plus className="h-4 w-4" />
+              New Notification
+            </Button>
+          </div>
         </div>
 
         {/* Create/Edit Form */}
@@ -390,6 +417,13 @@ export default function NotificationsAdminPage() {
           onConfirm={handleDelete}
           title="Delete Notification"
           description={`Are you sure you want to delete "${deleteTarget?.title}"? This action cannot be undone.`}
+        />
+
+        {/* AI Notification Composer */}
+        <AINotificationComposer
+          isOpen={showAIComposer}
+          onClose={() => setShowAIComposer(false)}
+          onSubmit={handleAIGenerated}
         />
       </div>
   )

@@ -45,7 +45,7 @@ export default function QualityCheckPage() {
   
   const { user, loading: authLoading } = useAuth({ 
     required: true, 
-    allowedRoles: ['admin', 'operations_lead', 'branch_manager'] 
+    allowedRoles: ['admin', 'operations_lead', 'branch_manager', 'branch_staff'] 
   })
   
   const [branch, setBranch] = useState<Branch | null>(null)
@@ -138,7 +138,6 @@ export default function QualityCheckPage() {
         <div className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
           <Breadcrumbs
             items={[
-              { label: 'Dashboard', href: '/dashboard' },
               { label: branch?.name || 'Branch', href: `/branch/${slug}` },
               { label: 'Quality Check' },
             ]}
@@ -170,7 +169,7 @@ export default function QualityCheckPage() {
                       'Refresh'
                     )}
                   </Button>
-                  <Button onClick={() => router.push('/dashboard')}>
+                  <Button onClick={() => router.push(`/branch/${slug}`)}>
                     <ArrowLeft className="h-4 w-4 mr-2" />
                     Back
                   </Button>

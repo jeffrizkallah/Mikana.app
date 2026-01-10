@@ -46,10 +46,16 @@ export function RecipeInstructionSelector({ branchSlug }: RecipeInstructionSelec
     new Set(instructions.flatMap(i => i.daysAvailable))
   ).sort((a, b) => DAY_ORDER.indexOf(a) - DAY_ORDER.indexOf(b))
 
+  const INITIAL_DISPLAY_COUNT = 5
+
   // Filter instructions by selected day
   const filteredInstructions = selectedDay
     ? instructions.filter(i => i.daysAvailable.includes(selectedDay))
     : []
+
+  // Show only first 5 items
+  const displayedInstructions = filteredInstructions.slice(0, INITIAL_DISPLAY_COUNT)
+  const hasMoreToShow = filteredInstructions.length > INITIAL_DISPLAY_COUNT
 
   if (isLoading) {
     return (
@@ -82,10 +88,13 @@ export function RecipeInstructionSelector({ branchSlug }: RecipeInstructionSelec
           {filteredInstructions.length > 0 ? (
             <>
               <p className="text-sm text-muted-foreground">
-                {filteredInstructions.length} item{filteredInstructions.length !== 1 ? 's' : ''} available on {selectedDay}
+                {hasMoreToShow 
+                  ? `Showing ${displayedInstructions.length} of ${filteredInstructions.length} items on ${selectedDay}`
+                  : `${filteredInstructions.length} item${filteredInstructions.length !== 1 ? 's' : ''} available on ${selectedDay}`
+                }
               </p>
               <div className="grid grid-cols-1 gap-3">
-                {filteredInstructions.map(instruction => (
+                {displayedInstructions.map(instruction => (
                   <Link
                     key={instruction.instructionId}
                     href={`/branch/${branchSlug}/recipe-instructions/${instruction.instructionId}`}
@@ -130,7 +139,7 @@ export function RecipeInstructionSelector({ branchSlug }: RecipeInstructionSelec
               <div className="pt-2">
                 <Link href={`/branch/${branchSlug}/recipe-instructions?day=${selectedDay}`}>
                   <Button variant="outline" size="sm" className="w-full">
-                    View All {selectedDay} Instructions
+                    View All {filteredInstructions.length} {selectedDay} Instructions
                   </Button>
                 </Link>
               </div>

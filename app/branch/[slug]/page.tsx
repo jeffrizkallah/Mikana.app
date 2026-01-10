@@ -5,8 +5,7 @@ import { RoleSidebar } from '@/components/RoleSidebar'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { PrintHeader } from '@/components/PrintHeader'
-import { KPIBadge } from '@/components/KPIBadge'
-import { RoleTabs } from '@/components/RoleTabs'
+import { BranchRolesSection } from '@/components/BranchRolesSection'
 import { RecipeSelector } from '@/components/RecipeSelector'
 import { RecipeInstructionSelector } from '@/components/RecipeInstructionSelector'
 import { BranchDispatches } from '@/components/BranchDispatches'
@@ -69,101 +68,68 @@ export default async function BranchPage({ params, searchParams }: BranchPagePro
               )}
             </div>
 
-            {/* Branch Information Card */}
+            {/* Branch Information & Contacts Card */}
             <Card className="mb-4 md:mb-6" data-tour-id="branch-info">
               <CardHeader className="px-4 py-3 md:px-6 md:py-4">
                 <CardTitle className="text-base sm:text-lg md:text-xl">Branch Information</CardTitle>
               </CardHeader>
               <CardContent className="px-4 py-3 md:px-6 md:py-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                  <div className="space-y-1 min-w-0">
-                    <div className="text-xs sm:text-sm font-medium flex items-center gap-2 text-muted-foreground">
-                      <MapPin className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
-                      <span>Location</span>
+                <div className={`grid gap-6 ${!isCK && branch.contacts?.length > 0 ? 'lg:grid-cols-2' : ''}`}>
+                  {/* Branch Details */}
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1 min-w-0">
+                        <div className="text-xs sm:text-sm font-medium flex items-center gap-2 text-muted-foreground">
+                          <MapPin className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
+                          <span>Location</span>
+                        </div>
+                        <p className="font-semibold text-sm sm:text-base break-words">{branch.location}</p>
+                      </div>
+
+                      <div className="space-y-1 min-w-0">
+                        <div className="text-xs sm:text-sm font-medium flex items-center gap-2 text-muted-foreground">
+                          <Clock className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
+                          <span>Operating Hours</span>
+                        </div>
+                        <p className="text-xs sm:text-sm break-words">{branch.operatingHours}</p>
+                      </div>
                     </div>
-                    <p className="font-semibold text-sm sm:text-base break-words">{branch.location}</p>
+
+                    <div className="space-y-1 min-w-0">
+                      <div className="text-xs sm:text-sm font-medium text-muted-foreground">
+                        Manager
+                      </div>
+                      <p className="font-semibold text-sm sm:text-base break-words">{branch.manager}</p>
+                    </div>
                   </div>
 
-                  <div className="space-y-1 min-w-0">
-                    <div className="text-xs sm:text-sm font-medium flex items-center gap-2 text-muted-foreground">
-                      <Clock className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
-                      <span>Operating Hours</span>
+                  {/* Contacts - Hidden for Central Kitchen */}
+                  {!isCK && branch.contacts?.length > 0 && (
+                    <div className="lg:border-l lg:pl-6">
+                      <h4 className="text-xs sm:text-sm font-medium text-muted-foreground mb-3">Contacts</h4>
+                      <div className="space-y-3">
+                        {branch.contacts.map((contact, index) => (
+                          <div key={index} className="flex flex-col gap-1 pb-3 border-b last:border-b-0 last:pb-0 min-w-0">
+                            <div className="font-semibold text-sm break-words">{contact.name}</div>
+                            <div className="text-xs text-muted-foreground break-words">{contact.role}</div>
+                            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs mt-1 min-w-0">
+                              <a href={`tel:${contact.phone}`} className="flex items-center gap-1.5 hover:underline text-primary">
+                                <Phone className="h-3 w-3 shrink-0" />
+                                <span className="break-all">{contact.phone}</span>
+                              </a>
+                              <a href={`mailto:${contact.email}`} className="flex items-center gap-1.5 hover:underline text-primary">
+                                <Mail className="h-3 w-3 shrink-0" />
+                                <span className="break-all">{contact.email}</span>
+                              </a>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <p className="text-xs sm:text-sm break-words">{branch.operatingHours}</p>
-                  </div>
-
-                  <div className="space-y-1 min-w-0 sm:col-span-2 lg:col-span-1">
-                    <div className="text-xs sm:text-sm font-medium text-muted-foreground">
-                      Manager
-                    </div>
-                    <p className="font-semibold text-sm sm:text-base break-words">{branch.manager}</p>
-                  </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
-
-            {/* KPIs - Hidden for Central Kitchen */}
-            {!isCK && (
-              <Card className="mb-4 md:mb-6" data-tour-id="kpi-badges">
-                <CardHeader className="px-4 py-3 md:px-6 md:py-4">
-                  <CardTitle className="text-base sm:text-lg md:text-xl">Key Performance Indicators</CardTitle>
-                </CardHeader>
-                <CardContent className="px-4 py-3 md:px-6 md:py-4">
-                  <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3">
-                    <div className="w-full sm:w-auto sm:flex-1 sm:min-w-[180px]">
-                      <KPIBadge
-                        label="Sales Target"
-                        value={branch.kpis.salesTarget}
-                        type="sales"
-                      />
-                    </div>
-                    <div className="w-full sm:w-auto sm:flex-1 sm:min-w-[120px]">
-                      <KPIBadge label="Waste" value={branch.kpis.wastePct} type="waste" />
-                    </div>
-                    <div className="w-full sm:w-auto sm:flex-1 sm:min-w-[140px]">
-                      <KPIBadge
-                        label="Hygiene Score"
-                        value={branch.kpis.hygieneScore}
-                        type="hygiene"
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Contacts - Hidden for Central Kitchen */}
-            {!isCK && (
-              <Card className="mb-4 md:mb-6">
-                <CardHeader className="px-4 py-3 md:px-6 md:py-4">
-                  <CardTitle className="text-base sm:text-lg md:text-xl">Contacts</CardTitle>
-                </CardHeader>
-                <CardContent className="px-4 py-3 md:px-6 md:py-4">
-                  <div className="space-y-3 md:space-y-4">
-                    {branch.contacts.map((contact, index) => (
-                      <div key={index} className="flex flex-col gap-2 pb-3 md:pb-4 border-b last:border-b-0 last:pb-0 min-w-0">
-                        <div className="font-semibold text-sm sm:text-base break-words">{contact.name}</div>
-                        <div className="text-xs sm:text-sm text-muted-foreground break-words">{contact.role}</div>
-                        <div className="flex flex-col gap-1 text-xs sm:text-sm min-w-0">
-                          <div className="flex items-center gap-2 min-w-0">
-                            <Phone className="h-3 w-3 shrink-0" />
-                            <a href={`tel:${contact.phone}`} className="hover:underline break-all min-w-0">
-                              {contact.phone}
-                            </a>
-                          </div>
-                          <div className="flex items-center gap-2 min-w-0">
-                            <Mail className="h-3 w-3 shrink-0" />
-                            <a href={`mailto:${contact.email}`} className="hover:underline break-all min-w-0 overflow-hidden">
-                              {contact.email}
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
 
             {/* Dispatches Section - Hidden for Central Kitchen */}
             {!isCK && !isPrintMode && (
@@ -173,18 +139,14 @@ export default async function BranchPage({ params, searchParams }: BranchPagePro
             )}
           </div>
 
-          {/* Roles Section */}
-          <Card className="mb-4 md:mb-6" data-tour-id="role-tabs">
-            <CardHeader className="px-4 py-3 md:px-6 md:py-4">
-              <CardTitle className="text-base sm:text-lg md:text-xl">Operational Roles</CardTitle>
-              <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                Select a role to view responsibilities, checklists, and daily timelines
-              </p>
-            </CardHeader>
-            <CardContent className="px-4 py-3 md:px-6 md:py-4">
-              <RoleTabs roles={branchRoles} branchSlug={branch.slug} />
-            </CardContent>
-          </Card>
+          {/* Roles Section / Quality Control Widget (for branch staff) */}
+          <div className="mb-4 md:mb-6">
+            <BranchRolesSection 
+              roles={branchRoles} 
+              branchSlug={branch.slug}
+              branchName={branch.name}
+            />
+          </div>
 
           {/* Central Kitchen: Production Schedule Link */}
           {isCK && !isPrintMode && (

@@ -10,7 +10,8 @@ import { isCentralKitchen } from '@/lib/data'
 import type { RecipeInstruction, Branch } from '@/lib/data'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Flame, Loader2, ChevronRight, Utensils } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Flame, Loader2, ChevronRight, Utensils, ChevronDown } from 'lucide-react'
 
 const DAY_ORDER = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
@@ -27,6 +28,9 @@ export default function RecipeInstructionsPage({ params }: RecipeInstructionsPag
   const [branch, setBranch] = useState<Branch | null | undefined>(undefined)
   const [instructions, setInstructions] = useState<RecipeInstruction[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [showAll, setShowAll] = useState(false)
+  
+  const INITIAL_DISPLAY_COUNT = 5
 
   // Load branch data from API
   useEffect(() => {
@@ -78,6 +82,19 @@ export default function RecipeInstructionsPage({ params }: RecipeInstructionsPag
     if (!dayParam) return instructions
     return instructions.filter(instruction => instruction.daysAvailable?.includes(dayParam))
   }, [instructions, dayParam])
+
+  // Reset showAll when day filter changes
+  useEffect(() => {
+    setShowAll(false)
+  }, [dayParam])
+
+  // Get instructions to display (limited or all)
+  const displayedInstructions = useMemo(() => {
+    if (showAll) return filteredInstructions
+    return filteredInstructions.slice(0, INITIAL_DISPLAY_COUNT)
+  }, [filteredInstructions, showAll])
+
+  const hasMoreToShow = filteredInstructions.length > INITIAL_DISPLAY_COUNT
 
   // Handle branch not found after loading
   if (branch === null) {
@@ -162,10 +179,14 @@ export default function RecipeInstructionsPage({ params }: RecipeInstructionsPag
         {filteredInstructions.length > 0 ? (
           <>
             <h2 className="text-2xl font-semibold mb-4">
-              {filteredInstructions.length} Instruction{filteredInstructions.length !== 1 ? 's' : ''} Available
+              {showAll ? (
+                <>{filteredInstructions.length} Instruction{filteredInstructions.length !== 1 ? 's' : ''} Available</>
+              ) : (
+                <>Showing {displayedInstructions.length} of {filteredInstructions.length} Instruction{filteredInstructions.length !== 1 ? 's' : ''}</>
+              )}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredInstructions.map(instruction => (
+              {displayedInstructions.map(instruction => (
                 <Link 
                   key={instruction.instructionId} 
                   href={`/branch/${branch.slug}/recipe-instructions/${instruction.instructionId}`}
@@ -216,6 +237,27 @@ export default function RecipeInstructionsPage({ params }: RecipeInstructionsPag
                 </Link>
               ))}
             </div>
+
+            {/* View All / Show Less Button */}
+            {hasMoreToShow && (
+              <div className="mt-8 text-center">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => setShowAll(!showAll)}
+                  className="min-w-[200px]"
+                >
+                  {showAll ? (
+                    <>Show Less</>
+                  ) : (
+                    <>
+                      <ChevronDown className="h-4 w-4 mr-2" />
+                      View All {filteredInstructions.length} Instructions
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
           </>
         ) : (
           <Card>

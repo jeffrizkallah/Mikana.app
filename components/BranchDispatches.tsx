@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Package, Clock, CheckCircle2, AlertTriangle, ChevronRight } from 'lucide-react'
+import { Package, Clock, CheckCircle2, AlertTriangle, ChevronRight, ChevronDown } from 'lucide-react'
 import type { Dispatch, BranchDispatch } from '@/lib/data'
 
 interface BranchDispatchesProps {
@@ -16,6 +16,7 @@ export function BranchDispatches({ branchSlug }: BranchDispatchesProps) {
   const [dispatches, setDispatches] = useState<Array<Dispatch & { branchDispatch: BranchDispatch }>>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'pending' | 'dispatched' | 'completed'>('pending')
+  const [isExpanded, setIsExpanded] = useState(false)
 
   useEffect(() => {
     fetchDispatches()
@@ -100,20 +101,156 @@ export function BranchDispatches({ branchSlug }: BranchDispatchesProps) {
     )
   }
 
+  // Helper function to render a dispatch card
+  const renderDispatchCard = (dispatch: Dispatch & { branchDispatch: BranchDispatch }) => {
+    const bd = dispatch.branchDispatch
+    const issuesCount = bd.items.filter(item => item.issue !== null).length
+    const isCompleted = bd.status === 'completed'
+    const isPacking = bd.status === 'packing'
+    const isDispatched = bd.status === 'dispatched'
+    const isReceiving = bd.status === 'receiving'
+    
+    // Get button text based on status
+    let buttonText = 'Open Checklist'
+    let buttonIcon = Package
+    if (bd.status === 'pending') {
+      buttonText = 'Start Packing'
+      buttonIcon = Package
+    } else if (isPacking) {
+      buttonText = 'Continue Packing'
+      buttonIcon = Package
+    } else if (isDispatched) {
+      buttonText = 'Start Receiving'
+      buttonIcon = Package
+    } else if (isReceiving) {
+      buttonText = 'Continue Receiving'
+      buttonIcon = Package
+    } else if (isCompleted) {
+      buttonText = 'View Details'
+      buttonIcon = ChevronRight
+    }
+    
+    const ButtonIcon = buttonIcon
+    
+    return (
+      <div 
+        key={dispatch.id} 
+        className={`border rounded-lg p-3 sm:p-4 min-w-0 ${
+          isCompleted ? 'border-l-4 border-l-green-500' :
+          isDispatched || isReceiving ? 'border-l-4 border-l-orange-500' :
+          'border-l-4 border-l-blue-500'
+        }`}
+      >
+        <div className="flex flex-col gap-2 mb-3 min-w-0">
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-1.5 mb-2">
+              {bd.status === 'pending' && (
+                <Badge variant="secondary" className="flex items-center gap-1 text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5">
+                  📋 Ready to Pack
+                </Badge>
+              )}
+              {isPacking && (
+                <Badge variant="default" className="flex items-center gap-1 bg-blue-600 text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5">
+                  🔄 Packing
+                </Badge>
+              )}
+              {(isDispatched || isReceiving) && (
+                <Badge variant="secondary" className="flex items-center gap-1 bg-orange-600 text-white text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5">
+                  📦 Ready to Receive
+                </Badge>
+              )}
+              {issuesCount > 0 && (
+                <Badge variant="destructive" className="flex items-center gap-1 text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5">
+                  <AlertTriangle className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                  {issuesCount} Issue{issuesCount > 1 ? 's' : ''}
+                </Badge>
+              )}
+            </div>
+            <div className="font-semibold text-sm sm:text-base md:text-lg break-words">
+              Delivery: {formatDate(dispatch.deliveryDate)}
+            </div>
+            <div className="text-xs sm:text-sm text-muted-foreground mt-1 break-words">
+              {bd.items.length} items
+              {bd.packedBy && ` • Packed by ${bd.packedBy}`}
+              {bd.receivedBy && ` • Received by ${bd.receivedBy}`}
+            </div>
+          </div>
+        </div>
+
+        {/* Progress for packing/receiving */}
+        {!isCompleted && (
+          <div className="mb-3 min-w-0">
+            <div className="text-[10px] sm:text-xs text-muted-foreground mb-1">
+              {isPacking || bd.status === 'pending' ? (
+                <>{bd.items.filter(item => item.packedChecked).length}/{bd.items.length} items packed</>
+              ) : (
+                <>{bd.items.filter(item => item.receivedChecked).length}/{bd.items.length} items received</>
+              )}
+            </div>
+            <div className="w-full bg-muted rounded-full h-1.5 sm:h-2">
+              <div 
+                className="bg-primary rounded-full h-1.5 sm:h-2 transition-all"
+                style={{ 
+                  width: `${isPacking || bd.status === 'pending' 
+                    ? (bd.items.filter(item => item.packedChecked).length / bd.items.length) * 100
+                    : (bd.items.filter(item => item.receivedChecked).length / bd.items.length) * 100
+                  }%` 
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Action Button */}
+        <Link href={`/dispatch/${dispatch.id}/branch/${branchSlug}`} className="block">
+          <Button 
+            className="w-full text-xs sm:text-sm"
+            variant={isCompleted ? "outline" : "default"}
+            size="sm"
+          >
+            <ButtonIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2 shrink-0" />
+            <span className="truncate">{buttonText}</span>
+          </Button>
+        </Link>
+      </div>
+    )
+  }
+
+  // Get the most recent dispatch (first one since they're sorted by date)
+  const mostRecentDispatch = dispatches[0]
+
   return (
     <Card className="overflow-hidden" data-tour-id="branch-dispatches">
-      <CardHeader className="px-4 py-3 md:px-6 md:py-4">
-        <CardTitle className="flex items-center gap-2 text-base sm:text-lg md:text-xl">
-          <Package className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
-          <span className="break-words">Dispatches & Deliveries</span>
+      <CardHeader 
+        className="px-4 py-3 md:px-6 md:py-4 cursor-pointer hover:bg-muted/50 transition-colors"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <CardTitle className="flex items-center justify-between text-base sm:text-lg md:text-xl">
+          <div className="flex items-center gap-2">
+            <Package className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
+            <span className="break-words">Dispatches & Deliveries</span>
+            <Badge variant="secondary" className="ml-1 text-xs">
+              {dispatches.length}
+            </Badge>
+          </div>
+          {isExpanded ? (
+            <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
+          ) : (
+            <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+          )}
         </CardTitle>
       </CardHeader>
+      
       <CardContent className="px-4 py-3 md:px-6 md:py-4">
-        {/* Tabs */}
+        {/* Tabs - Always visible */}
         <div className="flex gap-1.5 sm:gap-2 mb-4 overflow-x-auto pb-1">
           <Button
             variant={activeTab === 'pending' ? "default" : "outline"}
-            onClick={() => setActiveTab('pending')}
+            onClick={(e) => {
+              e.stopPropagation()
+              setActiveTab('pending')
+              if (!isExpanded) setIsExpanded(true)
+            }}
             size="sm"
             className="flex-1 min-w-[85px] text-xs sm:text-sm px-2 sm:px-3"
           >
@@ -122,7 +259,11 @@ export function BranchDispatches({ branchSlug }: BranchDispatchesProps) {
           </Button>
           <Button
             variant={activeTab === 'dispatched' ? "default" : "outline"}
-            onClick={() => setActiveTab('dispatched')}
+            onClick={(e) => {
+              e.stopPropagation()
+              setActiveTab('dispatched')
+              if (!isExpanded) setIsExpanded(true)
+            }}
             size="sm"
             className="flex-1 min-w-[100px] text-xs sm:text-sm px-2 sm:px-3"
           >
@@ -131,7 +272,11 @@ export function BranchDispatches({ branchSlug }: BranchDispatchesProps) {
           </Button>
           <Button
             variant={activeTab === 'completed' ? "default" : "outline"}
-            onClick={() => setActiveTab('completed')}
+            onClick={(e) => {
+              e.stopPropagation()
+              setActiveTab('completed')
+              if (!isExpanded) setIsExpanded(true)
+            }}
             size="sm"
             className="flex-1 min-w-[80px] text-xs sm:text-sm px-2 sm:px-3"
           >
@@ -140,136 +285,41 @@ export function BranchDispatches({ branchSlug }: BranchDispatchesProps) {
           </Button>
         </div>
 
-        {/* Dispatch List */}
-        <div className="space-y-3">
-          {currentDispatches.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <Package className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <div>
-                {activeTab === 'pending' 
-                  ? 'No pending dispatches' 
-                  : activeTab === 'dispatched'
-                  ? 'No dispatched items to receive'
-                  : 'No completed dispatches yet'
-                }
-              </div>
-            </div>
-          ) : (
-            currentDispatches.map(dispatch => {
-              const bd = dispatch.branchDispatch
-              const issuesCount = bd.items.filter(item => item.issue !== null).length
-              const isCompleted = bd.status === 'completed'
-              const isPacking = bd.status === 'packing'
-              const isDispatched = bd.status === 'dispatched'
-              const isReceiving = bd.status === 'receiving'
-              
-              // Get button text based on status
-              let buttonText = 'Open Checklist'
-              let buttonIcon = Package
-              if (bd.status === 'pending') {
-                buttonText = 'Start Packing'
-                buttonIcon = Package
-              } else if (isPacking) {
-                buttonText = 'Continue Packing'
-                buttonIcon = Package
-              } else if (isDispatched) {
-                buttonText = 'Start Receiving'
-                buttonIcon = Package
-              } else if (isReceiving) {
-                buttonText = 'Continue Receiving'
-                buttonIcon = Package
-              } else if (isCompleted) {
-                buttonText = 'View Details'
-                buttonIcon = ChevronRight
-              }
-              
-              const ButtonIcon = buttonIcon
-              
-              return (
-                <div 
-                  key={dispatch.id} 
-                  className={`border rounded-lg p-3 sm:p-4 min-w-0 ${
-                    isCompleted ? 'border-l-4 border-l-green-500' :
-                    isDispatched || isReceiving ? 'border-l-4 border-l-orange-500' :
-                    'border-l-4 border-l-blue-500'
-                  }`}
-                >
-                  <div className="flex flex-col gap-2 mb-3 min-w-0">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex flex-wrap items-center gap-1.5 mb-2">
-                        {bd.status === 'pending' && (
-                          <Badge variant="secondary" className="flex items-center gap-1 text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5">
-                            📋 Ready to Pack
-                          </Badge>
-                        )}
-                        {isPacking && (
-                          <Badge variant="default" className="flex items-center gap-1 bg-blue-600 text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5">
-                            🔄 Packing
-                          </Badge>
-                        )}
-                        {(isDispatched || isReceiving) && (
-                          <Badge variant="secondary" className="flex items-center gap-1 bg-orange-600 text-white text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5">
-                            📦 Ready to Receive
-                          </Badge>
-                        )}
-                        {issuesCount > 0 && (
-                          <Badge variant="destructive" className="flex items-center gap-1 text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5">
-                            <AlertTriangle className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-                            {issuesCount} Issue{issuesCount > 1 ? 's' : ''}
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="font-semibold text-sm sm:text-base md:text-lg break-words">
-                        Delivery: {formatDate(dispatch.deliveryDate)}
-                      </div>
-                      <div className="text-xs sm:text-sm text-muted-foreground mt-1 break-words">
-                        {bd.items.length} items
-                        {bd.packedBy && ` • Packed by ${bd.packedBy}`}
-                        {bd.receivedBy && ` • Received by ${bd.receivedBy}`}
-                      </div>
-                    </div>
-                  </div>
+        {/* Minimized view - show only most recent dispatch */}
+        {!isExpanded && mostRecentDispatch && (
+          <div className="space-y-3">
+            {renderDispatchCard(mostRecentDispatch)}
+            {dispatches.length > 1 && (
+              <button 
+                onClick={() => setIsExpanded(true)}
+                className="w-full text-center text-sm text-primary hover:underline py-2"
+              >
+                Show {dispatches.length - 1} more dispatch{dispatches.length > 2 ? 'es' : ''}...
+              </button>
+            )}
+          </div>
+        )}
 
-                  {/* Progress for packing/receiving */}
-                  {!isCompleted && (
-                    <div className="mb-3 min-w-0">
-                      <div className="text-[10px] sm:text-xs text-muted-foreground mb-1">
-                        {isPacking || bd.status === 'pending' ? (
-                          <>{bd.items.filter(item => item.packedChecked).length}/{bd.items.length} items packed</>
-                        ) : (
-                          <>{bd.items.filter(item => item.receivedChecked).length}/{bd.items.length} items received</>
-                        )}
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-1.5 sm:h-2">
-                        <div 
-                          className="bg-primary rounded-full h-1.5 sm:h-2 transition-all"
-                          style={{ 
-                            width: `${isPacking || bd.status === 'pending' 
-                              ? (bd.items.filter(item => item.packedChecked).length / bd.items.length) * 100
-                              : (bd.items.filter(item => item.receivedChecked).length / bd.items.length) * 100
-                            }%` 
-                          }}
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Action Button */}
-                  <Link href={`/dispatch/${dispatch.id}/branch/${branchSlug}`} className="block">
-                    <Button 
-                      className="w-full text-xs sm:text-sm"
-                      variant={isCompleted ? "outline" : "default"}
-                      size="sm"
-                    >
-                      <ButtonIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2 shrink-0" />
-                      <span className="truncate">{buttonText}</span>
-                    </Button>
-                  </Link>
+        {/* Expanded view - show all dispatches for active tab */}
+        {isExpanded && (
+          <div className="space-y-3">
+            {currentDispatches.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Package className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                <div>
+                  {activeTab === 'pending' 
+                    ? 'No pending dispatches' 
+                    : activeTab === 'dispatched'
+                    ? 'No dispatched items to receive'
+                    : 'No completed dispatches yet'
+                  }
                 </div>
-              )
-            })
-          )}
-        </div>
+              </div>
+            ) : (
+              currentDispatches.map(dispatch => renderDispatchCard(dispatch))
+            )}
+          </div>
+        )}
       </CardContent>
     </Card>
   )

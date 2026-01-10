@@ -9,6 +9,8 @@ import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { AddItemModal } from '@/components/AddItemModal'
+import { useAuth } from '@/hooks/useAuth'
 import { 
   ArrowLeft, 
   AlertTriangle, 
@@ -22,7 +24,8 @@ import {
   TrendingUp,
   ChevronDown,
   ChevronUp,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Plus
 } from 'lucide-react'
 import type { Dispatch, BranchDispatch, DispatchItem } from '@/lib/data'
 
@@ -42,8 +45,12 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
   const [expandedBranches, setExpandedBranches] = useState<Set<string>>(new Set())
   const [expandedIssueBranches, setExpandedIssueBranches] = useState<Set<string>>(new Set())
   const [completeDetailsFilter, setCompleteDetailsFilter] = useState<'all' | 'issues'>('all')
+  const [addItemModalOpen, setAddItemModalOpen] = useState(false)
+  const [addItemPreselectedBranch, setAddItemPreselectedBranch] = useState<string | undefined>(undefined)
   const router = useRouter()
   const isPrintMode = searchParams.print === '1'
+  const { canEdit } = useAuth()
+  const canAddItems = canEdit('dispatch')
 
   useEffect(() => {
     fetchDispatch()
@@ -328,6 +335,18 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
               </div>
               {!isPrintMode && (
                 <div className="flex gap-2">
+                  {canAddItems && (
+                    <Button
+                      onClick={() => {
+                        setAddItemPreselectedBranch(undefined)
+                        setAddItemModalOpen(true)
+                      }}
+                      className="flex items-center gap-2 bg-primary hover:bg-primary/90"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Add Item
+                    </Button>
+                  )}
                   <Button
                     variant="outline"
                     onClick={handleExport}
@@ -467,6 +486,7 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {dispatch.branchDispatches.map(bd => {
                     const issueCount = bd.items.filter(item => item.issue !== null).length
+                    const canAddToBranch = (bd.status === 'pending' || bd.status === 'packing') && canAddItems
                     return (
                       <div
                         key={bd.branchSlug}
@@ -476,7 +496,23 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
                       >
                         <div className="flex items-start justify-between mb-2">
                           <div className="font-semibold">{bd.branchName}</div>
-                          {getStatusBadge(bd.status)}
+                          <div className="flex items-center gap-2">
+                            {canAddToBranch && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7 rounded-full bg-primary/10 hover:bg-primary/20"
+                                onClick={() => {
+                                  setAddItemPreselectedBranch(bd.branchSlug)
+                                  setAddItemModalOpen(true)
+                                }}
+                                title={`Add item to ${bd.branchName}`}
+                              >
+                                <Plus className="h-4 w-4 text-primary" />
+                              </Button>
+                            )}
+                            {getStatusBadge(bd.status)}
+                          </div>
                         </div>
                         <div className="text-sm space-y-1">
                           <div className="text-muted-foreground">
@@ -614,7 +650,21 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
                                   
                                   return (
                                     <tr key={item.id} className="border-t hover:bg-muted/50">
-                                      <td className="p-3 font-medium">{item.name}</td>
+                                      <td className="p-3">
+                                          <div className="flex items-center gap-2">
+                                            <span className="font-medium">{item.name}</span>
+                                            {item.addedLate && (
+                                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-xs font-medium bg-amber-100 text-amber-800 rounded border border-amber-200">
+                                                ⚡ LATE
+                                              </span>
+                                            )}
+                                          </div>
+                                          {item.addedLate && item.addedBy && (
+                                            <div className="text-xs text-amber-600 mt-0.5">
+                                              Added by {item.addedBy}
+                                            </div>
+                                          )}
+                                        </td>
                                       <td className="p-3 text-center">{item.orderedQty}</td>
                                       <td className="p-3 text-center">
                                         <span className={packingIssue ? 'text-orange-600 font-semibold' : ''}>
@@ -821,7 +871,21 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
                                           hasIssue ? 'bg-red-50' : isPerfect ? 'bg-green-50' : ''
                                         }`}
                                       >
-                                        <td className="p-3 font-medium">{item.name}</td>
+                                        <td className="p-3">
+                                          <div className="flex items-center gap-2">
+                                            <span className="font-medium">{item.name}</span>
+                                            {item.addedLate && (
+                                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-xs font-medium bg-amber-100 text-amber-800 rounded border border-amber-200">
+                                                ⚡ LATE
+                                              </span>
+                                            )}
+                                          </div>
+                                          {item.addedLate && item.addedBy && (
+                                            <div className="text-xs text-amber-600 mt-0.5">
+                                              Added by {item.addedBy}
+                                            </div>
+                                          )}
+                                        </td>
                                         <td className="p-3 text-center">{item.orderedQty}</td>
                                         <td className="p-3 text-center">
                                           <span className={packingIssue ? 'text-orange-600 font-semibold' : ''}>
@@ -887,6 +951,21 @@ export default function DispatchReportPage({ params, searchParams }: ReportPageP
 
         {!isPrintMode && <Footer />}
       </main>
+
+      {/* Add Item Modal */}
+      {dispatch && (
+        <AddItemModal
+          isOpen={addItemModalOpen}
+          onClose={() => {
+            setAddItemModalOpen(false)
+            setAddItemPreselectedBranch(undefined)
+          }}
+          dispatchId={dispatch.id}
+          branchDispatches={dispatch.branchDispatches}
+          preSelectedBranch={addItemPreselectedBranch}
+          onItemAdded={fetchDispatch}
+        />
+      )}
     </div>
   )
 }

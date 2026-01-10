@@ -30,7 +30,8 @@ import {
   ChevronDown,
   Star,
   Boxes,
-  Eye
+  Eye,
+  Clock
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
@@ -101,6 +102,7 @@ export default function BranchManagerDashboard() {
   const [qualityCompliance, setQualityCompliance] = useState<QualityCompliance[]>([])
   const [inventorySummary, setInventorySummary] = useState<InventorySummary | null>(null)
   const [sortBy, setSortBy] = useState<'revenue' | 'name' | 'hygiene'>('revenue')
+  const [dispatchesExpanded, setDispatchesExpanded] = useState(false)
 
   useEffect(() => {
     if (user) {
@@ -668,15 +670,43 @@ export default function BranchManagerDashboard() {
               {/* Recent Dispatches */}
               {dispatches.length > 0 && (
                 <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <Truck className="h-4 w-4 text-blue-600" />
-                      Recent Dispatches
+                  <CardHeader 
+                    className="pb-2 cursor-pointer hover:bg-muted/50 transition-colors"
+                    onClick={() => setDispatchesExpanded(!dispatchesExpanded)}
+                  >
+                    <CardTitle className="text-base flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Truck className="h-4 w-4 text-blue-600" />
+                        Recent Dispatches
+                        <Badge variant="secondary" className="ml-1">{dispatches.length}</Badge>
+                      </div>
+                      {dispatchesExpanded ? (
+                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      )}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
+                    {/* Status Summary - Always visible */}
+                    <div className="flex gap-2 mb-3 text-xs">
+                      <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                        <Clock className="h-3 w-3 mr-1" />
+                        Pending: {dispatches.filter(d => d.branchDispatches.some(bd => branches.some(b => b.slug === bd.branchSlug) && (bd.status === 'pending' || bd.status === 'packing'))).length}
+                      </Badge>
+                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                        <Truck className="h-3 w-3 mr-1" />
+                        Active: {dispatches.filter(d => d.branchDispatches.some(bd => branches.some(b => b.slug === bd.branchSlug) && (bd.status === 'dispatched' || bd.status === 'receiving'))).length}
+                      </Badge>
+                      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                        Done: {dispatches.filter(d => d.branchDispatches.every(bd => !branches.some(b => b.slug === bd.branchSlug) || bd.status === 'completed')).length}
+                      </Badge>
+                    </div>
+
                     <div className="space-y-3">
-                      {dispatches.slice(0, 3).map(dispatch => {
+                      {/* Show only first dispatch when minimized, all when expanded */}
+                      {(dispatchesExpanded ? dispatches.slice(0, 3) : dispatches.slice(0, 1)).map(dispatch => {
                         const relevantBranches = dispatch.branchDispatches.filter(bd =>
                           branches.some(b => b.slug === bd.branchSlug)
                         )
@@ -720,6 +750,16 @@ export default function BranchManagerDashboard() {
                           </div>
                         )
                       })}
+                      
+                      {/* Show "more" link when minimized */}
+                      {!dispatchesExpanded && dispatches.length > 1 && (
+                        <button 
+                          onClick={() => setDispatchesExpanded(true)}
+                          className="w-full text-center text-sm text-primary hover:underline py-2"
+                        >
+                          Show {dispatches.length - 1} more dispatch{dispatches.length > 2 ? 'es' : ''}...
+                        </button>
+                      )}
                     </div>
                   </CardContent>
                 </Card>

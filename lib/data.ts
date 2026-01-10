@@ -215,6 +215,12 @@ export interface DispatchItem {
   receivedChecked: boolean      // Checked during receiving
   notes: string
   issue: 'missing' | 'damaged' | 'partial' | 'shortage' | null
+  
+  // Late addition fields (for items added after dispatch creation)
+  addedLate?: boolean           // Flag for items added after dispatch creation
+  addedAt?: string              // ISO timestamp when added
+  addedBy?: string              // Who added it (Dispatcher name/email)
+  addedReason?: string          // Reason for late addition
 }
 
 export interface BranchDispatch {

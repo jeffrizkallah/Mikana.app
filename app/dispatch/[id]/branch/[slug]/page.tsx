@@ -442,10 +442,23 @@ export default function ReceivingChecklistPage({ params }: ReceivingPageProps) {
                     </div>
                     
                     <div className="flex-1 min-w-0">
-                      {/* Item Header - Mobile Optimized */}
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <div className="flex-1 min-w-0">
-                          <div className="font-semibold text-sm md:text-lg mb-0.5">{item.name}</div>
+{/* Item Header - Mobile Optimized */}
+                                      <div className="flex items-start justify-between gap-2 mb-2">
+                                        <div className="flex-1 min-w-0">
+                                          <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                                            <span className="font-semibold text-sm md:text-lg">{item.name}</span>
+                                            {item.addedLate && (
+                                              <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-amber-100 text-amber-800 rounded-full border border-amber-200">
+                                                ⚡ LATE ADD
+                                              </span>
+                                            )}
+                                          </div>
+                                          {item.addedLate && item.addedBy && (
+                                            <div className="text-xs text-amber-600 mb-1">
+                                              Added by {item.addedBy}
+                                              {item.addedReason && ` • ${item.addedReason}`}
+                                            </div>
+                                          )}</div>
                           
                           {mode === 'packing' ? (
                             <div className="text-xs md:text-sm text-muted-foreground">
