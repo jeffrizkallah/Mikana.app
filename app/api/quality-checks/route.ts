@@ -154,7 +154,7 @@ export async function POST(request: Request) {
     }
 
     // Validate user has access to this branch (unless admin/operations)
-    const requiresBranchAccess = ['branch_manager', 'branch_staff'].includes(user.role)
+    const requiresBranchAccess = user.role && ['branch_manager', 'branch_staff'].includes(user.role)
     if (requiresBranchAccess && !user.branches?.includes(data.branchSlug)) {
       return NextResponse.json({ error: 'You do not have access to this branch' }, { status: 403 })
     }
