@@ -9,21 +9,20 @@ CHANGES/ADDITIONS
 - **(DONE)** Guided onboarding for different roles, for first time users. (check ###26)
 - **(DONE)** Make the visual presentation in the reheating edit section a drop or upload, not a URL for the image 
 - **(DONE)** Remove Dispatch and Sales Analysis from Operations Lead dashboard (she should not need them)
+- **(DONE)** Add recipes  
+- **(DONE)** Add reheating steps **(Need to chnage the imagine)**
+- **(DONE)** Update all data details on branches
+- **(DONE)** Prepare Branch manager dashboard (make video)
+- **(ONGOING)** Add internal Chat System **(HIDDEN)**
+- **(DONE)** Fix loafing sign to be centered
+- **(DONE)** Remove Branch health widgets from admin dashboard
+- Figure out hwo to digitize the daily recipes and production order for CK
+- Quality control for Esme
 - Make sure all the color tones of the icons accross all the software are the same (Branch Manager)
 - Add Regional Manager role with its dashbaord and tools
 - Add Ordering section for branches 
 - Breakdown of orders into recipes, sub-recipes, and ingredients
 - Add Inventory System
-- Add recipes  
-- **(DONE)** Add reheating steps **(Need to chnage the imagine)**
-- Update all data details on branches
-- Prepare Branch manager dashboard (make video)
-- **(ONGOING)** Add internal Chat System **(HIDDEN)**
-- Fix loafing sign to be centered
-- Remove Branch health widgets from admin dashboard
-- Figure out hwo to digitize the daily recipes and production order for CK
-- Quality control for Esme
-
 ---------------------------------------------------------------
 **EXTRA DETAILS FOR NOTES**
 
