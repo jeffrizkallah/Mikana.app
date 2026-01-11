@@ -83,8 +83,17 @@ function Modal({ isOpen, onClose, children, title }: ModalProps) {
   )
 }
 
+// Protected roles that only admins can assign
+const PROTECTED_ROLES: UserRole[] = ['admin', 'operations_lead']
+
 export default function UserManagementPage() {
-  const { isAdmin, loading: authLoading } = useAuth({ required: true, allowedRoles: ['admin', 'dispatcher'] })
+  const { isAdmin, user, loading: authLoading } = useAuth({ required: true, allowedRoles: ['admin', 'dispatcher'] })
+  
+  // Dispatchers can only assign non-protected roles
+  const isDispatcher = user?.role === 'dispatcher'
+  const availableRoleOptions = isDispatcher 
+    ? roleOptions.filter(role => !PROTECTED_ROLES.includes(role.value))
+    : roleOptions
   
   const [users, setUsers] = useState<UserWithBranches[]>([])
   const [pendingUsers, setPendingUsers] = useState<UserWithBranches[]>([])
@@ -554,7 +563,7 @@ export default function UserManagementPage() {
               className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
             >
               <option value="">Select a role</option>
-              {roleOptions.map(role => (
+              {availableRoleOptions.map(role => (
                 <option key={role.value} value={role.value}>
                   {role.label} - {role.description}
                 </option>
@@ -667,13 +676,26 @@ export default function UserManagementPage() {
               value={formRole}
               onChange={(e) => setFormRole(e.target.value as UserRole)}
               className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
+              disabled={isDispatcher && selectedUser?.role && PROTECTED_ROLES.includes(selectedUser.role)}
             >
-              {roleOptions.map(role => (
-                <option key={role.value} value={role.value}>
-                  {role.label}
+              {/* Show current role if it's protected and user is a dispatcher (read-only) */}
+              {isDispatcher && selectedUser?.role && PROTECTED_ROLES.includes(selectedUser.role) ? (
+                <option value={selectedUser.role}>
+                  {roleDisplayNames[selectedUser.role]} (Cannot modify)
                 </option>
-              ))}
+              ) : (
+                availableRoleOptions.map(role => (
+                  <option key={role.value} value={role.value}>
+                    {role.label}
+                  </option>
+                ))
+              )}
             </select>
+            {isDispatcher && selectedUser?.role && PROTECTED_ROLES.includes(selectedUser.role) && (
+              <p className="text-xs text-amber-600">
+                Only admins can modify users with Admin or Operations Lead roles.
+              </p>
+            )}
           </div>
           
           <div className="space-y-2">
@@ -873,12 +895,17 @@ export default function UserManagementPage() {
               className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
             >
               <option value="">Select a role</option>
-              {roleOptions.map(role => (
+              {availableRoleOptions.map(role => (
                 <option key={role.value} value={role.value}>
                   {role.label}
                 </option>
               ))}
             </select>
+            {isDispatcher && (
+              <p className="text-xs text-muted-foreground">
+                Admin and Operations Lead roles can only be assigned by admins.
+              </p>
+            )}
           </div>
           
           {newUserData.role === 'branch_manager' && (

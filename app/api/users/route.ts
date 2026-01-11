@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth-options'
-import { getAllUsers, getPendingUsers, createUser, hashPassword } from '@/lib/auth'
+import { getAllUsers, getPendingUsers, createUser, hashPassword, type UserRole } from '@/lib/auth'
 import { sql } from '@vercel/postgres'
+
+// Protected roles that only admins can assign
+const PROTECTED_ROLES: UserRole[] = ['admin', 'operations_lead']
 
 // GET - List all users or pending users
 export async function GET(request: Request) {
@@ -46,6 +49,14 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
+      )
+    }
+
+    // Dispatchers cannot assign protected roles (admin, operations_lead)
+    if (session.user.role === 'dispatcher' && PROTECTED_ROLES.includes(role)) {
+      return NextResponse.json(
+        { error: 'You do not have permission to assign Admin or Operations Lead roles' },
+        { status: 403 }
       )
     }
 

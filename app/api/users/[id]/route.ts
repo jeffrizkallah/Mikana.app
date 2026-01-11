@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth-options'
-import { getUserById, updateUser, resetUserPassword, approveUser, rejectUser } from '@/lib/auth'
+import { getUserById, updateUser, resetUserPassword, approveUser, rejectUser, type UserRole } from '@/lib/auth'
 import { sql } from '@vercel/postgres'
+
+// Protected roles that only admins can assign or modify
+const PROTECTED_ROLES: UserRole[] = ['admin', 'operations_lead']
 
 // GET - Get single user
 export async function GET(
@@ -62,6 +65,28 @@ export async function PATCH(
 
     const body = await request.json()
     const { action, role, status, branches, reason, newPassword } = body
+
+    // Check if current user is a dispatcher (not admin)
+    const isDispatcher = session.user.role === 'dispatcher'
+
+    // Dispatchers cannot assign protected roles (admin, operations_lead)
+    if (isDispatcher && role && PROTECTED_ROLES.includes(role)) {
+      return NextResponse.json(
+        { error: 'You do not have permission to assign Admin or Operations Lead roles' },
+        { status: 403 }
+      )
+    }
+
+    // Dispatchers cannot modify users who have protected roles
+    if (isDispatcher && (action === 'update' || !action)) {
+      const targetUser = await getUserById(userId)
+      if (targetUser?.role && PROTECTED_ROLES.includes(targetUser.role as UserRole)) {
+        return NextResponse.json(
+          { error: 'You do not have permission to modify users with Admin or Operations Lead roles' },
+          { status: 403 }
+        )
+      }
+    }
 
     // Helper to delete signup notification for this user
     const deleteSignupNotification = async (targetUserId: number) => {
@@ -151,6 +176,17 @@ export async function DELETE(
     // Don't allow deleting yourself
     if (userId === session.user.id) {
       return NextResponse.json({ error: 'Cannot deactivate your own account' }, { status: 400 })
+    }
+
+    // Dispatchers cannot deactivate users with protected roles (admin, operations_lead)
+    if (session.user.role === 'dispatcher') {
+      const targetUser = await getUserById(userId)
+      if (targetUser?.role && PROTECTED_ROLES.includes(targetUser.role as UserRole)) {
+        return NextResponse.json(
+          { error: 'You do not have permission to deactivate users with Admin or Operations Lead roles' },
+          { status: 403 }
+        )
+      }
     }
 
     // Deactivate instead of delete
