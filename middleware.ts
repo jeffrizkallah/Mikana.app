@@ -20,8 +20,10 @@ const publicRoutes = [
 
 // Routes that require specific roles
 const roleRestrictedRoutes: Record<string, string[]> = {
-  '/admin': ['admin'],
+  '/admin/recipes': ['admin', 'operations_lead'],
+  '/admin/recipe-instructions': ['admin', 'operations_lead'],
   '/admin/users': ['admin', 'dispatcher'],
+  '/admin': ['admin'],
   '/operations': ['admin', 'operations_lead'],
   '/dispatch': ['admin', 'operations_lead', 'dispatcher'],
   '/kitchen': ['admin', 'operations_lead', 'central_kitchen'],

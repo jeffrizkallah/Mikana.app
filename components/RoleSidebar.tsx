@@ -72,6 +72,15 @@ function getNavItems(role: UserRole | null, userBranches?: string[]): NavItem[] 
         { href: '/operations', label: 'Home', icon: Home },
         { href: '/', label: 'Branches', icon: Building2 },
         { href: '/branch/central-kitchen', label: 'Central Kitchen', icon: Factory },
+        { 
+          href: '/admin/recipes', 
+          label: 'Recipes', 
+          icon: ChefHat,
+          subItems: [
+            { href: '/admin/recipes', label: 'Recipe Manager' },
+            { href: '/admin/recipe-instructions', label: 'Reheating & Assembly' },
+          ]
+        },
       ]
 
     case 'dispatcher':
