@@ -817,7 +817,7 @@ export default function QualityControlPage() {
                             <img 
                               src={check.photos[0]} 
                               alt={check.productName}
-                              className="w-10 h-10 rounded-lg object-cover border hover:ring-2 hover:ring-primary transition-all"
+                              className="w-20 h-20 rounded-lg object-cover border hover:ring-2 hover:ring-primary transition-all"
                             />
                             {check.photos.length > 1 && (
                               <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full w-4 h-4 flex items-center justify-center">
