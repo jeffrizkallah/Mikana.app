@@ -94,7 +94,7 @@ export default function RecipeInstructionsPage({ params }: RecipeInstructionsPag
       filtered = filtered.filter(instruction => 
         instruction.dishName.toLowerCase().includes(query) ||
         instruction.category?.toLowerCase().includes(query) ||
-        instruction.components?.some(comp => comp.name?.toLowerCase().includes(query))
+        instruction.components?.some(comp => comp.subRecipeName?.toLowerCase().includes(query))
       )
     }
     
