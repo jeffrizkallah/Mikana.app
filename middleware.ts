@@ -22,6 +22,8 @@ const publicRoutes = [
 const roleRestrictedRoutes: Record<string, string[]> = {
   '/admin/recipes': ['admin', 'operations_lead'],
   '/admin/recipe-instructions': ['admin', 'operations_lead'],
+  '/admin/production-schedules': ['admin', 'operations_lead'],
+  '/admin/quality-control': ['admin', 'operations_lead'],
   '/admin/users': ['admin', 'dispatcher'],
   '/admin': ['admin'],
   '/operations': ['admin', 'operations_lead'],
