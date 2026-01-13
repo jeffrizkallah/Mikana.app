@@ -131,11 +131,11 @@ export default function QualityCheckPage() {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen w-full overflow-hidden">
       <RoleSidebar />
 
-      <main className="flex-1 flex flex-col pt-14 xs:pt-16 md:pt-0">
-        <div className="flex-1 container mx-auto px-3 xs:px-4 py-4 xs:py-6 md:py-8 max-w-4xl">
+      <main className="flex-1 flex flex-col pt-14 xs:pt-16 md:pt-0 min-w-0">
+        <div className="flex-1 w-full max-w-4xl mx-auto px-3 xs:px-4 py-4 xs:py-6 md:py-8 overflow-hidden">
           <Breadcrumbs
             items={[
               { label: branch?.name || 'Branch', href: `/branch/${slug}` },
@@ -183,7 +183,7 @@ export default function QualityCheckPage() {
           </div>
 
           {showForm ? (
-            <div>
+            <div className="w-full overflow-hidden">
               <Button 
                 variant="ghost" 
                 onClick={() => setShowForm(false)}

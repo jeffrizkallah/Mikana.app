@@ -158,28 +158,28 @@ export function ImageUpload({ images, onImagesChange, maxImages = 10 }: ImageUpl
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4 w-full overflow-hidden">
       {/* Upload Options Buttons */}
-      <div className="flex gap-3">
+      <div className="flex gap-2 sm:gap-3 w-full">
         <Button
           type="button"
           variant="outline"
           onClick={handleBrowseClick}
           disabled={isUploading}
-          className="flex-1 h-14 border-2 hover:border-orange-400 hover:bg-orange-50"
+          className="flex-1 min-w-0 h-11 sm:h-14 border-2 hover:border-orange-400 hover:bg-orange-50 px-2 sm:px-4"
         >
-          <Upload className="h-5 w-5 mr-2 text-orange-500" />
-          <span className="font-medium">Browse Gallery</span>
+          <Upload className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2 text-orange-500 shrink-0" />
+          <span className="font-medium text-xs sm:text-sm truncate">Browse Gallery</span>
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={handleCameraClick}
           disabled={isUploading}
-          className="flex-1 h-14 border-2 hover:border-orange-400 hover:bg-orange-50"
+          className="flex-1 min-w-0 h-11 sm:h-14 border-2 hover:border-orange-400 hover:bg-orange-50 px-2 sm:px-4"
         >
-          <Camera className="h-5 w-5 mr-2 text-orange-500" />
-          <span className="font-medium">Take Photo</span>
+          <Camera className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2 text-orange-500 shrink-0" />
+          <span className="font-medium text-xs sm:text-sm truncate">Take Photo</span>
         </Button>
       </div>
 
@@ -207,7 +207,7 @@ export function ImageUpload({ images, onImagesChange, maxImages = 10 }: ImageUpl
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         className={cn(
-          "border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer",
+          "border-2 border-dashed rounded-lg p-4 sm:p-6 text-center transition-colors cursor-pointer w-full",
           isDragging 
             ? "border-orange-500 bg-orange-50" 
             : "border-gray-300 hover:border-orange-400 hover:bg-gray-50",
@@ -217,19 +217,19 @@ export function ImageUpload({ images, onImagesChange, maxImages = 10 }: ImageUpl
       >
         {isUploading ? (
           <div className="flex flex-col items-center gap-2">
-            <Loader2 className="h-10 w-10 text-orange-500 animate-spin" />
-            <p className="text-sm text-muted-foreground">Uploading images...</p>
+            <Loader2 className="h-8 w-8 sm:h-10 sm:w-10 text-orange-500 animate-spin" />
+            <p className="text-xs sm:text-sm text-muted-foreground">Uploading images...</p>
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-2">
-            <div className="rounded-full bg-orange-100 p-3">
-              <Upload className="h-6 w-6 text-orange-500" />
+          <div className="flex flex-col items-center gap-1.5 sm:gap-2">
+            <div className="rounded-full bg-orange-100 p-2 sm:p-3">
+              <Upload className="h-5 w-5 sm:h-6 sm:w-6 text-orange-500" />
             </div>
             <div>
-              <p className="text-sm font-medium">
+              <p className="text-xs sm:text-sm font-medium">
                 Drop images here or <span className="text-orange-500">browse</span>
               </p>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">
                 PNG, JPG, GIF (max 4MB total per upload, max {maxImages} images)
               </p>
             </div>
@@ -239,7 +239,7 @@ export function ImageUpload({ images, onImagesChange, maxImages = 10 }: ImageUpl
 
       {/* Image Preview Grid */}
       {images.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 w-full">
           {images.map((url, index) => (
             <div
               key={index}
@@ -261,12 +261,12 @@ export function ImageUpload({ images, onImagesChange, maxImages = 10 }: ImageUpl
                     e.stopPropagation()
                     removeImage(index)
                   }}
-                  className="h-8 w-8"
+                  className="h-7 w-7 sm:h-8 sm:w-8"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </Button>
               </div>
-              <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+              <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 bg-black/70 text-white text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">
                 {index + 1}
               </div>
             </div>
@@ -275,9 +275,9 @@ export function ImageUpload({ images, onImagesChange, maxImages = 10 }: ImageUpl
       )}
 
       {images.length === 0 && !isUploading && (
-        <div className="text-center py-8 text-muted-foreground border rounded-lg bg-muted/30">
-          <ImageIcon className="h-12 w-12 mx-auto mb-2 opacity-30" />
-          <p className="text-sm">No images uploaded yet</p>
+        <div className="text-center py-6 sm:py-8 text-muted-foreground border rounded-lg bg-muted/30 w-full">
+          <ImageIcon className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-2 opacity-30" />
+          <p className="text-xs sm:text-sm">No images uploaded yet</p>
         </div>
       )}
     </div>

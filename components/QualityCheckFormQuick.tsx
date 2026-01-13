@@ -343,170 +343,149 @@ export function QualityCheckFormQuick({ branchSlug, branchName, onSuccess }: Qua
   const showSearchOverlay = isSearchFocused && searchQuery.length >= 2
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto overflow-x-hidden">
       {/* Sticky Header with Search */}
-      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm pb-2 -mx-4 px-4 pt-2">
+      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm pb-2 -mx-2 px-2 sm:-mx-4 sm:px-4 pt-2">
         {/* Success/Error Messages */}
         {successMessage && (
-          <div className="mb-2 bg-green-50 border border-green-200 rounded-lg p-2 flex items-center gap-2 text-green-700 text-sm">
-            <CheckCircle2 className="h-4 w-4 shrink-0" />
+          <div className="mb-2 bg-green-50 border border-green-200 rounded-lg p-1.5 sm:p-2 flex items-center gap-1.5 sm:gap-2 text-green-700 text-xs sm:text-sm">
+            <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
             {successMessage}
           </div>
         )}
         {error && (
-          <div className="mb-2 bg-red-50 border border-red-200 rounded-lg p-2 flex items-center gap-2 text-red-700 text-sm">
-            <AlertCircle className="h-4 w-4 shrink-0" />
+          <div className="mb-2 bg-red-50 border border-red-200 rounded-lg p-1.5 sm:p-2 flex items-center gap-1.5 sm:gap-2 text-red-700 text-xs sm:text-sm">
+            <AlertCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
             {error}
           </div>
         )}
 
-        {/* Search Bar */}
+        {/* Search Bar with Dropdown */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <Search className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400 z-10" />
           <input
             ref={searchInputRef}
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setIsSearchFocused(true)}
-            placeholder="Search products..."
-            className="w-full pl-11 pr-11 py-3.5 border-2 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary text-base bg-white"
+            placeholder="Search or type product name..."
+            className="w-full pl-9 sm:pl-11 pr-9 sm:pr-11 py-2.5 sm:py-3 border-2 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary text-sm sm:text-base bg-white"
           />
           {searchQuery && (
             <button
               onClick={() => { setSearchQuery(''); setIsSearchFocused(false) }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 hover:bg-gray-100 rounded-full"
+              className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 p-1 sm:p-1.5 hover:bg-gray-100 rounded-full z-10"
             >
-              <X className="h-5 w-5 text-gray-400" />
+              <X className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
             </button>
+          )}
+          
+          {/* Search Results Dropdown - positioned here for proper stacking */}
+          {showSearchOverlay && (
+            <>
+              {/* Backdrop to close dropdown */}
+              <div 
+                className="fixed inset-0 z-40" 
+                onClick={() => { setSearchQuery(''); setIsSearchFocused(false) }}
+              />
+              
+              {/* Dropdown */}
+              <div className="absolute left-0 right-0 top-full z-50 mt-1 bg-white border-2 border-gray-200 rounded-xl shadow-xl max-h-[50vh] overflow-y-auto">
+                {isSearching ? (
+                  <div className="p-4 text-center text-gray-500">
+                    <Loader2 className="h-5 w-5 animate-spin mx-auto mb-1" />
+                    <span className="text-sm">Searching...</span>
+                  </div>
+                ) : searchResults.length > 0 ? (
+                  <div className="divide-y divide-gray-100">
+                    {searchResults.slice(0, 8).map((product, index) => (
+                      <button
+                        key={index}
+                        onClick={() => selectProduct(product.name, product.category)}
+                        className={cn(
+                          "w-full px-3 py-2.5 text-left flex items-center justify-between active:bg-gray-50",
+                          submittedToday.includes(product.name) && "bg-green-50"
+                        )}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-sm truncate">{product.name}</p>
+                          <p className="text-xs text-gray-500">{product.category}</p>
+                        </div>
+                        {submittedToday.includes(product.name) && (
+                          <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0 ml-2" />
+                        )}
+                      </button>
+                    ))}
+                    {/* Add custom product option */}
+                    <button
+                      onClick={() => selectProduct(searchQuery.trim(), 'Custom')}
+                      className="w-full px-3 py-2.5 text-left flex items-center gap-2 active:bg-blue-50 bg-blue-50/50"
+                    >
+                      <span className="text-sm">✏️</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm text-blue-700">Use &quot;{searchQuery.trim()}&quot;</p>
+                        <p className="text-xs text-blue-600">Add as custom product</p>
+                      </div>
+                    </button>
+                  </div>
+                ) : searchQuery.length >= 2 ? (
+                  <div className="p-3">
+                    <p className="text-sm text-gray-500 text-center mb-2">No products found</p>
+                    <button
+                      onClick={() => selectProduct(searchQuery.trim(), 'Custom')}
+                      className="w-full p-3 text-left flex items-center gap-2 active:bg-blue-100 bg-blue-50 rounded-lg border border-blue-200"
+                    >
+                      <span className="text-base">✏️</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-sm text-blue-700">Add &quot;{searchQuery.trim()}&quot;</p>
+                        <p className="text-xs text-blue-600">Use as custom product name</p>
+                      </div>
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            </>
           )}
         </div>
       </div>
 
-      {/* Search Results Overlay */}
-      {showSearchOverlay && (
-        <div className="fixed inset-0 z-50 bg-background">
-          <div className="sticky top-0 bg-background border-b p-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                autoFocus
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search products..."
-                className="w-full pl-11 pr-11 py-3.5 border-2 rounded-xl text-base"
-              />
-              <button
-                onClick={() => { setSearchQuery(''); setIsSearchFocused(false) }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-          
-          <div className="overflow-y-auto h-[calc(100vh-70px)]">
-            {isSearching ? (
-              <div className="p-8 text-center text-gray-500">
-                <Loader2 className="h-6 w-6 animate-spin mx-auto mb-2" />
-                Searching...
-              </div>
-            ) : searchResults.length > 0 ? (
-              <div className="divide-y">
-                {searchResults.map((product, index) => (
-                  <button
-                    key={index}
-                    onClick={() => selectProduct(product.name, product.category)}
-                    className={cn(
-                      "w-full px-4 py-4 text-left flex items-center justify-between active:bg-gray-100",
-                      submittedToday.includes(product.name) && "bg-green-50"
-                    )}
-                  >
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate">{product.name}</p>
-                      <p className="text-sm text-gray-500">{product.category}</p>
-                    </div>
-                    {submittedToday.includes(product.name) && (
-                      <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 ml-2" />
-                    )}
-                  </button>
-                ))}
-                {/* Add custom product option at the bottom of results */}
-                <button
-                  onClick={() => selectProduct(searchQuery.trim(), 'Other')}
-                  className="w-full px-4 py-4 text-left flex items-center gap-3 active:bg-blue-50 bg-blue-50/50 border-t-2 border-blue-100"
-                >
-                  <div className="p-2 bg-blue-100 rounded-full">
-                    <span className="text-lg">✏️</span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-blue-700">Add &quot;{searchQuery.trim()}&quot;</p>
-                    <p className="text-sm text-blue-600">Use custom product name</p>
-                  </div>
-                  <ChevronRight className="h-5 w-5 text-blue-400" />
-                </button>
-              </div>
-            ) : (
-              <div className="p-6 text-center">
-                <div className="text-gray-500 mb-4">
-                  No products found for &quot;{searchQuery}&quot;
-                </div>
-                <button
-                  onClick={() => selectProduct(searchQuery.trim(), 'Other')}
-                  className="w-full p-4 text-left flex items-center gap-3 active:bg-blue-100 bg-blue-50 rounded-xl border-2 border-blue-200"
-                >
-                  <div className="p-2 bg-blue-100 rounded-full">
-                    <span className="text-lg">✏️</span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-blue-700">Add &quot;{searchQuery.trim()}&quot;</p>
-                    <p className="text-sm text-blue-600">Use this as custom product name</p>
-                  </div>
-                  <ChevronRight className="h-5 w-5 text-blue-400" />
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Category Modal */}
       {showCategoryModal && (
         <div className="fixed inset-0 z-50 bg-background">
-          <div className="sticky top-0 bg-background border-b p-3 space-y-2">
+          <div className="sticky top-0 bg-background border-b p-2 sm:p-3 space-y-2">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold flex items-center gap-2">
+              <h2 className="text-base sm:text-lg font-semibold flex items-center gap-1.5 sm:gap-2">
                 <span>{categoryIcons[modalCategory] || '📦'}</span>
                 {modalCategory}
               </h2>
               <button
                 onClick={() => setShowCategoryModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-full"
+                className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full"
               >
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4 sm:h-5 sm:w-5" />
               </button>
             </div>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-400" />
               <input
                 type="text"
                 value={modalSearchQuery}
                 onChange={(e) => setModalSearchQuery(e.target.value)}
                 placeholder={`Filter ${modalCategory}...`}
-                className="w-full pl-10 pr-4 py-2.5 border rounded-lg text-sm"
+                className="w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-2.5 border rounded-lg text-xs sm:text-sm"
               />
             </div>
           </div>
           
-          <div className="overflow-y-auto h-[calc(100vh-120px)] p-2">
-            <div className="grid grid-cols-2 gap-2">
+          <div className="overflow-y-auto h-[calc(100vh-110px)] sm:h-[calc(100vh-120px)] p-1.5 sm:p-2">
+            <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
               {filteredModalProducts.map((product, index) => (
                 <button
                   key={index}
                   onClick={() => selectProduct(product.name, modalCategory)}
                   className={cn(
-                    "p-3 rounded-lg text-left text-sm font-medium border-2 active:scale-95 transition-transform",
+                    "p-2 sm:p-3 rounded-lg text-left text-xs sm:text-sm font-medium border-2 active:scale-95 transition-transform",
                     submittedToday.includes(product.name) 
                       ? "border-green-500 bg-green-50" 
                       : "border-gray-100 bg-gray-50 active:bg-gray-100"
@@ -514,50 +493,50 @@ export function QualityCheckFormQuick({ branchSlug, branchName, onSuccess }: Qua
                 >
                   <span className="line-clamp-2">{product.name}</span>
                   {submittedToday.includes(product.name) && (
-                    <CheckCircle2 className="h-4 w-4 text-green-600 mt-1" />
+                    <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-600 mt-1" />
                   )}
                 </button>
               ))}
             </div>
             {filteredModalProducts.length === 0 && (
-              <p className="text-center text-gray-500 py-8">No products found</p>
+              <p className="text-center text-gray-500 py-8 text-sm">No products found</p>
             )}
           </div>
         </div>
       )}
 
       {/* Main Content */}
-      <div className="space-y-3 pb-4">
+      <div className="space-y-3 pb-4 w-full">
         
         {/* Meal Service - Compact */}
-        <div className="flex gap-2">
+        <div className="flex gap-1.5 sm:gap-2">
           <button
             type="button"
             onClick={() => setMealService('breakfast')}
             className={cn(
-              "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border-2 text-sm font-medium transition-all",
+              "flex-1 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2.5 rounded-lg border-2 text-xs sm:text-sm font-medium transition-all",
               mealService === 'breakfast'
                 ? "border-orange-500 bg-orange-50 text-orange-700"
                 : "border-gray-200 bg-white"
             )}
           >
-            <Coffee className="h-4 w-4" />
-            Breakfast
-            {mealService === 'breakfast' && <CheckCircle2 className="h-4 w-4" />}
+            <Coffee className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            <span>Breakfast</span>
+            {mealService === 'breakfast' && <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
           </button>
           <button
             type="button"
             onClick={() => setMealService('lunch')}
             className={cn(
-              "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border-2 text-sm font-medium transition-all",
+              "flex-1 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2.5 rounded-lg border-2 text-xs sm:text-sm font-medium transition-all",
               mealService === 'lunch'
                 ? "border-orange-500 bg-orange-50 text-orange-700"
                 : "border-gray-200 bg-white"
             )}
           >
-            <Sun className="h-4 w-4" />
-            Lunch
-            {mealService === 'lunch' && <CheckCircle2 className="h-4 w-4" />}
+            <Sun className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            <span>Lunch</span>
+            {mealService === 'lunch' && <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
           </button>
         </div>
 
@@ -589,7 +568,7 @@ export function QualityCheckFormQuick({ branchSlug, branchName, onSuccess }: Qua
 
         {/* Product Grid - Compact */}
         <Card className="border-0 shadow-sm">
-          <CardContent className="p-3">
+          <CardContent className="p-2 sm:p-3">
             {isLoadingProducts ? (
               <div className="py-6 text-center text-gray-500">
                 <Loader2 className="h-5 w-5 animate-spin mx-auto mb-1" />
@@ -602,73 +581,75 @@ export function QualityCheckFormQuick({ branchSlug, branchName, onSuccess }: Qua
                 <p className="text-xs">Search or select a category</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-2">
-                {getDisplayProducts(selectedCategory, 6).map((product, index) => (
-                  <button
-                    key={index}
-                    onClick={() => selectProduct(product.name, product.category || selectedCategory)}
-                    className={cn(
-                      "relative p-2.5 rounded-lg text-left text-sm font-medium border-2 active:scale-95 transition-transform",
-                      currentItem.product === product.name
-                        ? "border-primary bg-primary/10"
-                        : submittedToday.includes(product.name)
-                        ? "border-green-400 bg-green-50"
-                        : "border-gray-100 bg-gray-50 active:bg-gray-100"
-                    )}
-                  >
-                    <span className="line-clamp-2 text-xs leading-tight">{product.name}</span>
-                    {submittedToday.includes(product.name) && (
-                      <CheckCircle2 className="absolute top-1 right-1 h-3.5 w-3.5 text-green-600" />
-                    )}
-                  </button>
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+                  {getDisplayProducts(selectedCategory, 6).map((product, index) => (
+                    <button
+                      key={index}
+                      onClick={() => selectProduct(product.name, product.category || selectedCategory)}
+                      className={cn(
+                        "relative p-2 sm:p-2.5 rounded-lg text-left text-xs sm:text-sm font-medium border-2 active:scale-95 transition-transform",
+                        currentItem.product === product.name
+                          ? "border-primary bg-primary/10"
+                          : submittedToday.includes(product.name)
+                          ? "border-green-400 bg-green-50"
+                          : "border-gray-100 bg-gray-50 active:bg-gray-100"
+                      )}
+                    >
+                      <span className="line-clamp-2 text-xs leading-tight">{product.name}</span>
+                      {submittedToday.includes(product.name) && (
+                        <CheckCircle2 className="absolute top-1 right-1 h-3 w-3 sm:h-3.5 sm:w-3.5 text-green-600" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </>
             )}
           </CardContent>
         </Card>
 
         {/* Selected Product Indicator */}
         {currentItem.product && (
-          <div className="flex items-center gap-2 p-2.5 bg-primary/10 rounded-lg border-2 border-primary">
-            <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
+          <div className="flex items-center gap-1.5 sm:gap-2 p-2 sm:p-2.5 bg-primary/10 rounded-lg border-2 border-primary">
+            <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-primary shrink-0" />
             <div className="flex-1 min-w-0">
-              <p className="font-semibold text-primary text-sm truncate">{currentItem.product}</p>
+              <p className="font-semibold text-primary text-xs sm:text-sm truncate">{currentItem.product}</p>
               <p className="text-xs text-gray-600">{currentItem.section}</p>
             </div>
             <button 
               onClick={() => setCurrentItem(prev => ({ ...prev, product: '', section: '' }))}
               className="p-1 hover:bg-white/50 rounded"
             >
-              <X className="h-4 w-4 text-gray-500" />
+              <X className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-500" />
             </button>
           </div>
         )}
 
         {/* Quality Form - Compact */}
         {currentItem.product && (
-          <Card className="border-0 shadow-sm">
-            <CardHeader className="pb-2 pt-3 px-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <ClipboardCheck className="h-4 w-4 text-green-600" />
+          <Card className="border-0 shadow-sm w-full overflow-hidden">
+            <CardHeader className="pb-2 pt-2 sm:pt-3 px-2 sm:px-3">
+              <CardTitle className="text-sm sm:text-base flex items-center gap-1.5 sm:gap-2">
+                <ClipboardCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-600" />
                 Rate Quality
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 p-3 pt-0">
+            <CardContent className="space-y-3 sm:space-y-4 p-2 sm:p-3 pt-0 w-full">
               
-              {/* Star Ratings - Compact */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="text-center">
-                  <label className="text-xs font-semibold block mb-1">Taste</label>
-                  <div className="flex justify-center gap-0.5">
+              {/* Star Ratings - Mobile Optimized */}
+              <div className="grid grid-cols-2 gap-2 sm:gap-4 w-full">
+                <div className="text-center p-1.5 sm:p-2 bg-yellow-50/50 rounded-xl overflow-hidden">
+                  <label className="text-xs font-semibold block mb-1 sm:mb-2 text-yellow-700">Taste</label>
+                  <div className="flex justify-center gap-0.5 sm:gap-1">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
                         key={star}
                         type="button"
                         onClick={() => setCurrentItem(prev => ({ ...prev, taste: star }))}
-                        className="p-0.5"
+                        className="p-0.5 sm:p-1 active:scale-110 transition-transform"
                       >
                         <Star className={cn(
-                          "h-7 w-7",
+                          "h-5 w-5 sm:h-7 sm:w-7 md:h-8 md:w-8",
                           currentItem.taste >= star
                             ? "fill-yellow-400 text-yellow-500"
                             : "fill-gray-200 text-gray-300"
@@ -676,21 +657,21 @@ export function QualityCheckFormQuick({ branchSlug, branchName, onSuccess }: Qua
                       </button>
                     ))}
                   </div>
-                  <span className="text-lg font-bold text-yellow-600">{currentItem.taste}/5</span>
+                  <span className="text-base sm:text-xl font-bold text-yellow-600">{currentItem.taste}/5</span>
                 </div>
 
-                <div className="text-center">
-                  <label className="text-xs font-semibold block mb-1">Appearance</label>
-                  <div className="flex justify-center gap-0.5">
+                <div className="text-center p-1.5 sm:p-2 bg-blue-50/50 rounded-xl overflow-hidden">
+                  <label className="text-xs font-semibold block mb-1 sm:mb-2 text-blue-700">Appearance</label>
+                  <div className="flex justify-center gap-0.5 sm:gap-1">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
                         key={star}
                         type="button"
                         onClick={() => setCurrentItem(prev => ({ ...prev, appearance: star }))}
-                        className="p-0.5"
+                        className="p-0.5 sm:p-1 active:scale-110 transition-transform"
                       >
                         <Star className={cn(
-                          "h-7 w-7",
+                          "h-5 w-5 sm:h-7 sm:w-7 md:h-8 md:w-8",
                           currentItem.appearance >= star
                             ? "fill-blue-400 text-blue-500"
                             : "fill-gray-200 text-gray-300"
@@ -698,7 +679,7 @@ export function QualityCheckFormQuick({ branchSlug, branchName, onSuccess }: Qua
                       </button>
                     ))}
                   </div>
-                  <span className="text-lg font-bold text-blue-600">{currentItem.appearance}/5</span>
+                  <span className="text-base sm:text-xl font-bold text-blue-600">{currentItem.appearance}/5</span>
                 </div>
               </div>
 
@@ -711,14 +692,14 @@ export function QualityCheckFormQuick({ branchSlug, branchName, onSuccess }: Qua
                   value={currentItem.tasteNotes}
                   onChange={(e) => setCurrentItem(prev => ({ ...prev, tasteNotes: e.target.value, appearanceNotes: e.target.value }))}
                   placeholder="Describe taste and appearance..."
-                  className="w-full p-2.5 border rounded-lg min-h-[60px] resize-none text-sm"
+                  className="w-full p-2 sm:p-3 border-2 rounded-xl min-h-[60px] sm:min-h-[70px] resize-none text-sm sm:text-base focus:ring-2 focus:ring-primary focus:border-primary"
                 />
               </div>
 
               {/* Measurements - Side by Side */}
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="text-xs font-medium mb-1 block">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3 w-full">
+                <div className="bg-gray-50 p-2 sm:p-3 rounded-xl overflow-hidden min-w-0">
+                  <label className="text-xs font-medium mb-1 sm:mb-2 block text-gray-600 truncate">
                     {isCentralKitchen ? 'Portion (KG)' : 'Portion (g)'} <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -726,12 +707,12 @@ export function QualityCheckFormQuick({ branchSlug, branchName, onSuccess }: Qua
                     inputMode="decimal"
                     value={currentItem.portion}
                     onChange={(e) => setCurrentItem(prev => ({ ...prev, portion: e.target.value }))}
-                    className="w-full p-3 text-xl font-bold text-center border-2 rounded-lg"
+                    className="w-full p-2 sm:p-3 text-lg sm:text-2xl font-bold text-center border-2 rounded-xl bg-white focus:ring-2 focus:ring-primary focus:border-primary"
                     placeholder={getPlaceholder('portion')}
                   />
                 </div>
-                <div>
-                  <label className="text-xs font-medium mb-1 block">
+                <div className="bg-gray-50 p-2 sm:p-3 rounded-xl overflow-hidden min-w-0">
+                  <label className="text-xs font-medium mb-1 sm:mb-2 block text-gray-600 truncate">
                     Temp (°C) <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -739,7 +720,7 @@ export function QualityCheckFormQuick({ branchSlug, branchName, onSuccess }: Qua
                     inputMode="decimal"
                     value={currentItem.temp}
                     onChange={(e) => setCurrentItem(prev => ({ ...prev, temp: e.target.value }))}
-                    className="w-full p-3 text-xl font-bold text-center border-2 rounded-lg"
+                    className="w-full p-2 sm:p-3 text-lg sm:text-2xl font-bold text-center border-2 rounded-xl bg-white focus:ring-2 focus:ring-primary focus:border-primary"
                     placeholder={getPlaceholder('temp')}
                   />
                 </div>
@@ -747,13 +728,13 @@ export function QualityCheckFormQuick({ branchSlug, branchName, onSuccess }: Qua
 
               {/* Corrective Action - Compact */}
               {(currentItem.taste < 4 || currentItem.appearance < 4) && (
-                <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-lg">
-                  <label className="flex items-center gap-2">
+                <div className="p-2 sm:p-2.5 bg-amber-50 border border-amber-200 rounded-lg">
+                  <label className="flex items-center gap-1.5 sm:gap-2">
                     <input 
                       type="checkbox" 
                       checked={currentItem.correctiveAction}
                       onChange={(e) => setCurrentItem(prev => ({ ...prev, correctiveAction: e.target.checked }))}
-                      className="w-4 h-4 rounded" 
+                      className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded" 
                     />
                     <span className="text-xs font-semibold text-amber-900">
                       Corrective action taken
@@ -765,7 +746,7 @@ export function QualityCheckFormQuick({ branchSlug, branchName, onSuccess }: Qua
                       value={currentItem.correctiveNotes}
                       onChange={(e) => setCurrentItem(prev => ({ ...prev, correctiveNotes: e.target.value }))}
                       placeholder="Describe action..."
-                      className="w-full mt-2 p-2 border rounded text-sm"
+                      className="w-full mt-1.5 sm:mt-2 p-1.5 sm:p-2 border rounded text-xs sm:text-sm"
                     />
                   )}
                 </div>
@@ -787,12 +768,12 @@ export function QualityCheckFormQuick({ branchSlug, branchName, onSuccess }: Qua
               <Button 
                 onClick={handleSubmit}
                 disabled={isSubmitting || !currentItem.photos.length}
-                className="w-full h-14 text-base font-semibold bg-green-600 hover:bg-green-700 active:scale-[0.98] transition-transform"
+                className="w-full h-12 sm:h-14 text-sm sm:text-base font-semibold bg-green-600 hover:bg-green-700 active:scale-[0.98] transition-transform"
               >
                 {isSubmitting ? (
-                  <><Loader2 className="h-5 w-5 mr-2 animate-spin" /> Submitting...</>
+                  <><Loader2 className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2 animate-spin" /> Submitting...</>
                 ) : (
-                  <><CheckCircle2 className="h-5 w-5 mr-2" /> Submit & Next</>
+                  <><CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2" /> Submit & Next</>
                 )}
               </Button>
             </CardContent>
@@ -801,15 +782,15 @@ export function QualityCheckFormQuick({ branchSlug, branchName, onSuccess }: Qua
 
         {/* Today's Progress - Compact */}
         {submittedToday.length > 0 && !currentItem.product && (
-          <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-            <div className="flex items-center justify-between">
-              <div>
+          <div className="p-2 sm:p-3 bg-green-50 rounded-lg border border-green-200">
+            <div className="flex items-center justify-between gap-2">
+              <div className="shrink-0">
                 <p className="text-xs text-gray-600">Today</p>
-                <p className="text-lg font-bold text-green-600">{submittedToday.length} checked</p>
+                <p className="text-base sm:text-lg font-bold text-green-600">{submittedToday.length} checked</p>
               </div>
-              <div className="flex flex-wrap gap-1 justify-end max-w-[60%]">
+              <div className="flex flex-wrap gap-1 justify-end min-w-0 max-w-[55%] sm:max-w-[60%]">
                 {submittedToday.slice(0, 3).map((product, idx) => (
-                  <Badge key={idx} variant="outline" className="text-xs truncate max-w-[100px]">
+                  <Badge key={idx} variant="outline" className="text-xs truncate max-w-[70px] sm:max-w-[100px]">
                     {product}
                   </Badge>
                 ))}
