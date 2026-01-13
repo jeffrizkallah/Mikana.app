@@ -66,6 +66,9 @@ const commonProducts = {
 }
 
 export function QualityCheckFormQuick({ branchSlug, branchName, onSuccess }: QualityCheckFormQuickProps) {
+  // Central Kitchen uses different units: KG for portions, "Stored Temp" for temperature (frozen items)
+  const isCentralKitchen = branchSlug === 'central-kitchen'
+  
   const [mealService, setMealService] = useState<'breakfast' | 'lunch'>('lunch')
   const [submittedToday, setSubmittedToday] = useState<string[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -528,7 +531,7 @@ export function QualityCheckFormQuick({ branchSlug, branchName, onSuccess }: Qua
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-sm font-medium mb-2 block">
-                    Portion (grams) <span className="text-red-500">*</span>
+                    {isCentralKitchen ? 'Portion (KG)' : 'Portion (grams)'} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="number"
@@ -536,12 +539,12 @@ export function QualityCheckFormQuick({ branchSlug, branchName, onSuccess }: Qua
                     value={currentItem.portion}
                     onChange={(e) => setCurrentItem(prev => ({ ...prev, portion: e.target.value }))}
                     className="w-full p-4 text-2xl font-semibold text-center border-2 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary"
-                    placeholder={getPlaceholder(currentItem.product, 'portion')}
+                    placeholder={isCentralKitchen ? '5' : getPlaceholder(currentItem.product, 'portion')}
                   />
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-2 block">
-                    Temp (°C) <span className="text-red-500">*</span>
+                    {isCentralKitchen ? 'Stored Temp (°C)' : 'Temp (°C)'} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="number"
@@ -549,7 +552,7 @@ export function QualityCheckFormQuick({ branchSlug, branchName, onSuccess }: Qua
                     value={currentItem.temp}
                     onChange={(e) => setCurrentItem(prev => ({ ...prev, temp: e.target.value }))}
                     className="w-full p-4 text-2xl font-semibold text-center border-2 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary"
-                    placeholder={getPlaceholder(currentItem.product, 'temp')}
+                    placeholder={isCentralKitchen ? '-18' : getPlaceholder(currentItem.product, 'temp')}
                   />
                 </div>
               </div>

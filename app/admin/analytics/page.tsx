@@ -117,6 +117,20 @@ interface ClientData {
   percentage: number
 }
 
+interface YesterdayBranchData {
+  branch: string
+  revenue: number
+  units: number
+  orders: number
+}
+
+interface WeeklyBranchData {
+  branch: string
+  revenue: number
+  units: number
+  orders: number
+}
+
 type Period = 'today' | 'week' | 'month' | 'year'
 
 export default function AnalyticsPage() {
@@ -126,6 +140,9 @@ export default function AnalyticsPage() {
   const [categories, setCategories] = useState<CategoryData[]>([])
   const [products, setProducts] = useState<ProductData[]>([])
   const [clients, setClients] = useState<ClientData[]>([])
+  const [yesterdayBranches, setYesterdayBranches] = useState<YesterdayBranchData[]>([])
+  const [weeklyBranches, setWeeklyBranches] = useState<WeeklyBranchData[]>([])
+  const [weeklyInfo, setWeeklyInfo] = useState<{ weekStart: string; weekEnd: string; isComplete: boolean } | null>(null)
   const [period, setPeriod] = useState<Period>('month')
   const [isLoading, setIsLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
@@ -137,22 +154,26 @@ export default function AnalyticsPage() {
   const fetchAllData = async () => {
     setIsLoading(true)
     try {
-      const [summaryRes, trendsRes, branchesRes, categoriesRes, productsRes, clientsRes] = await Promise.all([
+      const [summaryRes, trendsRes, branchesRes, categoriesRes, productsRes, clientsRes, yesterdayRes, weeklyRes] = await Promise.all([
         fetch('/api/analytics/summary'),
         fetch(`/api/analytics/trends?days=${period === 'year' ? 365 : period === 'month' ? 30 : period === 'week' ? 7 : 1}`),
         fetch(`/api/analytics/branches?period=${period}`),
         fetch(`/api/analytics/categories?period=${period}`),
         fetch(`/api/analytics/products?period=${period}&limit=5`),
         fetch(`/api/analytics/clients?period=${period}&limit=5`),
+        fetch('/api/analytics/branches/yesterday'),
+        fetch('/api/analytics/branches/weekly'),
       ])
 
-      const [summaryData, trendsData, branchesData, categoriesData, productsData, clientsData] = await Promise.all([
+      const [summaryData, trendsData, branchesData, categoriesData, productsData, clientsData, yesterdayData, weeklyData] = await Promise.all([
         summaryRes.json(),
         trendsRes.json(),
         branchesRes.json(),
         categoriesRes.json(),
         productsRes.json(),
         clientsRes.json(),
+        yesterdayRes.json(),
+        weeklyRes.json(),
       ])
 
       setSummary(summaryData)
@@ -161,6 +182,13 @@ export default function AnalyticsPage() {
       setCategories(categoriesData.categories || [])
       setProducts(productsData.topByRevenue || [])
       setClients(clientsData.clients || [])
+      setYesterdayBranches(yesterdayData.branches || [])
+      setWeeklyBranches(weeklyData.branches || [])
+      setWeeklyInfo({
+        weekStart: weeklyData.weekStart,
+        weekEnd: weeklyData.weekEnd,
+        isComplete: weeklyData.isComplete,
+      })
       setLastUpdated(new Date())
     } catch (error) {
       console.error('Failed to fetch analytics:', error)
@@ -468,6 +496,167 @@ export default function AnalyticsPage() {
                 </div>
               )}
             </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Branch Sales Analysis - Yesterday & Weekly */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Yesterday's Branch Sales */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-blue-600" />
+              Yesterday's Branch Sales
+            </CardTitle>
+            <p className="text-xs text-muted-foreground mt-1">
+              Sales by branch for yesterday
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div style={{ height: Math.max(350, yesterdayBranches.length * 28) }}>
+              {yesterdayBranches.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={yesterdayBranches} layout="vertical" margin={{ left: 10, right: 10, top: 10, bottom: 10 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis 
+                      type="number" 
+                      tickFormatter={(value) => formatCompactCurrency(value).replace('AED ', '')}
+                      tick={{ fontSize: 11 }}
+                    />
+                    <YAxis 
+                      type="category" 
+                      dataKey="branch" 
+                      width={100}
+                      tick={{ fontSize: 10 }}
+                      interval={0}
+                      tickFormatter={(value: string) => {
+                        // Replace underscores with spaces and truncate if too long
+                        const formatted = value.replace(/_/g, ' ')
+                        return formatted.length > 14 ? formatted.substring(0, 11) + '...' : formatted
+                      }}
+                    />
+                    <Tooltip 
+                      formatter={(value: number, name: string) => {
+                        if (name === 'revenue') return [formatCurrency(value), 'Revenue']
+                        if (name === 'units') return [formatNumber(value), 'Units']
+                        if (name === 'orders') return [value, 'Orders']
+                        return [value, name]
+                      }}
+                      labelFormatter={(label: string) => label.replace(/_/g, ' ')}
+                      contentStyle={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '6px' }}
+                    />
+                    <Bar dataKey="revenue" fill="#3B82F6" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex items-center justify-center text-muted-foreground">
+                  No sales data available for yesterday
+                </div>
+              )}
+            </div>
+            {yesterdayBranches.length > 0 && (
+              <div className="mt-4 pt-4 border-t space-y-2">
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Total Revenue:</span>
+                  <span className="font-semibold">
+                    {formatCurrency(yesterdayBranches.reduce((sum, b) => sum + b.revenue, 0))}
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Total Units:</span>
+                  <span className="font-semibold">
+                    {formatNumber(yesterdayBranches.reduce((sum, b) => sum + b.units, 0))}
+                  </span>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Weekly Branch Sales */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-emerald-600" />
+              Weekly Branch Sales
+              {weeklyInfo?.isComplete && (
+                <Badge variant="outline" className="ml-2 text-xs bg-emerald-50 text-emerald-700 border-emerald-200">
+                  Complete
+                </Badge>
+              )}
+            </CardTitle>
+            <p className="text-xs text-muted-foreground mt-1">
+              {weeklyInfo ? (
+                <>
+                  Week: {new Date(weeklyInfo.weekStart).toLocaleDateString('en-AE', { month: 'short', day: 'numeric' })} - {new Date(weeklyInfo.weekEnd).toLocaleDateString('en-AE', { month: 'short', day: 'numeric' })}
+                  {!weeklyInfo.isComplete && ' (Partial - updates Saturday)'}
+                </>
+              ) : (
+                'Weekly sales by branch (updates Saturday after Friday sync)'
+              )}
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div style={{ height: Math.max(350, weeklyBranches.length * 28) }}>
+              {weeklyBranches.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={weeklyBranches} layout="vertical" margin={{ left: 10, right: 10, top: 10, bottom: 10 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis 
+                      type="number" 
+                      tickFormatter={(value) => formatCompactCurrency(value).replace('AED ', '')}
+                      tick={{ fontSize: 11 }}
+                    />
+                    <YAxis 
+                      type="category" 
+                      dataKey="branch" 
+                      width={100}
+                      tick={{ fontSize: 10 }}
+                      interval={0}
+                      tickFormatter={(value: string) => {
+                        // Replace underscores with spaces and truncate if too long
+                        const formatted = value.replace(/_/g, ' ')
+                        return formatted.length > 14 ? formatted.substring(0, 11) + '...' : formatted
+                      }}
+                    />
+                    <Tooltip 
+                      formatter={(value: number, name: string) => {
+                        if (name === 'revenue') return [formatCurrency(value), 'Revenue']
+                        if (name === 'units') return [formatNumber(value), 'Units']
+                        if (name === 'orders') return [value, 'Orders']
+                        return [value, name]
+                      }}
+                      labelFormatter={(label: string) => label.replace(/_/g, ' ')}
+                      contentStyle={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '6px' }}
+                    />
+                    <Bar dataKey="revenue" fill="#10B981" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex items-center justify-center text-muted-foreground">
+                  {weeklyInfo?.isComplete 
+                    ? 'No sales data available for this week'
+                    : 'Weekly data will be available on Saturday after Friday sync'}
+                </div>
+              )}
+            </div>
+            {weeklyBranches.length > 0 && (
+              <div className="mt-4 pt-4 border-t space-y-2">
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Total Revenue:</span>
+                  <span className="font-semibold">
+                    {formatCurrency(weeklyBranches.reduce((sum, b) => sum + b.revenue, 0))}
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Total Units:</span>
+                  <span className="font-semibold">
+                    {formatNumber(weeklyBranches.reduce((sum, b) => sum + b.units, 0))}
+                  </span>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
