@@ -41,18 +41,18 @@ export default function HomePage() {
     <div className="flex min-h-screen">
       <RoleSidebar />
 
-      <main className="flex-1 flex flex-col pt-16 md:pt-0">
-        <div className="flex-1 container mx-auto px-4 py-8">
+      <main className="flex-1 flex flex-col pt-14 xs:pt-16 md:pt-0">
+        <div className="flex-1 container mx-auto px-3 xs:px-4 py-4 xs:py-6 md:py-8">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold mb-2 text-primary">All Branches</h1>
-            <p className="text-lg text-muted-foreground">
+          <div className="mb-4 xs:mb-6 md:mb-8">
+            <h1 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl font-bold mb-1 xs:mb-2 text-primary">All Branches</h1>
+            <p className="text-sm xs:text-base md:text-lg text-muted-foreground">
               Select a branch to see all tasks, guides, and daily actions
             </p>
           </div>
 
           {/* Search and Filter */}
-          <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="mb-4 xs:mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 xs:gap-4">
             <div className="relative w-full sm:w-64">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -60,18 +60,18 @@ export default function HomePage() {
                 placeholder="Search branches..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-10 h-9 xs:h-10 text-sm"
               />
             </div>
             
-            <div className="flex items-center gap-4">
-              <p className="text-sm text-muted-foreground">
-                {filteredBranches.length} of {allBranches.length} branches
+            <div className="flex flex-wrap items-center gap-2 xs:gap-4 w-full sm:w-auto">
+              <p className="text-xs xs:text-sm text-muted-foreground order-2 sm:order-1">
+                {filteredBranches.length}/{allBranches.length}
               </p>
               <select
                 value={selectedLocation}
                 onChange={e => setSelectedLocation(e.target.value)}
-                className="rounded-md border border-input bg-background px-3 py-2 text-sm min-w-[140px] cursor-pointer"
+                className="rounded-md border border-input bg-background px-2 xs:px-3 py-1.5 xs:py-2 text-xs xs:text-sm min-w-[120px] xs:min-w-[140px] cursor-pointer flex-1 sm:flex-none order-1 sm:order-2"
               >
                 <option value="all">All Locations</option>
                 {locations.map(location => (
@@ -85,11 +85,11 @@ export default function HomePage() {
 
           {/* Branch grid */}
           {loading ? (
-            <div className="flex justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            <div className="flex justify-center py-8 xs:py-12">
+              <Loader2 className="h-6 w-6 xs:h-8 xs:w-8 animate-spin text-muted-foreground" />
             </div>
           ) : filteredBranches.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 xs:grid-cols-2 fold:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 xs:gap-4 md:gap-6">
               {filteredBranches.map(branch => (
                 <BranchCard key={branch.id} branch={branch} />
               ))}

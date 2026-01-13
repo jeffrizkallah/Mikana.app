@@ -415,41 +415,41 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-4 xs:space-y-6 max-w-7xl mx-auto px-0.5 xs:px-0">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="space-y-1">
+      <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-2 xs:gap-3">
+        <div className="space-y-0.5 xs:space-y-1">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-primary/10">
-              <Activity className="h-5 w-5 text-primary" />
+            <div className="p-1.5 xs:p-2 rounded-lg xs:rounded-xl bg-primary/10">
+              <Activity className="h-4 w-4 xs:h-5 xs:w-5 text-primary" />
             </div>
-            <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
+            <h1 className="text-lg xs:text-xl sm:text-2xl font-bold text-foreground">Admin Dashboard</h1>
           </div>
-          <p className="text-muted-foreground">
+          <p className="text-xs xs:text-sm text-muted-foreground">
             Monitor and manage your Mikana operations
           </p>
         </div>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Clock className="h-4 w-4" />
-          <span>Last updated: {new Date().toLocaleTimeString()}</span>
+        <div className="flex items-center gap-1.5 xs:gap-2 text-[10px] xs:text-xs sm:text-sm text-muted-foreground">
+          <Clock className="h-3 w-3 xs:h-4 xs:w-4" />
+          <span>Updated: {new Date().toLocaleTimeString()}</span>
         </div>
       </div>
 
       {/* Stats Overview - Bento Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4" data-tour-id="admin-stats">
+      <div className="grid grid-cols-2 fold:grid-cols-4 md:grid-cols-4 gap-2 xs:gap-3 md:gap-4" data-tour-id="admin-stats">
         {/* Branches Stat */}
         <Card className="relative overflow-hidden group hover:shadow-md transition-all duration-300 animate-slide-up opacity-0 stagger-1" style={{ animationFillMode: 'forwards' }}>
-          <CardContent className="pt-6">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Branches</p>
-                <p className="text-3xl font-bold text-foreground mt-1">{stats?.branches.total || 0}</p>
-                <p className="text-xs text-muted-foreground mt-1">
+          <CardContent className="pt-3 xs:pt-4 md:pt-6 px-3 xs:px-4">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-[10px] xs:text-xs sm:text-sm font-medium text-muted-foreground">Total Branches</p>
+                <p className="text-xl xs:text-2xl md:text-3xl font-bold text-foreground mt-0.5 xs:mt-1">{stats?.branches.total || 0}</p>
+                <p className="text-[10px] xs:text-xs text-muted-foreground mt-0.5 xs:mt-1">
                   {Object.keys(stats?.branches.byLocation || {}).length} locations
                 </p>
               </div>
-              <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-600 group-hover:scale-110 transition-transform duration-300">
-                <Building2 className="h-5 w-5" />
+              <div className="p-1.5 xs:p-2 md:p-2.5 rounded-lg xs:rounded-xl bg-cyan-500/10 text-cyan-600 group-hover:scale-110 transition-transform duration-300 shrink-0">
+                <Building2 className="h-4 w-4 xs:h-5 xs:w-5" />
               </div>
             </div>
           </CardContent>
@@ -457,17 +457,17 @@ export default function AdminDashboardPage() {
 
         {/* Recipes Stat */}
         <Card className="relative overflow-hidden group hover:shadow-md transition-all duration-300 animate-slide-up opacity-0 stagger-2" style={{ animationFillMode: 'forwards' }}>
-          <CardContent className="pt-6">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">CK Recipes</p>
-                <p className="text-3xl font-bold text-foreground mt-1">{stats?.recipes.total || 0}</p>
-                <p className="text-xs text-muted-foreground mt-1">
+          <CardContent className="pt-3 xs:pt-4 md:pt-6 px-3 xs:px-4">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-[10px] xs:text-xs sm:text-sm font-medium text-muted-foreground">CK Recipes</p>
+                <p className="text-xl xs:text-2xl md:text-3xl font-bold text-foreground mt-0.5 xs:mt-1">{stats?.recipes.total || 0}</p>
+                <p className="text-[10px] xs:text-xs text-muted-foreground mt-0.5 xs:mt-1">
                   {Object.keys(stats?.recipes.byCategory || {}).length} categories
                 </p>
               </div>
-              <div className="p-2.5 rounded-xl bg-teal-500/10 text-teal-600 group-hover:scale-110 transition-transform duration-300">
-                <ChefHat className="h-5 w-5" />
+              <div className="p-1.5 xs:p-2 md:p-2.5 rounded-lg xs:rounded-xl bg-teal-500/10 text-teal-600 group-hover:scale-110 transition-transform duration-300 shrink-0">
+                <ChefHat className="h-4 w-4 xs:h-5 xs:w-5" />
               </div>
             </div>
           </CardContent>
@@ -475,26 +475,26 @@ export default function AdminDashboardPage() {
 
         {/* Dispatches Stat */}
         <Card className="relative overflow-hidden group hover:shadow-md transition-all duration-300 animate-slide-up opacity-0 stagger-3" style={{ animationFillMode: 'forwards' }}>
-          <CardContent className="pt-6">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Dispatches</p>
-                <p className="text-3xl font-bold text-foreground mt-1">{stats?.dispatches.total || 0}</p>
-                <div className="flex items-center gap-1 mt-1">
+          <CardContent className="pt-3 xs:pt-4 md:pt-6 px-3 xs:px-4">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-[10px] xs:text-xs sm:text-sm font-medium text-muted-foreground">Dispatches</p>
+                <p className="text-xl xs:text-2xl md:text-3xl font-bold text-foreground mt-0.5 xs:mt-1">{stats?.dispatches.total || 0}</p>
+                <div className="flex flex-wrap items-center gap-0.5 xs:gap-1 mt-0.5 xs:mt-1">
                   {(stats?.dispatches.pending || 0) > 0 && (
-                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
-                      {stats?.dispatches.pending} pending
+                    <Badge variant="secondary" className="text-[8px] xs:text-[10px] px-1 xs:px-1.5 py-0">
+                      {stats?.dispatches.pending} pend
                     </Badge>
                   )}
                   {(stats?.dispatches.inProgress || 0) > 0 && (
-                    <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                    <Badge variant="outline" className="text-[8px] xs:text-[10px] px-1 xs:px-1.5 py-0">
                       {stats?.dispatches.inProgress} active
                     </Badge>
                   )}
                 </div>
               </div>
-              <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 group-hover:scale-110 transition-transform duration-300">
-                <Truck className="h-5 w-5" />
+              <div className="p-1.5 xs:p-2 md:p-2.5 rounded-lg xs:rounded-xl bg-amber-500/10 text-amber-600 group-hover:scale-110 transition-transform duration-300 shrink-0">
+                <Truck className="h-4 w-4 xs:h-5 xs:w-5" />
               </div>
             </div>
           </CardContent>
@@ -502,17 +502,17 @@ export default function AdminDashboardPage() {
 
         {/* Hygiene Avg Stat */}
         <Card className="relative overflow-hidden group hover:shadow-md transition-all duration-300 animate-slide-up opacity-0 stagger-4" style={{ animationFillMode: 'forwards' }}>
-          <CardContent className="pt-6">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Avg. Hygiene</p>
-                <p className="text-3xl font-bold text-foreground mt-1">{stats?.branches.avgHygiene || 0}</p>
-                <p className="text-xs text-muted-foreground mt-1">
+          <CardContent className="pt-3 xs:pt-4 md:pt-6 px-3 xs:px-4">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-[10px] xs:text-xs sm:text-sm font-medium text-muted-foreground">Avg. Hygiene</p>
+                <p className="text-xl xs:text-2xl md:text-3xl font-bold text-foreground mt-0.5 xs:mt-1">{stats?.branches.avgHygiene || 0}</p>
+                <p className="text-[10px] xs:text-xs text-muted-foreground mt-0.5 xs:mt-1">
                   {stats?.branches.lowHygieneCount || 0} below threshold
                 </p>
               </div>
-              <div className="p-2.5 rounded-xl bg-green-500/10 text-green-600 group-hover:scale-110 transition-transform duration-300">
-                <TrendingUp className="h-5 w-5" />
+              <div className="p-1.5 xs:p-2 md:p-2.5 rounded-lg xs:rounded-xl bg-green-500/10 text-green-600 group-hover:scale-110 transition-transform duration-300 shrink-0">
+                <TrendingUp className="h-4 w-4 xs:h-5 xs:w-5" />
               </div>
             </div>
           </CardContent>
@@ -663,7 +663,7 @@ export default function AdminDashboardPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            <div className="grid grid-cols-2 fold:grid-cols-4 md:grid-cols-4 gap-2 xs:gap-3 md:gap-4 mb-3 xs:mb-4">
               <div className="text-center p-3 bg-green-50 rounded-lg">
                 <p className="text-2xl font-bold text-green-700">{qualitySummary.totalSubmissions}</p>
                 <p className="text-xs text-green-600">Submissions</p>
@@ -687,7 +687,7 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* Branch compliance grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+            <div className="grid grid-cols-1 xs:grid-cols-2 fold:grid-cols-3 lg:grid-cols-4 gap-1.5 xs:gap-2">
               {qualitySummary.todayCompliance.slice(0, 8).map((branch) => (
                 <div 
                   key={branch.branchSlug}
@@ -739,12 +739,12 @@ export default function AdminDashboardPage() {
       )}
 
       {/* Management Cards */}
-      <div className="space-y-3" data-tour-id="admin-quick-actions">
-        <h2 className="text-lg font-semibold flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-primary" />
+      <div className="space-y-2 xs:space-y-3" data-tour-id="admin-quick-actions">
+        <h2 className="text-base xs:text-lg font-semibold flex items-center gap-2">
+          <Sparkles className="h-3.5 w-3.5 xs:h-4 xs:w-4 text-primary" />
           Quick Management
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 xs:grid-cols-2 fold:grid-cols-2 lg:grid-cols-3 gap-2 xs:gap-3 md:gap-4">
           {/* Recipes Management */}
           <Link href="/admin/recipes">
             <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">

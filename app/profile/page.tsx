@@ -26,6 +26,294 @@ import {
 import { useOnboarding } from '@/lib/onboarding/context'
 import { roleDisplayNames, type UserRole } from '@/lib/auth'
 
+// Helper function for role badge colors
+const getRoleBadgeColor = (role: string) => {
+  const colors: Record<string, string> = {
+    admin: 'bg-purple-100 text-purple-700',
+    operations_lead: 'bg-blue-100 text-blue-700',
+    dispatcher: 'bg-orange-100 text-orange-700',
+    central_kitchen: 'bg-rose-100 text-rose-700',
+    branch_manager: 'bg-green-100 text-green-700',
+    branch_staff: 'bg-teal-100 text-teal-700',
+  }
+  return colors[role] || 'bg-gray-100 text-gray-700'
+}
+
+// ProfileContent extracted as a separate component to prevent re-creation on parent re-renders
+// This fixes mobile keyboard disappearing issue when typing in password fields
+interface ProfileContentProps {
+  user: {
+    firstName?: string | null
+    lastName?: string | null
+    email?: string | null
+    role?: string | null
+    branches?: string[]
+  } | undefined
+  role: UserRole | null
+  isChangingPassword: boolean
+  setIsChangingPassword: (value: boolean) => void
+  passwordData: {
+    currentPassword: string
+    newPassword: string
+    confirmPassword: string
+  }
+  setPasswordData: React.Dispatch<React.SetStateAction<{
+    currentPassword: string
+    newPassword: string
+    confirmPassword: string
+  }>>
+  passwordError: string
+  setPasswordError: (value: string) => void
+  passwordSuccess: string
+  isSubmitting: boolean
+  handlePasswordChange: (e: React.FormEvent) => Promise<void>
+}
+
+function ProfileContent({
+  user,
+  role,
+  isChangingPassword,
+  setIsChangingPassword,
+  passwordData,
+  setPasswordData,
+  passwordError,
+  setPasswordError,
+  passwordSuccess,
+  isSubmitting,
+  handlePasswordChange,
+}: ProfileContentProps) {
+  const { resetOnboarding, onboardingState } = useOnboarding()
+  const [isResettingTour, setIsResettingTour] = useState(false)
+
+  const handleReplayTour = async () => {
+    setIsResettingTour(true)
+    try {
+      await resetOnboarding()
+    } finally {
+      setIsResettingTour(false)
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <div className="p-3 rounded-xl bg-primary/10">
+          <User className="h-6 w-6 text-primary" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold">My Profile</h1>
+          <p className="text-muted-foreground">Manage your account settings</p>
+        </div>
+      </div>
+
+      {/* Account Info */}
+      <Card data-tour-id="profile-info">
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <User className="h-4 w-4" />
+            Account Information
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label className="text-muted-foreground text-xs">Full Name</Label>
+              <p className="font-medium">{user?.firstName} {user?.lastName}</p>
+            </div>
+            
+            <div className="space-y-1">
+              <Label className="text-muted-foreground text-xs">Role</Label>
+              <div>
+                <Badge className={`${getRoleBadgeColor(role || '')} border-0`}>
+                  <Shield className="h-3 w-3 mr-1" />
+                  {role ? roleDisplayNames[role] : 'Unknown'}
+                </Badge>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <Label className="text-muted-foreground text-xs flex items-center gap-1">
+                <Mail className="h-3 w-3" /> Email
+              </Label>
+              <p className="font-medium">{user?.email}</p>
+            </div>
+
+            {role === 'branch_manager' && user?.branches && user.branches.length > 0 && (
+              <div className="space-y-1">
+                <Label className="text-muted-foreground text-xs flex items-center gap-1">
+                  <Building2 className="h-3 w-3" /> Assigned Branches
+                </Label>
+                <div className="flex flex-wrap gap-1">
+                  {user.branches.map(branch => (
+                    <Badge key={branch} variant="outline" className="text-xs">
+                      {branch.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {role === 'branch_staff' && user?.branches && user.branches.length > 0 && (
+              <div className="space-y-1">
+                <Label className="text-muted-foreground text-xs flex items-center gap-1">
+                  <Building2 className="h-3 w-3" /> Assigned Branch
+                </Label>
+                <Badge variant="outline">
+                  {user.branches[0].split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                </Badge>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Change Password */}
+      <Card data-tour-id="security-section">
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Lock className="h-4 w-4" />
+            Security
+          </CardTitle>
+          <CardDescription>
+            Change your password to keep your account secure
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {!isChangingPassword ? (
+            <Button variant="outline" onClick={() => setIsChangingPassword(true)}>
+              <Lock className="h-4 w-4 mr-2" />
+              Change Password
+            </Button>
+          ) : (
+            <form onSubmit={handlePasswordChange} className="space-y-4 max-w-md">
+              <div className="space-y-2">
+                <Label htmlFor="currentPassword">Current Password</Label>
+                <Input
+                  id="currentPassword"
+                  type="password"
+                  autoComplete="current-password"
+                  inputMode="text"
+                  value={passwordData.currentPassword}
+                  onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="newPassword">New Password</Label>
+                <Input
+                  id="newPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  inputMode="text"
+                  value={passwordData.newPassword}
+                  onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
+                  required
+                />
+                <p className="text-xs text-muted-foreground">Minimum 6 characters</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  inputMode="text"
+                  value={passwordData.confirmPassword}
+                  onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                  required
+                />
+              </div>
+
+              {passwordError && (
+                <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-lg">
+                  <AlertCircle className="h-4 w-4" />
+                  {passwordError}
+                </div>
+              )}
+
+              {passwordSuccess && (
+                <div className="flex items-center gap-2 text-green-600 text-sm bg-green-50 p-3 rounded-lg">
+                  <CheckCircle2 className="h-4 w-4" />
+                  {passwordSuccess}
+                </div>
+              )}
+
+              <div className="flex gap-2">
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    'Save Password'
+                  )}
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={() => {
+                    setIsChangingPassword(false)
+                    setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' })
+                    setPasswordError('')
+                  }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Replay Tour Guide */}
+      <Card data-tour-id="replay-tour" className="border-dashed border-2 border-primary/30 bg-primary/5">
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <GraduationCap className="h-4 w-4 text-primary" />
+            Tour Guide
+          </CardTitle>
+          <CardDescription>
+            Need a refresher on how to use the app?
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="text-sm text-muted-foreground">
+              {onboardingState?.toursCompleted && onboardingState.toursCompleted.length > 0 ? (
+                <p>You&apos;ve completed {onboardingState.toursCompleted.length} tour{onboardingState.toursCompleted.length !== 1 ? 's' : ''}. Replay to see tips again.</p>
+              ) : (
+                <p>Get a guided walkthrough of the app&apos;s features.</p>
+              )}
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={handleReplayTour}
+              disabled={isResettingTour}
+              className="shrink-0"
+            >
+              {isResettingTour ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Resetting...
+                </>
+              ) : (
+                <>
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  Replay Tour
+                </>
+              )}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
 export default function ProfilePage() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -100,16 +388,18 @@ export default function ProfilePage() {
     }
   }
 
-  const getRoleBadgeColor = (role: string) => {
-    const colors: Record<string, string> = {
-      admin: 'bg-purple-100 text-purple-700',
-      operations_lead: 'bg-blue-100 text-blue-700',
-      dispatcher: 'bg-orange-100 text-orange-700',
-      central_kitchen: 'bg-rose-100 text-rose-700',
-      branch_manager: 'bg-green-100 text-green-700',
-      branch_staff: 'bg-teal-100 text-teal-700',
-    }
-    return colors[role] || 'bg-gray-100 text-gray-700'
+  const profileContentProps = {
+    user,
+    role,
+    isChangingPassword,
+    setIsChangingPassword,
+    passwordData,
+    setPasswordData,
+    passwordError,
+    setPasswordError,
+    passwordSuccess,
+    isSubmitting,
+    handlePasswordChange,
   }
 
   // Branch staff gets minimal layout
@@ -119,236 +409,9 @@ export default function ProfilePage() {
         <RoleSidebar />
         <main className="pt-20 pb-8 px-4">
           <div className="max-w-2xl mx-auto">
-            <ProfileContent />
+            <ProfileContent {...profileContentProps} />
           </div>
         </main>
-      </div>
-    )
-  }
-
-  function ProfileContent() {
-    const { resetOnboarding, onboardingState } = useOnboarding()
-    const [isResettingTour, setIsResettingTour] = useState(false)
-
-    const handleReplayTour = async () => {
-      setIsResettingTour(true)
-      try {
-        await resetOnboarding()
-      } finally {
-        setIsResettingTour(false)
-      }
-    }
-
-    return (
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center gap-3">
-          <div className="p-3 rounded-xl bg-primary/10">
-            <User className="h-6 w-6 text-primary" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold">My Profile</h1>
-            <p className="text-muted-foreground">Manage your account settings</p>
-          </div>
-        </div>
-
-        {/* Account Info */}
-        <Card data-tour-id="profile-info">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <User className="h-4 w-4" />
-              Account Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <Label className="text-muted-foreground text-xs">Full Name</Label>
-                <p className="font-medium">{user?.firstName} {user?.lastName}</p>
-              </div>
-              
-              <div className="space-y-1">
-                <Label className="text-muted-foreground text-xs">Role</Label>
-                <div>
-                  <Badge className={`${getRoleBadgeColor(role || '')} border-0`}>
-                    <Shield className="h-3 w-3 mr-1" />
-                    {role ? roleDisplayNames[role] : 'Unknown'}
-                  </Badge>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <Label className="text-muted-foreground text-xs flex items-center gap-1">
-                  <Mail className="h-3 w-3" /> Email
-                </Label>
-                <p className="font-medium">{user?.email}</p>
-              </div>
-
-              {role === 'branch_manager' && user?.branches && user.branches.length > 0 && (
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground text-xs flex items-center gap-1">
-                    <Building2 className="h-3 w-3" /> Assigned Branches
-                  </Label>
-                  <div className="flex flex-wrap gap-1">
-                    {user.branches.map(branch => (
-                      <Badge key={branch} variant="outline" className="text-xs">
-                        {branch.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {role === 'branch_staff' && user?.branches && user.branches.length > 0 && (
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground text-xs flex items-center gap-1">
-                    <Building2 className="h-3 w-3" /> Assigned Branch
-                  </Label>
-                  <Badge variant="outline">
-                    {user.branches[0].split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
-                  </Badge>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Change Password */}
-        <Card data-tour-id="security-section">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Lock className="h-4 w-4" />
-              Security
-            </CardTitle>
-            <CardDescription>
-              Change your password to keep your account secure
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {!isChangingPassword ? (
-              <Button variant="outline" onClick={() => setIsChangingPassword(true)}>
-                <Lock className="h-4 w-4 mr-2" />
-                Change Password
-              </Button>
-            ) : (
-              <form onSubmit={handlePasswordChange} className="space-y-4 max-w-md">
-                <div className="space-y-2">
-                  <Label htmlFor="currentPassword">Current Password</Label>
-                  <Input
-                    id="currentPassword"
-                    type="password"
-                    value={passwordData.currentPassword}
-                    onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="newPassword">New Password</Label>
-                  <Input
-                    id="newPassword"
-                    type="password"
-                    value={passwordData.newPassword}
-                    onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
-                    required
-                  />
-                  <p className="text-xs text-muted-foreground">Minimum 6 characters</p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    value={passwordData.confirmPassword}
-                    onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                    required
-                  />
-                </div>
-
-                {passwordError && (
-                  <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-lg">
-                    <AlertCircle className="h-4 w-4" />
-                    {passwordError}
-                  </div>
-                )}
-
-                {passwordSuccess && (
-                  <div className="flex items-center gap-2 text-green-600 text-sm bg-green-50 p-3 rounded-lg">
-                    <CheckCircle2 className="h-4 w-4" />
-                    {passwordSuccess}
-                  </div>
-                )}
-
-                <div className="flex gap-2">
-                  <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Saving...
-                      </>
-                    ) : (
-                      'Save Password'
-                    )}
-                  </Button>
-                  <Button 
-                    type="button" 
-                    variant="outline"
-                    onClick={() => {
-                      setIsChangingPassword(false)
-                      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' })
-                      setPasswordError('')
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </form>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Replay Tour Guide */}
-        <Card data-tour-id="replay-tour" className="border-dashed border-2 border-primary/30 bg-primary/5">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <GraduationCap className="h-4 w-4 text-primary" />
-              Tour Guide
-            </CardTitle>
-            <CardDescription>
-              Need a refresher on how to use the app?
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="text-sm text-muted-foreground">
-                {onboardingState?.toursCompleted && onboardingState.toursCompleted.length > 0 ? (
-                  <p>You&apos;ve completed {onboardingState.toursCompleted.length} tour{onboardingState.toursCompleted.length !== 1 ? 's' : ''}. Replay to see tips again.</p>
-                ) : (
-                  <p>Get a guided walkthrough of the app&apos;s features.</p>
-                )}
-              </div>
-              <Button 
-                variant="outline" 
-                onClick={handleReplayTour}
-                disabled={isResettingTour}
-                className="shrink-0"
-              >
-                {isResettingTour ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Resetting...
-                  </>
-                ) : (
-                  <>
-                    <RotateCcw className="h-4 w-4 mr-2" />
-                    Replay Tour
-                  </>
-                )}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     )
   }
@@ -358,7 +421,7 @@ export default function ProfilePage() {
       <RoleSidebar />
       <main className="flex-1 pt-16 md:pt-0">
         <div className="container mx-auto px-4 py-8 max-w-4xl">
-          <ProfileContent />
+          <ProfileContent {...profileContentProps} />
         </div>
       </main>
     </div>

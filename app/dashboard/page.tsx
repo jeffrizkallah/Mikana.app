@@ -301,18 +301,18 @@ export default function BranchManagerDashboard() {
     <div className="flex min-h-screen">
       <RoleSidebar />
 
-      <main className="flex-1 flex flex-col pt-16 md:pt-0">
-        <div className="flex-1 container mx-auto px-4 py-6 max-w-7xl">
+        <main className="flex-1 flex flex-col pt-14 xs:pt-16 md:pt-0">
+        <div className="flex-1 container mx-auto px-3 xs:px-4 py-4 xs:py-6 max-w-7xl">
           {/* Header */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-primary/10">
-                  <Building2 className="h-5 w-5 text-primary" />
+          <div className="mb-4 xs:mb-6">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 xs:gap-3 min-w-0">
+                <div className="p-1.5 xs:p-2 rounded-lg xs:rounded-xl bg-primary/10 shrink-0">
+                  <Building2 className="h-4 w-4 xs:h-5 xs:w-5 text-primary" />
                 </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-                  <p className="text-sm text-muted-foreground">
+                <div className="min-w-0">
+                  <h1 className="text-lg xs:text-xl sm:text-2xl font-bold text-foreground truncate">Dashboard</h1>
+                  <p className="text-xs xs:text-sm text-muted-foreground truncate">
                     Welcome back, {user?.firstName}!
                   </p>
                 </div>
@@ -322,11 +322,13 @@ export default function BranchManagerDashboard() {
                 size="sm"
                 onClick={() => fetchData()}
                 disabled={loading}
+                className="shrink-0 text-xs xs:text-sm h-8 xs:h-9 px-2 xs:px-3"
               >
                 {loading ? (
                   <>
-                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-primary mr-2"></div>
-                    Refreshing...
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-primary mr-1 xs:mr-2"></div>
+                    <span className="hidden xs:inline">Refreshing...</span>
+                    <span className="xs:hidden">...</span>
                   </>
                 ) : (
                   'Refresh'
@@ -384,80 +386,81 @@ export default function BranchManagerDashboard() {
           )}
 
           {/* KPI Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+          <div className="grid grid-cols-2 fold:grid-cols-4 md:grid-cols-4 gap-2 xs:gap-3 mb-4 xs:mb-6">
             {/* Revenue Card */}
             <Card className="hover:shadow-md transition-shadow">
-              <CardContent className="pt-4 pb-3">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="p-1.5 rounded-lg bg-emerald-100">
-                    <DollarSign className="h-4 w-4 text-emerald-600" />
+              <CardContent className="pt-3 xs:pt-4 pb-2.5 xs:pb-3 px-3 xs:px-4">
+                <div className="flex items-center gap-1.5 xs:gap-2 mb-1.5 xs:mb-2">
+                  <div className="p-1 xs:p-1.5 rounded-md xs:rounded-lg bg-emerald-100">
+                    <DollarSign className="h-3.5 w-3.5 xs:h-4 xs:w-4 text-emerald-600" />
                   </div>
-                  <span className="text-xs text-muted-foreground">Revenue</span>
+                  <span className="text-[10px] xs:text-xs text-muted-foreground">Revenue</span>
                 </div>
-                <p className="text-xl font-bold">{formatCurrency(todayRevenue)}</p>
+                <p className="text-base xs:text-lg sm:text-xl font-bold">{formatCurrency(todayRevenue)}</p>
                 <div className={cn(
-                  "flex items-center gap-1 text-xs mt-1",
+                  "flex items-center gap-1 text-[10px] xs:text-xs mt-1",
                   revenueChange >= 0 ? "text-green-600" : "text-red-600"
                 )}>
                   {revenueChange >= 0 ? (
-                    <TrendingUp className="h-3 w-3" />
+                    <TrendingUp className="h-2.5 w-2.5 xs:h-3 xs:w-3" />
                   ) : (
-                    <TrendingDown className="h-3 w-3" />
+                    <TrendingDown className="h-2.5 w-2.5 xs:h-3 xs:w-3" />
                   )}
-                  <span>{revenueChange >= 0 ? '+' : ''}{revenueChange}% vs yesterday</span>
+                  <span className="hidden xs:inline">{revenueChange >= 0 ? '+' : ''}{revenueChange}% vs yesterday</span>
+                  <span className="xs:hidden">{revenueChange >= 0 ? '+' : ''}{revenueChange}%</span>
                 </div>
               </CardContent>
             </Card>
 
             {/* Orders Card */}
             <Card className="hover:shadow-md transition-shadow">
-              <CardContent className="pt-4 pb-3">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="p-1.5 rounded-lg bg-blue-100">
-                    <ShoppingCart className="h-4 w-4 text-blue-600" />
+              <CardContent className="pt-3 xs:pt-4 pb-2.5 xs:pb-3 px-3 xs:px-4">
+                <div className="flex items-center gap-1.5 xs:gap-2 mb-1.5 xs:mb-2">
+                  <div className="p-1 xs:p-1.5 rounded-md xs:rounded-lg bg-blue-100">
+                    <ShoppingCart className="h-3.5 w-3.5 xs:h-4 xs:w-4 text-blue-600" />
                   </div>
-                  <span className="text-xs text-muted-foreground">Orders</span>
+                  <span className="text-[10px] xs:text-xs text-muted-foreground">Orders</span>
                 </div>
-                <p className="text-xl font-bold">{todayOrders}</p>
-                <span className="text-xs text-muted-foreground">Today</span>
+                <p className="text-base xs:text-lg sm:text-xl font-bold">{todayOrders}</p>
+                <span className="text-[10px] xs:text-xs text-muted-foreground">Today</span>
               </CardContent>
             </Card>
 
             {/* Quality Compliance Card */}
             <Link href={branches[0] ? `/branch/${branches[0].slug}/quality-check` : '#'}>
               <Card className="hover:shadow-md transition-shadow cursor-pointer group h-full">
-                <CardContent className="pt-4 pb-3">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="p-1.5 rounded-lg bg-green-100">
-                      <ClipboardCheck className="h-4 w-4 text-green-600" />
+                <CardContent className="pt-3 xs:pt-4 pb-2.5 xs:pb-3 px-3 xs:px-4">
+                  <div className="flex items-center gap-1.5 xs:gap-2 mb-1.5 xs:mb-2">
+                    <div className="p-1 xs:p-1.5 rounded-md xs:rounded-lg bg-green-100">
+                      <ClipboardCheck className="h-3.5 w-3.5 xs:h-4 xs:w-4 text-green-600" />
                     </div>
-                    <span className="text-xs text-muted-foreground">Quality</span>
+                    <span className="text-[10px] xs:text-xs text-muted-foreground">Quality</span>
                   </div>
-                  <p className="text-xl font-bold">{qualityPercentage}%</p>
-                  <span className="text-xs text-muted-foreground">{qualityComplete}/{qualityTotal} today</span>
+                  <p className="text-base xs:text-lg sm:text-xl font-bold">{qualityPercentage}%</p>
+                  <span className="text-[10px] xs:text-xs text-muted-foreground">{qualityComplete}/{qualityTotal} today</span>
                 </CardContent>
               </Card>
             </Link>
 
             {/* Inventory Card */}
             <Card className="hover:shadow-md transition-shadow">
-              <CardContent className="pt-4 pb-3">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="p-1.5 rounded-lg bg-purple-100">
-                    <Boxes className="h-4 w-4 text-purple-600" />
+              <CardContent className="pt-3 xs:pt-4 pb-2.5 xs:pb-3 px-3 xs:px-4">
+                <div className="flex items-center gap-1.5 xs:gap-2 mb-1.5 xs:mb-2">
+                  <div className="p-1 xs:p-1.5 rounded-md xs:rounded-lg bg-purple-100">
+                    <Boxes className="h-3.5 w-3.5 xs:h-4 xs:w-4 text-purple-600" />
                   </div>
-                  <span className="text-xs text-muted-foreground">Inventory</span>
+                  <span className="text-[10px] xs:text-xs text-muted-foreground">Inventory</span>
                 </div>
-                <p className="text-xl font-bold">{inventorySummary?.totalItems || 0}</p>
-                <span className="text-xs text-muted-foreground">Items tracked</span>
+                <p className="text-base xs:text-lg sm:text-xl font-bold">{inventorySummary?.totalItems || 0}</p>
+                <span className="text-[10px] xs:text-xs text-muted-foreground">Items tracked</span>
               </CardContent>
             </Card>
           </div>
 
           {/* Main Content Grid */}
-          <div className="grid lg:grid-cols-3 gap-6">
+          <div className="grid fold:grid-cols-2 lg:grid-cols-3 gap-4 xs:gap-6">
             {/* Branches Column - Takes 2/3 */}
-            <div className="lg:col-span-2 space-y-4">
+            <div className="fold:col-span-1 lg:col-span-2 space-y-3 xs:space-y-4">
               {/* Branch Header with Sort */}
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold flex items-center gap-2">
@@ -600,7 +603,7 @@ export default function BranchManagerDashboard() {
             </div>
 
             {/* Right Sidebar - Takes 1/3 */}
-            <div className="space-y-4">
+            <div className="space-y-3 xs:space-y-4">
               {/* Quality Overview Widget */}
               <Card>
                 <CardHeader className="pb-2">

@@ -22,6 +22,7 @@ import {
   Eye,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
+import { QualityControlWidget } from '@/components/QualityControlWidget'
 
 interface Dispatch {
   id: string
@@ -364,6 +365,14 @@ export default function CentralKitchenDashboard() {
             )}
           </CardContent>
         </Card>
+
+        {/* Quality Control Section */}
+        <div className="mb-8">
+          <QualityControlWidget 
+            branchSlug="central-kitchen" 
+            branchName="Central Kitchen" 
+          />
+        </div>
 
         {/* Today's Dispatches */}
         {todaysDispatches.length > 0 && (

@@ -134,8 +134,8 @@ export default function QualityCheckPage() {
     <div className="flex min-h-screen">
       <RoleSidebar />
 
-      <main className="flex-1 flex flex-col pt-16 md:pt-0">
-        <div className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
+      <main className="flex-1 flex flex-col pt-14 xs:pt-16 md:pt-0">
+        <div className="flex-1 container mx-auto px-3 xs:px-4 py-4 xs:py-6 md:py-8 max-w-4xl">
           <Breadcrumbs
             items={[
               { label: branch?.name || 'Branch', href: `/branch/${slug}` },
@@ -144,24 +144,25 @@ export default function QualityCheckPage() {
           />
 
           {/* Header */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-green-100">
-                  <ClipboardCheck className="h-5 w-5 text-green-600" />
+          <div className="mb-4 xs:mb-6">
+            <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-3 xs:gap-2">
+              <div className="flex items-center gap-2 xs:gap-3">
+                <div className="p-1.5 xs:p-2 rounded-lg xs:rounded-xl bg-green-100 shrink-0">
+                  <ClipboardCheck className="h-4 w-4 xs:h-5 xs:w-5 text-green-600" />
                 </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-foreground">Quality Check</h1>
-                  <p className="text-sm text-muted-foreground">{branch?.name}</p>
+                <div className="min-w-0">
+                  <h1 className="text-lg xs:text-xl sm:text-2xl font-bold text-foreground">Quality Check</h1>
+                  <p className="text-xs xs:text-sm text-muted-foreground truncate">{branch?.name}</p>
                 </div>
               </div>
               {!showForm && (
-                <div className="flex gap-2">
+                <div className="flex gap-1.5 xs:gap-2 w-full xs:w-auto shrink-0">
                   <Button 
                     variant="outline" 
                     size="sm"
                     onClick={() => fetchData()}
                     disabled={loading}
+                    className="h-8 xs:h-9 text-xs xs:text-sm px-2 xs:px-3 flex-1 xs:flex-none"
                   >
                     {loading ? (
                       <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-primary"></div>
@@ -169,8 +170,11 @@ export default function QualityCheckPage() {
                       'Refresh'
                     )}
                   </Button>
-                  <Button onClick={() => router.push(`/branch/${slug}`)}>
-                    <ArrowLeft className="h-4 w-4 mr-2" />
+                  <Button 
+                    onClick={() => router.push(`/branch/${slug}`)}
+                    className="h-8 xs:h-9 text-xs xs:text-sm px-2 xs:px-3 flex-1 xs:flex-none"
+                  >
+                    <ArrowLeft className="h-3.5 w-3.5 xs:h-4 xs:w-4 mr-1 xs:mr-2" />
                     Back
                   </Button>
                 </div>
@@ -199,38 +203,38 @@ export default function QualityCheckPage() {
             <div className="space-y-6">
               {/* Summary Stats */}
               <Card className="border-l-4 border-l-blue-500">
-                <CardContent className="py-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">Total Submissions Today</p>
-                      <p className="text-4xl font-bold text-blue-600">{todayChecks.length}</p>
+                <CardContent className="py-4 xs:py-6 px-3 xs:px-6">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="text-xs xs:text-sm text-muted-foreground mb-0.5 xs:mb-1">Total Today</p>
+                      <p className="text-2xl xs:text-3xl sm:text-4xl font-bold text-blue-600">{todayChecks.length}</p>
                     </div>
-                    <div className="flex gap-6">
+                    <div className="flex gap-3 xs:gap-4 sm:gap-6">
                       <div className="text-center">
                         <div className={cn(
-                          "w-16 h-16 rounded-full flex items-center justify-center mb-2",
+                          "w-10 h-10 xs:w-12 xs:h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mb-1 xs:mb-2 mx-auto",
                           hasBreakfastCheck ? "bg-green-100" : "bg-gray-100"
                         )}>
                           <Coffee className={cn(
-                            "h-7 w-7",
+                            "h-5 w-5 xs:h-6 xs:w-6 sm:h-7 sm:w-7",
                             hasBreakfastCheck ? "text-green-600" : "text-gray-400"
                           )} />
                         </div>
-                        <p className="text-xs font-medium text-muted-foreground">Breakfast</p>
-                        <p className="text-lg font-bold">{breakfastChecks.length}</p>
+                        <p className="text-[10px] xs:text-xs font-medium text-muted-foreground">Breakfast</p>
+                        <p className="text-sm xs:text-base sm:text-lg font-bold">{breakfastChecks.length}</p>
                       </div>
                       <div className="text-center">
                         <div className={cn(
-                          "w-16 h-16 rounded-full flex items-center justify-center mb-2",
+                          "w-10 h-10 xs:w-12 xs:h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mb-1 xs:mb-2 mx-auto",
                           hasLunchCheck ? "bg-green-100" : "bg-gray-100"
                         )}>
                           <Sun className={cn(
-                            "h-7 w-7",
+                            "h-5 w-5 xs:h-6 xs:w-6 sm:h-7 sm:w-7",
                             hasLunchCheck ? "text-green-600" : "text-gray-400"
                           )} />
                         </div>
-                        <p className="text-xs font-medium text-muted-foreground">Lunch</p>
-                        <p className="text-lg font-bold">{lunchChecks.length}</p>
+                        <p className="text-[10px] xs:text-xs font-medium text-muted-foreground">Lunch</p>
+                        <p className="text-sm xs:text-base sm:text-lg font-bold">{lunchChecks.length}</p>
                       </div>
                     </div>
                   </div>
@@ -247,21 +251,21 @@ export default function QualityCheckPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-3 mb-4">
+                    <div className="space-y-2 xs:space-y-3 mb-4">
                       {todayChecks.map((check) => (
                         <div 
                           key={check.id}
-                          className="flex items-center justify-between p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors"
+                          className="flex flex-col xs:flex-row xs:items-center justify-between p-2.5 xs:p-3 gap-2 xs:gap-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors"
                         >
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2 xs:gap-3 min-w-0">
                             {check.mealService === 'breakfast' ? (
-                              <Coffee className="h-5 w-5 text-amber-600" />
+                              <Coffee className="h-4 w-4 xs:h-5 xs:w-5 text-amber-600 shrink-0" />
                             ) : (
-                              <Sun className="h-5 w-5 text-orange-500" />
+                              <Sun className="h-4 w-4 xs:h-5 xs:w-5 text-orange-500 shrink-0" />
                             )}
-                            <div>
-                              <p className="font-medium">{check.productName}</p>
-                              <p className="text-sm text-muted-foreground">
+                            <div className="min-w-0">
+                              <p className="font-medium text-sm xs:text-base truncate">{check.productName}</p>
+                              <p className="text-xs xs:text-sm text-muted-foreground">
                                 {check.section} • {new Date(check.submissionDate).toLocaleTimeString('en-US', {
                                   hour: '2-digit',
                                   minute: '2-digit'
@@ -269,11 +273,11 @@ export default function QualityCheckPage() {
                               </p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="text-yellow-600 border-yellow-200 bg-yellow-50">
+                          <div className="flex items-center gap-1.5 xs:gap-2 ml-6 xs:ml-0 shrink-0">
+                            <Badge variant="outline" className="text-yellow-600 border-yellow-200 bg-yellow-50 text-[10px] xs:text-xs px-1.5 xs:px-2">
                               Taste: {check.tasteScore}/5
                             </Badge>
-                            <Badge variant="outline" className="text-blue-600 border-blue-200 bg-blue-50">
+                            <Badge variant="outline" className="text-blue-600 border-blue-200 bg-blue-50 text-[10px] xs:text-xs px-1.5 xs:px-2">
                               Look: {check.appearanceScore}/5
                             </Badge>
                           </div>
@@ -295,10 +299,10 @@ export default function QualityCheckPage() {
               {/* Start Quality Check Button */}
               <Button 
                 onClick={() => setShowForm(true)}
-                className="w-full bg-green-600 hover:bg-green-700 h-14"
+                className="w-full bg-green-600 hover:bg-green-700 h-11 xs:h-12 sm:h-14 text-sm xs:text-base"
                 size="lg"
               >
-                <ClipboardCheck className="h-5 w-5 mr-2" />
+                <ClipboardCheck className="h-4 w-4 xs:h-5 xs:w-5 mr-2" />
                 Start Quality Check
               </Button>
             </div>

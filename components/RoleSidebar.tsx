@@ -192,17 +192,18 @@ export function RoleSidebar({ className }: RoleSidebarProps) {
     <>
       {/* Mobile Top Bar */}
       <div className={`md:hidden fixed left-0 right-0 z-50 glass-nav border-b border-border no-print ${isPreviewMode ? 'top-10' : 'top-0'}`}>
-        <div className="flex items-center justify-between px-4 py-3">
+        <div className="flex items-center justify-between px-3 xs:px-4 py-2.5 xs:py-3">
           <Link href={role ? getNavItems(role)[0]?.href || '/' : '/'} className="flex items-center gap-2">
-            <span className="text-lg font-bold text-primary">Mikana</span>
+            <span className="text-base xs:text-lg font-bold text-primary">Mikana</span>
           </Link>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5 xs:gap-1">
             <NotificationDropdown />
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setIsMobileOpen(!isMobileOpen)}
               aria-label="Toggle menu"
+              className="h-9 w-9 xs:h-10 xs:w-10 touch-target-sm"
             >
               {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
@@ -223,12 +224,13 @@ export function RoleSidebar({ className }: RoleSidebarProps) {
         className={`
           fixed left-0 z-50 glass-nav border-r border-border no-print
           transition-all duration-300 ease-in-out
-          ${isCollapsed ? 'w-[80px]' : 'w-[280px]'}
+          ${isCollapsed ? 'w-[70px] xs:w-[80px]' : 'w-[260px] xs:w-[280px]'}
           ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
           md:translate-x-0
           flex flex-col
           ${isPreviewMode ? 'top-10 h-[calc(100vh-40px)]' : 'top-0 h-screen'}
           ${className || ''}
+          safe-bottom
         `}
       >
         {/* Logo Section */}
@@ -253,7 +255,7 @@ export function RoleSidebar({ className }: RoleSidebarProps) {
         </div>
 
         {/* Navigation Links */}
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+        <nav className="flex-1 p-2.5 xs:p-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon
             const active = isActive(item.href)
@@ -390,7 +392,7 @@ export function RoleSidebar({ className }: RoleSidebarProps) {
 
       {/* Spacer for desktop */}
       <div 
-        className={`hidden md:block transition-all duration-300 ease-in-out flex-shrink-0 ${isCollapsed ? 'w-[80px]' : 'w-[280px]'}`}
+        className={`hidden md:block transition-all duration-300 ease-in-out flex-shrink-0 ${isCollapsed ? 'w-[70px] xs:w-[80px]' : 'w-[260px] xs:w-[280px]'}`}
       />
     </>
   )

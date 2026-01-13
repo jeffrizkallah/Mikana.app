@@ -8,6 +8,22 @@ const config: Config = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    screens: {
+      // Extra small devices (small phones, folded foldables)
+      'xs': '375px',
+      // Small devices (phones, Samsung Fold unfolded inner)
+      'sm': '640px',
+      // Medium-small (large phones, small tablets, foldables)
+      'fold': '752px',
+      // Medium devices (tablets)
+      'md': '768px',
+      // Large devices (landscape tablets, small laptops)
+      'lg': '1024px',
+      // Extra large devices (desktops)
+      'xl': '1280px',
+      // 2X large devices (large desktops)
+      '2xl': '1536px',
+    },
     extend: {
       colors: {
         border: 'hsl(var(--border))',

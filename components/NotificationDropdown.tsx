@@ -29,20 +29,27 @@ export function NotificationDropdown() {
   useEffect(() => {
     if (isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect()
-      const dropdownWidth = 420
       const viewportWidth = window.innerWidth
+      
+      // Responsive dropdown width
+      const dropdownWidth = viewportWidth < 640 ? viewportWidth - 16 : 
+                            viewportWidth < 768 ? 380 : 420
       
       // Position below the button
       let left = rect.left
       
+      // On very small screens, center the dropdown
+      if (viewportWidth < 480) {
+        left = 8
+      }
       // If dropdown would overflow right side, align to right edge of button
-      if (left + dropdownWidth > viewportWidth - 16) {
+      else if (left + dropdownWidth > viewportWidth - 16) {
         left = rect.right - dropdownWidth
       }
       
       // If still overflowing left, align to left with padding
-      if (left < 16) {
-        left = 16
+      if (left < 8) {
+        left = 8
       }
       
       setDropdownPosition({
@@ -164,10 +171,11 @@ export function NotificationDropdown() {
   const dropdownContent = isOpen && isMounted ? createPortal(
     <div 
       ref={dropdownRef}
-      className="fixed w-[420px] max-w-[calc(100vw-2rem)] bg-card border border-border rounded-lg shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-[100]"
+      className="fixed w-[calc(100vw-1rem)] xs:w-[calc(100vw-2rem)] sm:w-[380px] md:w-[420px] max-w-[420px] bg-card border border-border rounded-lg shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-[100]"
       style={{
         top: dropdownPosition.top,
-        left: dropdownPosition.left,
+        left: Math.max(8, dropdownPosition.left),
+        right: window.innerWidth < 640 ? 8 : 'auto',
       }}
     >
       {/* Header */}
@@ -245,7 +253,7 @@ export function NotificationDropdown() {
         variant="ghost"
         size="icon"
         onClick={() => setIsOpen(!isOpen)}
-        className="relative"
+        className="relative h-9 w-9 xs:h-10 xs:w-10 touch-target-sm"
         aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
       >
         <Bell className={`h-5 w-5 ${hasUrgent ? 'text-red-500' : ''}`} />

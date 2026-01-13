@@ -142,8 +142,8 @@ export default function DispatchDashboardPage() {
       <div className="flex min-h-screen">
         <RoleSidebar />
       
-        <main className="flex-1 flex flex-col pt-16 md:pt-0">
-          <div className="flex-1 container mx-auto px-4 py-8">
+        <main className="flex-1 flex flex-col pt-14 xs:pt-16 md:pt-0">
+          <div className="flex-1 container mx-auto px-3 xs:px-4 py-4 xs:py-6 md:py-8">
             <Breadcrumbs
               items={[
                 { label: 'Home', href: '/' },
@@ -151,64 +151,65 @@ export default function DispatchDashboardPage() {
               ]}
             />
 
-            <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-4xl font-bold mb-2">Dispatch Management</h1>
-              <p className="text-muted-foreground">Monitor and manage all branch dispatches</p>
+            <div className="mb-4 xs:mb-6 md:mb-8">
+          <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-3 xs:gap-4 mb-4">
+            <div className="min-w-0">
+              <h1 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl font-bold mb-1 xs:mb-2">Dispatch Management</h1>
+              <p className="text-xs xs:text-sm text-muted-foreground">Monitor and manage all branch dispatches</p>
             </div>
-            <Link href="/dispatch/upload" data-tour-id="create-dispatch-btn">
-              <Button size="lg" className="flex items-center gap-2">
-                <Upload className="h-5 w-5" />
-                Create Dispatch
+            <Link href="/dispatch/upload" data-tour-id="create-dispatch-btn" className="w-full xs:w-auto shrink-0">
+              <Button size="default" className="flex items-center gap-2 w-full xs:w-auto h-9 xs:h-10 text-sm xs:text-base">
+                <Upload className="h-4 w-4 xs:h-5 xs:w-5" />
+                <span className="xs:hidden">Create</span>
+                <span className="hidden xs:inline">Create Dispatch</span>
               </Button>
             </Link>
             </div>
             </div>
 
             {/* Statistics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+            <div className="grid grid-cols-2 xs:grid-cols-3 fold:grid-cols-5 md:grid-cols-5 gap-2 xs:gap-3 md:gap-4 mb-4 xs:mb-6">
           <Card>
-            <CardContent className="pt-6">
+            <CardContent className="pt-3 xs:pt-4 md:pt-6 px-2 xs:px-4">
               <div className="text-center">
-                <div className="text-3xl font-bold">{stats.total}</div>
-                <div className="text-sm text-muted-foreground mt-1">Total Dispatches</div>
+                <div className="text-xl xs:text-2xl md:text-3xl font-bold">{stats.total}</div>
+                <div className="text-[10px] xs:text-xs md:text-sm text-muted-foreground mt-0.5 xs:mt-1">Total</div>
               </div>
             </CardContent>
           </Card>
           
           <Card>
-            <CardContent className="pt-6">
+            <CardContent className="pt-3 xs:pt-4 md:pt-6 px-2 xs:px-4">
               <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-600">{stats.pending}</div>
-                <div className="text-sm text-muted-foreground mt-1">Pending</div>
+                <div className="text-xl xs:text-2xl md:text-3xl font-bold text-yellow-600">{stats.pending}</div>
+                <div className="text-[10px] xs:text-xs md:text-sm text-muted-foreground mt-0.5 xs:mt-1">Pending</div>
               </div>
             </CardContent>
           </Card>
           
           <Card>
-            <CardContent className="pt-6">
+            <CardContent className="pt-3 xs:pt-4 md:pt-6 px-2 xs:px-4">
               <div className="text-center">
-                <div className="text-3xl font-bold text-blue-600">{stats.dispatched}</div>
-                <div className="text-sm text-muted-foreground mt-1">Dispatched</div>
+                <div className="text-xl xs:text-2xl md:text-3xl font-bold text-blue-600">{stats.dispatched}</div>
+                <div className="text-[10px] xs:text-xs md:text-sm text-muted-foreground mt-0.5 xs:mt-1">Dispatched</div>
               </div>
             </CardContent>
           </Card>
           
           <Card>
-            <CardContent className="pt-6">
+            <CardContent className="pt-3 xs:pt-4 md:pt-6 px-2 xs:px-4">
               <div className="text-center">
-                <div className="text-3xl font-bold text-green-600">{stats.completed}</div>
-                <div className="text-sm text-muted-foreground mt-1">Completed</div>
+                <div className="text-xl xs:text-2xl md:text-3xl font-bold text-green-600">{stats.completed}</div>
+                <div className="text-[10px] xs:text-xs md:text-sm text-muted-foreground mt-0.5 xs:mt-1">Completed</div>
               </div>
             </CardContent>
           </Card>
           
-              <Card>
-                <CardContent className="pt-6">
+              <Card className="col-span-2 xs:col-span-1">
+                <CardContent className="pt-3 xs:pt-4 md:pt-6 px-2 xs:px-4">
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-red-600">{stats.withIssues}</div>
-                    <div className="text-sm text-muted-foreground mt-1">With Issues</div>
+                    <div className="text-xl xs:text-2xl md:text-3xl font-bold text-red-600">{stats.withIssues}</div>
+                    <div className="text-[10px] xs:text-xs md:text-sm text-muted-foreground mt-0.5 xs:mt-1">With Issues</div>
                   </div>
                 </CardContent>
               </Card>
@@ -257,50 +258,51 @@ export default function DispatchDashboardPage() {
                   ).length
 
                   return (
-                    <div key={dispatch.id} className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="font-semibold text-lg">
-                              Delivery: {formatDate(dispatch.deliveryDate)}
+                    <div key={dispatch.id} className="border rounded-lg p-3 xs:p-4 hover:bg-muted/50 transition-colors">
+                      <div className="flex flex-col xs:flex-row xs:items-start justify-between gap-2 xs:gap-3 mb-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2 xs:gap-3 mb-1 xs:mb-2">
+                            <h3 className="font-semibold text-sm xs:text-base md:text-lg">
+                              {formatDate(dispatch.deliveryDate)}
                             </h3>
                             {withIssues > 0 && (
                               <Link href={`/dispatch/${dispatch.id}/report`}>
-                                <Badge variant="destructive" className="flex items-center gap-1 cursor-pointer hover:bg-destructive/80 transition-colors">
-                                  <AlertTriangle className="h-3 w-3" />
+                                <Badge variant="destructive" className="flex items-center gap-1 cursor-pointer hover:bg-destructive/80 transition-colors text-[10px] xs:text-xs">
+                                  <AlertTriangle className="h-2.5 w-2.5 xs:h-3 xs:w-3" />
                                   {withIssues} Issue{withIssues > 1 ? 's' : ''}
                                 </Badge>
                               </Link>
                             )}
                           </div>
-                          <div className="text-sm text-muted-foreground">
+                          <div className="text-[10px] xs:text-xs md:text-sm text-muted-foreground truncate">
                             Created: {formatDate(dispatch.createdDate)} by {dispatch.createdBy}
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5 xs:gap-2 shrink-0">
                           <Link href={`/dispatch/${dispatch.id}/report`}>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="flex items-center gap-2"
+                              className="flex items-center gap-1 xs:gap-2 h-8 xs:h-9 text-xs xs:text-sm px-2 xs:px-3"
                             >
-                              <FileText className="h-4 w-4" />
-                              View Report
+                              <FileText className="h-3.5 w-3.5 xs:h-4 xs:w-4" />
+                              <span className="hidden xs:inline">View Report</span>
+                              <span className="xs:hidden">Report</span>
                             </Button>
                           </Link>
                           <Button
                             variant="destructive"
                             size="sm"
                             onClick={() => handleDeleteClick(dispatch)}
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-1 xs:gap-2 h-8 xs:h-9 text-xs xs:text-sm px-2 xs:px-3"
                           >
-                            <Trash2 className="h-4 w-4" />
-                            Delete
+                            <Trash2 className="h-3.5 w-3.5 xs:h-4 xs:w-4" />
+                            <span className="hidden xs:inline">Delete</span>
                           </Button>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                      <div className="grid grid-cols-2 fold:grid-cols-4 md:grid-cols-4 gap-2 xs:gap-3 md:gap-4 mb-3 xs:mb-4">
                         <div>
                           <div className="text-sm text-muted-foreground">Total Branches</div>
                           <div className="text-xl font-semibold">{totalBranches}</div>
