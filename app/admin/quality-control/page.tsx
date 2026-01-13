@@ -283,7 +283,7 @@ export default function QualityControlPage() {
     const hasFilter = currentValue !== ''
     
     return (
-      <th className="text-left p-3 text-sm font-medium relative">
+      <th className="text-left p-2 md:p-3 text-xs md:text-sm font-medium relative whitespace-nowrap">
         <div className="flex items-center gap-1">
           <button
             className="column-filter-trigger flex items-center gap-1 hover:text-primary transition-colors"
@@ -294,7 +294,7 @@ export default function QualityControlPage() {
           >
             {label}
             <Filter className={cn(
-              "h-3 w-3 transition-colors",
+              "h-3 w-3 transition-colors flex-shrink-0",
               hasFilter ? "text-primary fill-primary" : "text-muted-foreground"
             )} />
           </button>
@@ -389,41 +389,41 @@ export default function QualityControlPage() {
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-4 md:p-6 max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-green-100">
-              <ClipboardCheck className="h-6 w-6 text-green-600" />
+              <ClipboardCheck className="h-5 w-5 md:h-6 md:w-6 text-green-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold">Quality Control</h1>
-              <p className="text-sm text-muted-foreground">Monitor and manage food quality checks</p>
+              <h1 className="text-xl md:text-2xl font-bold">Quality Control</h1>
+              <p className="text-xs md:text-sm text-muted-foreground">Monitor and manage food quality checks</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <select
               value={filters.period}
               onChange={(e) => setFilters({ ...filters, period: e.target.value })}
-              className="border rounded-lg px-3 py-2 text-sm bg-background"
+              className="border rounded-lg px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm bg-background"
             >
               <option value="today">Today</option>
               <option value="week">Last 7 days</option>
               <option value="month">Last 30 days</option>
             </select>
             <Link href="/admin/quality-control/fields">
-              <Button variant="outline">
-                <Settings2 className="h-4 w-4 mr-2" />
-                Form Fields
+              <Button variant="outline" size="sm" className="text-xs md:text-sm">
+                <Settings2 className="h-3.5 w-3.5 md:h-4 md:w-4 md:mr-2" />
+                <span className="hidden md:inline">Form Fields</span>
               </Button>
             </Link>
-            <Button variant="outline" onClick={() => setShowImportModal(true)}>
-              <Download className="h-4 w-4 mr-2 rotate-180" />
-              Import
+            <Button variant="outline" size="sm" className="text-xs md:text-sm" onClick={() => setShowImportModal(true)}>
+              <Download className="h-3.5 w-3.5 md:h-4 md:w-4 rotate-180 md:mr-2" />
+              <span className="hidden md:inline">Import</span>
             </Button>
-            <Button variant="outline" onClick={exportToCSV}>
-              <Download className="h-4 w-4 mr-2" />
-              Export
+            <Button variant="outline" size="sm" className="text-xs md:text-sm" onClick={exportToCSV}>
+              <Download className="h-3.5 w-3.5 md:h-4 md:w-4 md:mr-2" />
+              <span className="hidden md:inline">Export</span>
             </Button>
           </div>
         </div>
@@ -608,8 +608,8 @@ export default function QualityControlPage() {
         {activeTab === 'submissions' && (
           <div className="space-y-4">
             {/* Stats Bar */}
-            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-              <div className="flex items-center gap-4 text-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-blue-50 rounded-lg">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm">
                 <span className="font-medium text-blue-900">
                   Showing {startIndex + 1}-{Math.min(endIndex, sortedSubmissions.length)} of {sortedSubmissions.length} submissions
                 </span>
@@ -618,31 +618,31 @@ export default function QualityControlPage() {
                     (filtered from {submissions.length} total)
                   </span>
                 )}
-                <span className="text-muted-foreground">
+                <span className="text-muted-foreground hidden md:inline">
                   Sorted by: {sortField} {sortDirection === 'asc' ? '↑' : '↓'}
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Page {currentPage} of {totalPages}</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">Page {currentPage} of {totalPages}</span>
               </div>
             </div>
 
             {/* Filters */}
-            <div className="flex flex-wrap gap-3 p-4 bg-muted/50 rounded-lg">
-              <div className="flex items-center gap-2">
-                <Search className="h-4 w-4 text-muted-foreground" />
+            <div className="flex flex-wrap gap-2 md:gap-3 p-3 md:p-4 bg-muted/50 rounded-lg">
+              <div className="flex items-center gap-2 flex-1 min-w-[150px] max-w-[200px]">
+                <Search className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                 <input
                   type="text"
                   placeholder="Search products..."
                   value={filters.search}
                   onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                  className="border rounded px-2 py-1 text-sm w-40"
+                  className="border rounded px-2 py-1 text-xs md:text-sm w-full"
                 />
               </div>
               <select
                 value={filters.section}
                 onChange={(e) => setFilters({ ...filters, section: e.target.value })}
-                className="border rounded px-2 py-1 text-sm"
+                className="border rounded px-2 py-1 text-xs md:text-sm bg-background"
               >
                 <option value="">All Sections</option>
                 <option value="Hot">Hot</option>
@@ -653,7 +653,7 @@ export default function QualityControlPage() {
               <select
                 value={filters.mealService}
                 onChange={(e) => setFilters({ ...filters, mealService: e.target.value })}
-                className="border rounded px-2 py-1 text-sm"
+                className="border rounded px-2 py-1 text-xs md:text-sm bg-background"
               >
                 <option value="">All Meals</option>
                 <option value="breakfast">Breakfast</option>
@@ -708,8 +708,8 @@ export default function QualityControlPage() {
             )}
 
             {/* Table */}
-            <div className="border rounded-lg overflow-hidden">
-              <table className="w-full">
+            <div className="border rounded-lg overflow-x-auto">
+              <table className="w-full min-w-[900px]">
                 <thead className="bg-muted/50">
                   <tr>
                     <ColumnFilterHeader
@@ -734,39 +734,39 @@ export default function QualityControlPage() {
                       currentValue={filters.product}
                     />
                     <th 
-                      className="text-left p-3 text-sm font-medium cursor-pointer hover:bg-muted transition-colors select-none"
+                      className="text-left p-2 md:p-3 text-xs md:text-sm font-medium cursor-pointer hover:bg-muted transition-colors select-none whitespace-nowrap"
                       onClick={() => handleSort('section')}
                     >
                       Section <SortIndicator field="section" />
                     </th>
                     <th 
-                      className="text-center p-3 text-sm font-medium cursor-pointer hover:bg-muted transition-colors select-none"
+                      className="text-center p-2 md:p-3 text-xs md:text-sm font-medium cursor-pointer hover:bg-muted transition-colors select-none whitespace-nowrap"
                       onClick={() => handleSort('taste')}
                     >
                       Taste <SortIndicator field="taste" />
                     </th>
                     <th 
-                      className="text-center p-3 text-sm font-medium cursor-pointer hover:bg-muted transition-colors select-none"
+                      className="text-center p-2 md:p-3 text-xs md:text-sm font-medium cursor-pointer hover:bg-muted transition-colors select-none whitespace-nowrap"
                       onClick={() => handleSort('appearance')}
                     >
                       Appearance <SortIndicator field="appearance" />
                     </th>
-                    <th className="text-center p-3 text-sm font-medium">
+                    <th className="text-center p-2 md:p-3 text-xs md:text-sm font-medium whitespace-nowrap">
                       Photo
                     </th>
                     <th 
-                      className="text-center p-3 text-sm font-medium cursor-pointer hover:bg-muted transition-colors select-none"
+                      className="text-center p-2 md:p-3 text-xs md:text-sm font-medium cursor-pointer hover:bg-muted transition-colors select-none whitespace-nowrap"
                       onClick={() => handleSort('status')}
                     >
                       Status <SortIndicator field="status" />
                     </th>
-                    <th className="text-center p-3 text-sm font-medium">Actions</th>
+                    <th className="text-center p-2 md:p-3 text-xs md:text-sm font-medium whitespace-nowrap">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {paginatedSubmissions.map((check) => (
                     <tr key={check.id} className="border-t hover:bg-muted/30">
-                      <td className="p-3 text-sm">
+                      <td className="p-2 md:p-3 text-xs md:text-sm whitespace-nowrap">
                         <div>{new Date(check.submissionDate).toLocaleDateString()}</div>
                         <div className="text-xs text-muted-foreground">
                           {new Date(check.submissionDate).toLocaleTimeString('en-US', {
@@ -775,22 +775,22 @@ export default function QualityControlPage() {
                           })}
                         </div>
                       </td>
-                      <td className="p-3 text-sm">
-                        <div>{check.branchName}</div>
+                      <td className="p-2 md:p-3 text-xs md:text-sm">
+                        <div className="max-w-[120px] md:max-w-none truncate">{check.branchName}</div>
                         <div className="text-xs text-muted-foreground flex items-center gap-1">
                           {check.mealService === 'breakfast' ? (
-                            <Coffee className="h-3 w-3" />
+                            <Coffee className="h-3 w-3 flex-shrink-0" />
                           ) : (
-                            <Sun className="h-3 w-3" />
+                            <Sun className="h-3 w-3 flex-shrink-0" />
                           )}
                           {check.mealService}
                         </div>
                       </td>
-                      <td className="p-3 text-sm font-medium">{check.productName}</td>
-                      <td className="p-3 text-sm">{check.section}</td>
-                      <td className="p-3 text-center">
+                      <td className="p-2 md:p-3 text-xs md:text-sm font-medium max-w-[120px] md:max-w-none truncate">{check.productName}</td>
+                      <td className="p-2 md:p-3 text-xs md:text-sm whitespace-nowrap">{check.section}</td>
+                      <td className="p-2 md:p-3 text-center">
                         <span className={cn(
-                          "inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium",
+                          "inline-flex items-center gap-1 px-1.5 md:px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap",
                           check.tasteScore <= 2 ? "bg-red-100 text-red-700" :
                           check.tasteScore <= 3 ? "bg-amber-100 text-amber-700" :
                           "bg-green-100 text-green-700"
@@ -798,9 +798,9 @@ export default function QualityControlPage() {
                           <Star className="h-3 w-3" /> {check.tasteScore}
                         </span>
                       </td>
-                      <td className="p-3 text-center">
+                      <td className="p-2 md:p-3 text-center">
                         <span className={cn(
-                          "inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium",
+                          "inline-flex items-center gap-1 px-1.5 md:px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap",
                           check.appearanceScore <= 2 ? "bg-red-100 text-red-700" :
                           check.appearanceScore <= 3 ? "bg-amber-100 text-amber-700" :
                           "bg-green-100 text-green-700"
@@ -808,7 +808,7 @@ export default function QualityControlPage() {
                           <Eye className="h-3 w-3" /> {check.appearanceScore}
                         </span>
                       </td>
-                      <td className="p-3 text-center">
+                      <td className="p-2 md:p-3 text-center">
                         {check.photos && check.photos.length > 0 ? (
                           <button
                             onClick={() => setSelectedCheck(check)}
@@ -817,7 +817,7 @@ export default function QualityControlPage() {
                             <img 
                               src={check.photos[0]} 
                               alt={check.productName}
-                              className="w-20 h-20 rounded-lg object-cover border hover:ring-2 hover:ring-primary transition-all"
+                              className="w-12 h-12 md:w-20 md:h-20 rounded-lg object-cover border hover:ring-2 hover:ring-primary transition-all"
                             />
                             {check.photos.length > 1 && (
                               <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full w-4 h-4 flex items-center justify-center">
@@ -831,15 +831,15 @@ export default function QualityControlPage() {
                           </span>
                         )}
                       </td>
-                      <td className="p-3 text-center">
+                      <td className="p-2 md:p-3 text-center">
                         <Badge variant={
                           check.status === 'reviewed' ? 'default' :
                           check.status === 'flagged' ? 'destructive' : 'secondary'
-                        } className="text-xs">
+                        } className="text-xs whitespace-nowrap">
                           {check.status}
                         </Badge>
                       </td>
-                      <td className="p-3 text-center">
+                      <td className="p-2 md:p-3 text-center">
                         <Button 
                           variant="ghost" 
                           size="sm"
@@ -861,17 +861,19 @@ export default function QualityControlPage() {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+              <div className="flex items-center justify-between gap-2 p-3 md:p-4 bg-muted/50 rounded-lg">
                 <Button
                   variant="outline"
+                  size="sm"
+                  className="text-xs md:text-sm"
                   onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                   disabled={currentPage === 1}
                 >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
-                  Previous
+                  <ChevronLeft className="h-4 w-4" />
+                  <span className="hidden sm:inline ml-1">Previous</span>
                 </Button>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 md:gap-2">
                   {/* Show page numbers */}
                   {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                     let pageNum: number
@@ -890,7 +892,7 @@ export default function QualityControlPage() {
                         key={pageNum}
                         onClick={() => setCurrentPage(pageNum)}
                         className={cn(
-                          "w-10 h-10 rounded-lg text-sm font-medium transition-colors",
+                          "w-8 h-8 md:w-10 md:h-10 rounded-lg text-xs md:text-sm font-medium transition-colors",
                           currentPage === pageNum
                             ? "bg-primary text-primary-foreground"
                             : "bg-background hover:bg-muted"
@@ -904,11 +906,13 @@ export default function QualityControlPage() {
 
                 <Button
                   variant="outline"
+                  size="sm"
+                  className="text-xs md:text-sm"
                   onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                   disabled={currentPage === totalPages}
                 >
-                  Next
-                  <ChevronRight className="h-4 w-4 ml-1" />
+                  <span className="hidden sm:inline mr-1">Next</span>
+                  <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
             )}
