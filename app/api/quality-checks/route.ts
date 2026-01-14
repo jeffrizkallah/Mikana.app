@@ -23,6 +23,7 @@ export async function GET(request: Request) {
 
     const user = session.user
     const isAdmin = user.role === 'admin' || user.role === 'operations_lead'
+    const isCentralKitchen = user.role === 'central_kitchen'
 
     // Build the query with filters
     let query = `
@@ -63,13 +64,18 @@ export async function GET(request: Request) {
     let paramIndex = 1
 
     // Filter by user's branches if not admin
-    if (!isAdmin && user.branches && user.branches.length > 0) {
+    if (!isAdmin && !isCentralKitchen && user.branches && user.branches.length > 0) {
       query += ` AND qc.branch_slug = ANY($${paramIndex})`
       params.push(user.branches)
       paramIndex++
-    } else if (!isAdmin) {
+    } else if (!isAdmin && !isCentralKitchen) {
       // User has no branches, return empty
       return NextResponse.json([])
+    } else if (isCentralKitchen) {
+      // Central kitchen can only see central-kitchen branch quality checks
+      query += ` AND qc.branch_slug = $${paramIndex}`
+      params.push('central-kitchen')
+      paramIndex++
     }
 
     // Apply filters

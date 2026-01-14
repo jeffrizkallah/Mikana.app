@@ -17,6 +17,7 @@ export async function GET(
     const { id } = await params
     const user = session.user
     const isAdmin = user.role === 'admin' || user.role === 'operations_lead'
+    const isCentralKitchen = user.role === 'central_kitchen'
 
     const result = await sql`
       SELECT 
@@ -59,7 +60,12 @@ export async function GET(
     const qualityCheck = result.rows[0]
 
     // Check access
-    if (!isAdmin && !user.branches?.includes(qualityCheck.branchSlug)) {
+    if (!isAdmin && !isCentralKitchen && !user.branches?.includes(qualityCheck.branchSlug)) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+    }
+    
+    // Central kitchen can only access central-kitchen branch quality checks
+    if (isCentralKitchen && qualityCheck.branchSlug !== 'central-kitchen') {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 })
     }
 
