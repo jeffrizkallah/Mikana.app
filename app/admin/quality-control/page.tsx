@@ -123,26 +123,18 @@ export default function QualityControlPage() {
         setFieldConfigs(fieldsData)
       }
 
-      // Fetch summary
+      // Fetch summary (this uses period filter for overview stats)
       const summaryRes = await fetch(`/api/quality-checks/summary?period=${filters.period}`)
       if (summaryRes.ok) {
         const summaryData = await summaryRes.json()
         setSummary(summaryData)
       }
 
-      // Fetch all submissions
-      const today = new Date()
-      let startDate = new Date()
-      if (filters.period === 'today') {
-        startDate = new Date(today.setHours(0, 0, 0, 0))
-      } else if (filters.period === 'week') {
-        startDate.setDate(startDate.getDate() - 7)
-      } else {
-        startDate.setDate(startDate.getDate() - 30)
-      }
-
+      // Fetch all submissions without date restriction
+      // This ensures all dates appear in the filter dropdown
+      // Users can then filter by specific dates using the column header filter
       const submissionsRes = await fetch(
-        `/api/quality-checks?startDate=${startDate.toISOString()}&limit=1000`
+        `/api/quality-checks?limit=1000`
       )
       if (submissionsRes.ok) {
         const data = await submissionsRes.json()
