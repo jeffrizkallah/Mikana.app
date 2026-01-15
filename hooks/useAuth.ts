@@ -5,15 +5,15 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import type { UserRole } from '@/lib/auth'
 
-// Role landing pages
+// Role landing pages - all roles redirect to home page
 export const roleLandingPages: Record<UserRole, string> = {
-  admin: '/admin',
-  regional_manager: '/regional',
-  operations_lead: '/operations',
-  dispatcher: '/dispatch',
-  central_kitchen: '/kitchen',
-  branch_manager: '/dashboard',
-  branch_staff: '/branch', // Redirected to specific branch by middleware
+  admin: '/',
+  regional_manager: '/',
+  operations_lead: '/',
+  dispatcher: '/',
+  central_kitchen: '/',
+  branch_manager: '/',
+  branch_staff: '/',
 }
 
 export function useAuth(options?: { 
