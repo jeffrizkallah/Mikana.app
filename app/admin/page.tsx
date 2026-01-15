@@ -33,6 +33,8 @@ import {
   Coffee,
   Sun,
 } from 'lucide-react'
+import { Sparkline } from '@/components/Sparkline'
+import { cn } from '@/lib/utils'
 
 interface Branch {
   id: string
@@ -154,11 +156,20 @@ interface QualitySummary {
   }[]
 }
 
+interface BranchHistoryData {
+  branch: string
+  history: { date: string; revenue: number; units: number; orders: number }[]
+  totalRevenue: number
+  totalOrders: number
+  avgRevenue: number
+}
+
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [branches, setBranches] = useState<Branch[]>([])
   const [salesData, setSalesData] = useState<SalesData | null>(null)
   const [qualitySummary, setQualitySummary] = useState<QualitySummary | null>(null)
+  const [branchHistory, setBranchHistory] = useState<BranchHistoryData[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedSubmissionId, setSelectedSubmissionId] = useState<number | null>(null)
 
@@ -166,7 +177,20 @@ export default function AdminDashboardPage() {
     fetchDashboardData()
     fetchSalesData()
     fetchQualitySummary()
+    fetchBranchHistory()
   }, [])
+
+  const fetchBranchHistory = async () => {
+    try {
+      const response = await fetch('/api/analytics/branches/history?days=7')
+      if (response.ok) {
+        const data = await response.json()
+        setBranchHistory(data.branches || [])
+      }
+    } catch (error) {
+      console.error('Failed to fetch branch history:', error)
+    }
+  }
 
   const fetchQualitySummary = async () => {
     try {
@@ -644,6 +668,165 @@ export default function AdminDashboardPage() {
         </CardContent>
       </Card>
 
+      {/* Yesterday's Branch Performance Widget */}
+      {branchHistory.length > 0 && (
+        <Card className="border-l-4 border-l-emerald-500 animate-slide-up opacity-0 stagger-6" style={{ animationFillMode: 'forwards' }}>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base flex items-center gap-2">
+                <BarChart3 className="h-4 w-4 text-emerald-600" />
+                Yesterday&apos;s Branch Performance
+              </CardTitle>
+              <Link href="/admin/analytics">
+                <Button variant="ghost" size="sm" className="text-xs gap-1 h-7">
+                  View Full Analytics
+                  <ArrowRight className="h-3 w-3" />
+                </Button>
+              </Link>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {branchHistory.slice(0, 6).map((branch, idx) => {
+                // Get yesterday's data (last item in history)
+                const yesterdayData = branch.history[branch.history.length - 1]
+                const yesterdayRevenue = yesterdayData?.revenue || 0
+                const yesterdayOrders = yesterdayData?.orders || 1
+                const aov = yesterdayOrders > 0 ? Math.round(yesterdayRevenue / yesterdayOrders) : 0
+                
+                // Calculate trend from history
+                const revenues = branch.history.map(h => h.revenue)
+                const firstHalf = revenues.slice(0, Math.floor(revenues.length / 2))
+                const secondHalf = revenues.slice(Math.floor(revenues.length / 2))
+                const firstAvg = firstHalf.length > 0 ? firstHalf.reduce((a, b) => a + b, 0) / firstHalf.length : 0
+                const secondAvg = secondHalf.length > 0 ? secondHalf.reduce((a, b) => a + b, 0) / secondHalf.length : 0
+                const trendPct = firstAvg > 0 ? Math.round(((secondAvg - firstAvg) / firstAvg) * 100) : 0
+                
+                // Determine status
+                let status: 'top' | 'rising' | 'steady' | 'declining' | 'attention'
+                let statusLabel: string
+                let statusColor: string
+                
+                if (idx === 0) {
+                  status = 'top'
+                  statusLabel = 'Top Performer'
+                  statusColor = 'text-amber-600 bg-amber-50'
+                } else if (trendPct >= 10) {
+                  status = 'rising'
+                  statusLabel = 'Rising'
+                  statusColor = 'text-green-600 bg-green-50'
+                } else if (trendPct <= -10) {
+                  if (trendPct <= -20) {
+                    status = 'attention'
+                    statusLabel = 'Needs Attention'
+                    statusColor = 'text-red-600 bg-red-50'
+                  } else {
+                    status = 'declining'
+                    statusLabel = 'Declining'
+                    statusColor = 'text-orange-600 bg-orange-50'
+                  }
+                } else {
+                  status = 'steady'
+                  statusLabel = 'Steady'
+                  statusColor = 'text-slate-600 bg-slate-50'
+                }
+
+                const formatCurrency = (value: number) => {
+                  return new Intl.NumberFormat('en-AE', {
+                    style: 'currency',
+                    currency: 'AED',
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                  }).format(value)
+                }
+                
+                return (
+                  <div key={branch.branch} className="flex items-center gap-3 py-1">
+                    {/* Rank */}
+                    <span className={cn(
+                      "w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0",
+                      idx === 0 ? "bg-yellow-100 text-yellow-700" :
+                      idx === 1 ? "bg-gray-100 text-gray-600" :
+                      idx === 2 ? "bg-amber-100 text-amber-700" :
+                      "bg-slate-50 text-slate-500"
+                    )}>
+                      {idx + 1}
+                    </span>
+                    
+                    {/* Branch name and status */}
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm font-medium block truncate">
+                        {branch.branch.replace(/_/g, ' ')}
+                      </span>
+                      <span className={cn(
+                        "text-[10px] px-1.5 py-0.5 rounded-full inline-flex items-center gap-1",
+                        statusColor
+                      )}>
+                        {status === 'top' && '⭐'}
+                        {status === 'rising' && '▲'}
+                        {status === 'declining' && '▼'}
+                        {status === 'attention' && '⚠'}
+                        {status === 'steady' && '━'}
+                        {statusLabel}
+                      </span>
+                    </div>
+                    
+                    {/* Sparkline - weekday bar chart */}
+                    <div className="shrink-0 hidden xs:block">
+                      <Sparkline 
+                        data={revenues}
+                        dates={branch.history.map(h => h.date)} 
+                        width={110} 
+                        height={44}
+                        showDayLabels={true}
+                        excludeWeekends={true}
+                        trend={
+                          status === 'top' || status === 'rising' ? 'up' :
+                          status === 'declining' || status === 'attention' ? 'down' :
+                          'neutral'
+                        }
+                      />
+                    </div>
+                    
+                    {/* Revenue and AOV */}
+                    <div className="text-right shrink-0 min-w-[80px] xs:min-w-[90px]">
+                      <p className="text-sm font-bold">{formatCurrency(yesterdayRevenue)}</p>
+                      <p className="text-[10px] text-muted-foreground">
+                        AOV {formatCurrency(aov)}
+                      </p>
+                    </div>
+                  </div>
+                )
+              })}
+              {branchHistory.length > 6 && (
+                <Link href="/admin/analytics" className="block text-center text-sm text-primary hover:underline pt-2">
+                  View all {branchHistory.length} branches
+                </Link>
+              )}
+              
+              {/* Color Legend */}
+              <div className="flex items-center justify-center gap-4 pt-4 mt-3 border-t border-slate-100">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-sm bg-emerald-400"></div>
+                  <span className="text-[10px] text-muted-foreground">Rising</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-sm bg-blue-400"></div>
+                  <span className="text-[10px] text-muted-foreground">Steady</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-sm bg-red-400"></div>
+                  <span className="text-[10px] text-muted-foreground">Declining</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-sm bg-slate-200"></div>
+                  <span className="text-[10px] text-muted-foreground">No data</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Quality Control Widget */}
       {qualitySummary && (
