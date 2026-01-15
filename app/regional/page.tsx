@@ -30,6 +30,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
+import { Sparkline } from '@/components/Sparkline'
 
 interface Branch {
   id: string
@@ -114,6 +115,14 @@ interface YesterdayBranchData {
   orders: number
 }
 
+interface BranchHistoryData {
+  branch: string
+  history: { date: string; revenue: number; units: number; orders: number }[]
+  totalRevenue: number
+  totalOrders: number
+  avgRevenue: number
+}
+
 export default function RegionalDashboardPage() {
   const { user, loading: authLoading } = useAuth({
     required: true,
@@ -125,6 +134,7 @@ export default function RegionalDashboardPage() {
   const [qualitySummary, setQualitySummary] = useState<QualitySummary | null>(null)
   const [dispatches, setDispatches] = useState<Dispatch[]>([])
   const [yesterdayBranches, setYesterdayBranches] = useState<YesterdayBranchData[]>([])
+  const [branchHistory, setBranchHistory] = useState<BranchHistoryData[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -135,12 +145,13 @@ export default function RegionalDashboardPage() {
 
   const fetchData = async () => {
     try {
-      const [branchesRes, salesRes, qualityRes, dispatchRes, yesterdayRes] = await Promise.all([
+      const [branchesRes, salesRes, qualityRes, dispatchRes, yesterdayRes, historyRes] = await Promise.all([
         fetch('/api/branches'),
         fetch('/api/analytics/summary'),
         fetch('/api/quality-checks/summary?period=today'),
         fetch('/api/dispatch'),
         fetch('/api/analytics/branches/yesterday'),
+        fetch('/api/analytics/branches/history?days=7'),
       ])
 
       const branchesData: Branch[] = await branchesRes.json()
@@ -165,6 +176,11 @@ export default function RegionalDashboardPage() {
       if (yesterdayRes.ok) {
         const yesterdayData = await yesterdayRes.json()
         setYesterdayBranches(yesterdayData.branches || [])
+      }
+
+      if (historyRes.ok) {
+        const historyData = await historyRes.json()
+        setBranchHistory(historyData.branches || [])
       }
 
     } catch (error) {
@@ -355,13 +371,57 @@ export default function RegionalDashboardPage() {
               </div>
             </CardHeader>
             <CardContent>
-              {yesterdayBranches.length > 0 ? (
+              {branchHistory.length > 0 ? (
                 <div className="space-y-3">
-                  {yesterdayBranches.slice(0, 6).map((branch, idx) => (
-                    <div key={branch.branch} className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
+                  {branchHistory.slice(0, 6).map((branch, idx) => {
+                    // Get yesterday's data (last item in history)
+                    const yesterdayData = branch.history[branch.history.length - 1]
+                    const yesterdayRevenue = yesterdayData?.revenue || 0
+                    const yesterdayOrders = yesterdayData?.orders || 1
+                    const aov = yesterdayOrders > 0 ? Math.round(yesterdayRevenue / yesterdayOrders) : 0
+                    
+                    // Calculate trend from history
+                    const revenues = branch.history.map(h => h.revenue)
+                    const firstHalf = revenues.slice(0, Math.floor(revenues.length / 2))
+                    const secondHalf = revenues.slice(Math.floor(revenues.length / 2))
+                    const firstAvg = firstHalf.length > 0 ? firstHalf.reduce((a, b) => a + b, 0) / firstHalf.length : 0
+                    const secondAvg = secondHalf.length > 0 ? secondHalf.reduce((a, b) => a + b, 0) / secondHalf.length : 0
+                    const trendPct = firstAvg > 0 ? Math.round(((secondAvg - firstAvg) / firstAvg) * 100) : 0
+                    
+                    // Determine status
+                    let status: 'top' | 'rising' | 'steady' | 'declining' | 'attention'
+                    let statusLabel: string
+                    let statusColor: string
+                    
+                    if (idx === 0) {
+                      status = 'top'
+                      statusLabel = 'Top Performer'
+                      statusColor = 'text-amber-600 bg-amber-50'
+                    } else if (trendPct >= 10) {
+                      status = 'rising'
+                      statusLabel = 'Rising'
+                      statusColor = 'text-green-600 bg-green-50'
+                    } else if (trendPct <= -10) {
+                      if (trendPct <= -20) {
+                        status = 'attention'
+                        statusLabel = 'Needs Attention'
+                        statusColor = 'text-red-600 bg-red-50'
+                      } else {
+                        status = 'declining'
+                        statusLabel = 'Declining'
+                        statusColor = 'text-orange-600 bg-orange-50'
+                      }
+                    } else {
+                      status = 'steady'
+                      statusLabel = 'Steady'
+                      statusColor = 'text-slate-600 bg-slate-50'
+                    }
+                    
+                    return (
+                      <div key={branch.branch} className="flex items-center gap-3 py-1">
+                        {/* Rank */}
                         <span className={cn(
-                          "w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold",
+                          "w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0",
                           idx === 0 ? "bg-yellow-100 text-yellow-700" :
                           idx === 1 ? "bg-gray-100 text-gray-600" :
                           idx === 2 ? "bg-amber-100 text-amber-700" :
@@ -369,14 +429,104 @@ export default function RegionalDashboardPage() {
                         )}>
                           {idx + 1}
                         </span>
-                        <span className="text-sm font-medium">{branch.branch.replace(/_/g, ' ')}</span>
+                        
+                        {/* Branch name and status */}
+                        <div className="flex-1 min-w-0">
+                          <span className="text-sm font-medium block truncate">
+                            {branch.branch.replace(/_/g, ' ')}
+                          </span>
+                          <span className={cn(
+                            "text-[10px] px-1.5 py-0.5 rounded-full inline-flex items-center gap-1",
+                            statusColor
+                          )}>
+                            {status === 'top' && '⭐'}
+                            {status === 'rising' && '▲'}
+                            {status === 'declining' && '▼'}
+                            {status === 'attention' && '⚠'}
+                            {status === 'steady' && '━'}
+                            {statusLabel}
+                          </span>
+                        </div>
+                        
+                        {/* Sparkline - weekday bar chart */}
+                        <div className="shrink-0">
+                          <Sparkline 
+                            data={revenues}
+                            dates={branch.history.map(h => h.date)} 
+                            width={110} 
+                            height={44}
+                            showDayLabels={true}
+                            excludeWeekends={true}
+                            trend={
+                              status === 'top' || status === 'rising' ? 'up' :
+                              status === 'declining' || status === 'attention' ? 'down' :
+                              'neutral'
+                            }
+                          />
+                        </div>
+                        
+                        {/* Revenue and AOV */}
+                        <div className="text-right shrink-0 min-w-[90px]">
+                          <p className="text-sm font-bold">{formatCurrency(yesterdayRevenue)}</p>
+                          <p className="text-[10px] text-muted-foreground">
+                            AOV {formatCurrency(aov)}
+                          </p>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm font-bold">{formatCurrency(branch.revenue)}</p>
-                        <p className="text-xs text-muted-foreground">{branch.orders} orders</p>
-                      </div>
+                    )
+                  })}
+                  {branchHistory.length > 6 && (
+                    <Link href="/regional/analytics" className="block text-center text-sm text-primary hover:underline pt-2">
+                      View all {branchHistory.length} branches
+                    </Link>
+                  )}
+                  
+                  {/* Color Legend */}
+                  <div className="flex items-center justify-center gap-4 pt-4 mt-3 border-t border-slate-100">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2.5 h-2.5 rounded-sm bg-emerald-400"></div>
+                      <span className="text-[10px] text-muted-foreground">Rising</span>
                     </div>
-                  ))}
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2.5 h-2.5 rounded-sm bg-blue-400"></div>
+                      <span className="text-[10px] text-muted-foreground">Steady</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2.5 h-2.5 rounded-sm bg-red-400"></div>
+                      <span className="text-[10px] text-muted-foreground">Declining</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2.5 h-2.5 rounded-sm bg-slate-200"></div>
+                      <span className="text-[10px] text-muted-foreground">No data</span>
+                    </div>
+                  </div>
+                </div>
+              ) : yesterdayBranches.length > 0 ? (
+                // Fallback to simple view if no history data
+                <div className="space-y-3">
+                  {yesterdayBranches.slice(0, 6).map((branch, idx) => {
+                    const aov = branch.orders > 0 ? Math.round(branch.revenue / branch.orders) : 0
+                    return (
+                      <div key={branch.branch} className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className={cn(
+                            "w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold",
+                            idx === 0 ? "bg-yellow-100 text-yellow-700" :
+                            idx === 1 ? "bg-gray-100 text-gray-600" :
+                            idx === 2 ? "bg-amber-100 text-amber-700" :
+                            "bg-slate-50 text-slate-500"
+                          )}>
+                            {idx + 1}
+                          </span>
+                          <span className="text-sm font-medium">{branch.branch.replace(/_/g, ' ')}</span>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-bold">{formatCurrency(branch.revenue)}</p>
+                          <p className="text-[10px] text-muted-foreground">AOV {formatCurrency(aov)}</p>
+                        </div>
+                      </div>
+                    )
+                  })}
                   {yesterdayBranches.length > 6 && (
                     <Link href="/regional/analytics" className="block text-center text-sm text-primary hover:underline pt-2">
                       View all {yesterdayBranches.length} branches
