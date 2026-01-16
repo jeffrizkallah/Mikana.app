@@ -13,13 +13,15 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const browserId = searchParams.get('userId') || ''
 
-    // Get the current user's session to check their role
+    // Get the current user's session to check their role and ID
     const session = await getServerSession(authOptions)
     const userRole = session?.user?.role || null
+    const userId = session?.user?.id || null
 
     // Query notifications:
-    // - If target_roles is NULL, everyone can see it (broadcast)
+    // - If target_roles is NULL AND related_user_id is NULL, everyone can see it (broadcast)
     // - If target_roles is set, only users with matching roles can see it
+    // - If related_user_id is set, only that specific user can see it
     const result = await sql`
       SELECT 
         n.*,
@@ -31,8 +33,12 @@ export async function GET(request: Request) {
       WHERE n.is_active = true 
         AND n.expires_at > NOW()
         AND (
-          n.target_roles IS NULL 
-          OR ${userRole}::TEXT = ANY(n.target_roles)
+          -- Broadcast notifications (no target roles and no specific user)
+          (n.target_roles IS NULL AND n.related_user_id IS NULL)
+          -- Role-targeted notifications (no specific user)
+          OR (n.related_user_id IS NULL AND ${userRole}::TEXT = ANY(n.target_roles))
+          -- User-specific notifications (like feedback)
+          OR n.related_user_id = ${userId}
         )
       ORDER BY 
         CASE WHEN n.priority = 'urgent' THEN 0 ELSE 1 END,

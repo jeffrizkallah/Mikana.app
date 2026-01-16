@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -29,6 +29,10 @@ import {
   X,
   Image as ImageIcon,
   Flag,
+  MessageSquare,
+  Send,
+  Loader2,
+  CheckCheck
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/useAuth'
@@ -94,6 +98,18 @@ interface QualitySummary {
   lowScores: any[]
 }
 
+interface Feedback {
+  id: number
+  qualityCheckId: number
+  feedbackText: string
+  feedbackBy: number
+  feedbackByName: string
+  feedbackByRole: string
+  isRead: boolean
+  readAt: string | null
+  createdAt: string
+}
+
 export default function RegionalQualityControlPage() {
   const { user, loading: authLoading } = useAuth({
     required: true,
@@ -123,6 +139,16 @@ export default function RegionalQualityControlPage() {
   const [activeColumnFilter, setActiveColumnFilter] = useState<'date' | 'branch' | 'product' | null>(null)
   const [flaggingId, setFlaggingId] = useState<number | null>(null)
   const [flagNotes, setFlagNotes] = useState('')
+  
+  // Feedback state
+  const [showFeedbackPanel, setShowFeedbackPanel] = useState(false)
+  const [feedbackText, setFeedbackText] = useState('')
+  const [sendingFeedback, setSendingFeedback] = useState(false)
+  const [feedbackSuccess, setFeedbackSuccess] = useState(false)
+  const [feedback, setFeedback] = useState<Feedback[]>([])
+  const [feedbackLoading, setFeedbackLoading] = useState(false)
+
+  const canGiveFeedback = ['admin', 'regional_manager', 'operations_lead'].includes(user?.role || '')
 
   useEffect(() => {
     if (user) {
@@ -174,6 +200,78 @@ export default function RegionalQualityControlPage() {
       console.error('Error flagging quality check:', error)
     }
   }
+
+  // Feedback functions
+  const fetchFeedback = useCallback(async (qualityCheckId: number) => {
+    setFeedbackLoading(true)
+    try {
+      const response = await fetch(`/api/quality-checks/${qualityCheckId}/feedback`)
+      if (response.ok) {
+        const data = await response.json()
+        setFeedback(data.feedback || [])
+      }
+    } catch (err) {
+      console.error('Error fetching feedback:', err)
+    } finally {
+      setFeedbackLoading(false)
+    }
+  }, [])
+
+  const handleSendFeedback = async () => {
+    if (!feedbackText.trim() || !selectedCheck) return
+
+    setSendingFeedback(true)
+    try {
+      const response = await fetch(`/api/quality-checks/${selectedCheck.id}/feedback`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ feedbackText: feedbackText.trim() })
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to send feedback')
+      }
+
+      setFeedbackText('')
+      setFeedbackSuccess(true)
+      setTimeout(() => setFeedbackSuccess(false), 3000)
+      
+      // Refresh feedback list
+      await fetchFeedback(selectedCheck.id)
+    } catch (err) {
+      console.error('Error sending feedback:', err)
+      alert(err instanceof Error ? err.message : 'Failed to send feedback')
+    } finally {
+      setSendingFeedback(false)
+    }
+  }
+
+  const formatRelativeTime = (dateString: string) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffMs = now.getTime() - date.getTime()
+    const diffMins = Math.floor(diffMs / 60000)
+    const diffHours = Math.floor(diffMs / 3600000)
+    const diffDays = Math.floor(diffMs / 86400000)
+
+    if (diffMins < 1) return 'Just now'
+    if (diffMins < 60) return `${diffMins}m ago`
+    if (diffHours < 24) return `${diffHours}h ago`
+    if (diffDays < 7) return `${diffDays}d ago`
+    return new Date(dateString).toLocaleDateString()
+  }
+
+  // Fetch feedback when selectedCheck changes
+  useEffect(() => {
+    if (selectedCheck) {
+      fetchFeedback(selectedCheck.id)
+      setShowFeedbackPanel(false)
+      setFeedbackText('')
+    } else {
+      setFeedback([])
+    }
+  }, [selectedCheck, fetchFeedback])
 
   // Get unique values for column filters
   const uniqueBranches = Array.from(new Set(submissions.map(s => s.branchSlug)))
@@ -1117,6 +1215,93 @@ export default function RegionalQualityControlPage() {
                       </a>
                     ))}
                   </div>
+                </div>
+              )}
+
+              {/* Feedback Section */}
+              {canGiveFeedback && (
+                <div className="border-t pt-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-sm font-medium flex items-center gap-2">
+                      <MessageSquare className="h-4 w-4 text-orange-500" />
+                      Feedback to Submitter
+                    </p>
+                    <Button
+                      variant={showFeedbackPanel ? "secondary" : "outline"}
+                      size="sm"
+                      onClick={() => setShowFeedbackPanel(!showFeedbackPanel)}
+                    >
+                      {showFeedbackPanel ? 'Hide' : 'Give Feedback'}
+                    </Button>
+                  </div>
+
+                  {/* Previous Feedback */}
+                  {feedbackLoading ? (
+                    <div className="flex items-center justify-center py-4">
+                      <Loader2 className="h-5 w-5 animate-spin text-orange-500" />
+                    </div>
+                  ) : feedback.length > 0 && (
+                    <div className="space-y-2 mb-3">
+                      {feedback.map((fb) => (
+                        <div 
+                          key={fb.id} 
+                          className="p-3 bg-orange-50 rounded-lg border border-orange-200"
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <div className="h-6 w-6 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center text-white text-xs font-bold">
+                              {fb.feedbackByName.charAt(0)}
+                            </div>
+                            <span className="text-xs font-medium">{fb.feedbackByName}</span>
+                            <span className="text-xs text-muted-foreground">• {formatRelativeTime(fb.createdAt)}</span>
+                            {fb.isRead && (
+                              <CheckCheck className="h-3.5 w-3.5 text-green-500 ml-auto" />
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-700">{fb.feedbackText}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Feedback Input Panel */}
+                  {showFeedbackPanel && (
+                    <div className="p-4 bg-orange-50 rounded-lg border border-orange-200 space-y-3">
+                      {feedbackSuccess && (
+                        <div className="p-2 bg-green-100 border border-green-300 rounded-lg text-green-800 text-sm flex items-center gap-2">
+                          <CheckCircle2 className="h-4 w-4" />
+                          Feedback sent to {selectedCheck.submitterName}!
+                        </div>
+                      )}
+                      <p className="text-xs text-orange-700">
+                        Send improvement suggestions to <strong>{selectedCheck.submitterName}</strong>
+                      </p>
+                      <textarea
+                        value={feedbackText}
+                        onChange={(e) => setFeedbackText(e.target.value)}
+                        placeholder="Share how this could be improved..."
+                        className="w-full p-3 border rounded-lg text-sm resize-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                        rows={3}
+                        maxLength={2000}
+                      />
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-400">
+                          {feedbackText.length}/2000
+                        </span>
+                        <Button
+                          onClick={handleSendFeedback}
+                          disabled={!feedbackText.trim() || sendingFeedback}
+                          className="bg-orange-500 hover:bg-orange-600"
+                        >
+                          {sendingFeedback ? (
+                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          ) : (
+                            <Send className="h-4 w-4 mr-2" />
+                          )}
+                          Send Feedback
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 

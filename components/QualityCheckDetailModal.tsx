@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { X, AlertTriangle, Thermometer, Scale, CheckCircle, XCircle, Clock, User, MapPin, Calendar, Image as ImageIcon, Eye } from 'lucide-react'
+import { useEffect, useState, useCallback } from 'react'
+import { useSession } from 'next-auth/react'
+import { X, AlertTriangle, Thermometer, Scale, CheckCircle, Clock, User, MapPin, Calendar, Image as ImageIcon, Eye, MessageSquare, Send, Loader2, CheckCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -11,7 +12,7 @@ interface QualityCheckDetail {
   id: number
   branchSlug: string
   branchName: string
-  submittedBy: string
+  submittedBy: number
   submitterName: string
   submitterEmail?: string
   submissionDate: string
@@ -36,20 +37,64 @@ interface QualityCheckDetail {
   createdAt: string
 }
 
+interface Feedback {
+  id: number
+  qualityCheckId: number
+  feedbackText: string
+  feedbackBy: number
+  feedbackByName: string
+  feedbackByRole: string
+  isRead: boolean
+  readAt: string | null
+  createdAt: string
+}
+
 interface QualityCheckDetailModalProps {
   submissionId: number | null
   onClose: () => void
 }
 
 export function QualityCheckDetailModal({ submissionId, onClose }: QualityCheckDetailModalProps) {
+  const { data: session } = useSession()
   const [submission, setSubmission] = useState<QualityCheckDetail | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null)
+  
+  // Feedback state
+  const [feedback, setFeedback] = useState<Feedback[]>([])
+  const [feedbackLoading, setFeedbackLoading] = useState(false)
+  const [showFeedbackPanel, setShowFeedbackPanel] = useState(false)
+  const [feedbackText, setFeedbackText] = useState('')
+  const [sendingFeedback, setSendingFeedback] = useState(false)
+  const [feedbackSuccess, setFeedbackSuccess] = useState(false)
+
+  const userRole = session?.user?.role
+  const userId = session?.user?.id
+  const canGiveFeedback = ['admin', 'regional_manager', 'operations_lead'].includes(userRole || '')
+  const isSubmitter = submission?.submittedBy === userId
+
+  const fetchFeedback = useCallback(async () => {
+    if (!submissionId) return
+    
+    setFeedbackLoading(true)
+    try {
+      const response = await fetch(`/api/quality-checks/${submissionId}/feedback`)
+      if (response.ok) {
+        const data = await response.json()
+        setFeedback(data.feedback || [])
+      }
+    } catch (err) {
+      console.error('Error fetching feedback:', err)
+    } finally {
+      setFeedbackLoading(false)
+    }
+  }, [submissionId])
 
   useEffect(() => {
     if (!submissionId) {
       setSubmission(null)
+      setFeedback([])
       return
     }
 
@@ -72,15 +117,71 @@ export function QualityCheckDetailModal({ submissionId, onClose }: QualityCheckD
     }
 
     fetchSubmission()
-  }, [submissionId])
+    fetchFeedback()
+  }, [submissionId, fetchFeedback])
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') {
+        if (selectedPhoto) {
+          setSelectedPhoto(null)
+          setShowFeedbackPanel(false)
+        } else {
+          onClose()
+        }
+      }
     }
     document.addEventListener('keydown', handleEscape)
     return () => document.removeEventListener('keydown', handleEscape)
-  }, [onClose])
+  }, [onClose, selectedPhoto])
+
+  const handleSendFeedback = async () => {
+    if (!feedbackText.trim() || !submissionId) return
+
+    setSendingFeedback(true)
+    try {
+      const response = await fetch(`/api/quality-checks/${submissionId}/feedback`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ feedbackText: feedbackText.trim() })
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to send feedback')
+      }
+
+      setFeedbackText('')
+      setFeedbackSuccess(true)
+      setTimeout(() => setFeedbackSuccess(false), 3000)
+      
+      // Refresh feedback list
+      await fetchFeedback()
+    } catch (err) {
+      console.error('Error sending feedback:', err)
+      alert(err instanceof Error ? err.message : 'Failed to send feedback')
+    } finally {
+      setSendingFeedback(false)
+    }
+  }
+
+  const handleMarkAsRead = async (feedbackId: number) => {
+    if (!submissionId) return
+
+    try {
+      const response = await fetch(`/api/quality-checks/${submissionId}/feedback/${feedbackId}/read`, {
+        method: 'PATCH'
+      })
+
+      if (response.ok) {
+        setFeedback(prev => prev.map(f => 
+          f.id === feedbackId ? { ...f, isRead: true, readAt: new Date().toISOString() } : f
+        ))
+      }
+    } catch (err) {
+      console.error('Error marking feedback as read:', err)
+    }
+  }
 
   if (!submissionId) return null
 
@@ -110,9 +211,30 @@ export function QualityCheckDetailModal({ submissionId, onClose }: QualityCheckD
     })
   }
 
+  const formatRelativeTime = (dateString: string) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffMs = now.getTime() - date.getTime()
+    const diffMins = Math.floor(diffMs / 60000)
+    const diffHours = Math.floor(diffMs / 3600000)
+    const diffDays = Math.floor(diffMs / 86400000)
+
+    if (diffMins < 1) return 'Just now'
+    if (diffMins < 60) return `${diffMins}m ago`
+    if (diffHours < 24) return `${diffHours}h ago`
+    if (diffDays < 7) return `${diffDays}d ago`
+    return formatDate(dateString)
+  }
+
   const formatMealService = (service: string) => {
     return service.charAt(0).toUpperCase() + service.slice(1)
   }
+
+  const formatRole = (role: string) => {
+    return role.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+  }
+
+  const unreadFeedbackCount = feedback.filter(f => !f.isRead).length
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -135,6 +257,11 @@ export function QualityCheckDetailModal({ submissionId, onClose }: QualityCheckD
                 {submission && (
                   <Badge className="text-xs bg-blue-600">
                     {formatMealService(submission.mealService)}
+                  </Badge>
+                )}
+                {unreadFeedbackCount > 0 && isSubmitter && (
+                  <Badge className="text-xs bg-orange-500 animate-pulse">
+                    {unreadFeedbackCount} new feedback
                   </Badge>
                 )}
               </div>
@@ -186,6 +313,58 @@ export function QualityCheckDetailModal({ submissionId, onClose }: QualityCheckD
 
           {submission && !loading && !error && (
             <div className="space-y-6">
+              {/* Feedback Received Section (for submitters) */}
+              {isSubmitter && feedback.length > 0 && (
+                <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl border border-orange-200 p-4">
+                  <h3 className="font-semibold text-sm mb-3 text-orange-900 uppercase tracking-wide flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4" />
+                    Feedback Received ({feedback.length})
+                  </h3>
+                  <div className="space-y-3">
+                    {feedback.map((fb) => (
+                      <div 
+                        key={fb.id} 
+                        className={`p-3 rounded-lg border ${
+                          fb.isRead 
+                            ? 'bg-white/50 border-orange-100' 
+                            : 'bg-white border-orange-300 shadow-sm'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <div className="flex items-center gap-2">
+                            <div className="h-7 w-7 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center text-white text-xs font-bold">
+                              {fb.feedbackByName.charAt(0)}
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-orange-900">{fb.feedbackByName}</p>
+                              <p className="text-xs text-orange-600">{formatRole(fb.feedbackByRole)} • {formatRelativeTime(fb.createdAt)}</p>
+                            </div>
+                          </div>
+                          {!fb.isRead && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleMarkAsRead(fb.id)}
+                              className="text-xs h-7 px-2 text-orange-700 hover:bg-orange-100"
+                            >
+                              <CheckCheck className="h-3.5 w-3.5 mr-1" />
+                              Acknowledge
+                            </Button>
+                          )}
+                          {fb.isRead && (
+                            <span className="text-xs text-green-600 flex items-center gap-1">
+                              <CheckCheck className="h-3.5 w-3.5" />
+                              Acknowledged
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-700 leading-relaxed">{fb.feedbackText}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Scores Section */}
               <div>
                 <h3 className="font-semibold text-sm mb-3 text-muted-foreground uppercase tracking-wide">
@@ -296,6 +475,11 @@ export function QualityCheckDetailModal({ submissionId, onClose }: QualityCheckD
                   <h3 className="font-semibold text-sm mb-3 text-muted-foreground uppercase tracking-wide flex items-center gap-2">
                     <ImageIcon className="h-4 w-4" />
                     Photos ({submission.photos.length})
+                    {canGiveFeedback && (
+                      <span className="text-xs font-normal text-blue-600 ml-2">
+                        Click to view & give feedback
+                      </span>
+                    )}
                   </h3>
                   <div className="grid grid-cols-3 gap-2">
                     {submission.photos.map((photo, index) => (
@@ -358,31 +542,176 @@ export function QualityCheckDetailModal({ submissionId, onClose }: QualityCheckD
         </div>
       </Card>
 
-      {/* Photo Lightbox */}
+      {/* Photo Lightbox with Feedback Panel */}
       {selectedPhoto && (
         <div
-          className="fixed inset-0 z-[110] bg-black/90 flex items-center justify-center p-4"
-          onClick={() => setSelectedPhoto(null)}
+          className="fixed inset-0 z-[110] bg-black/90 flex"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setSelectedPhoto(null)
+              setShowFeedbackPanel(false)
+            }
+          }}
         >
+          {/* Close button */}
           <Button
             variant="ghost"
             size="icon"
-            className="absolute top-4 right-4 text-white hover:bg-white/20"
-            onClick={() => setSelectedPhoto(null)}
+            className="absolute top-4 right-4 text-white hover:bg-white/20 z-10"
+            onClick={() => {
+              setSelectedPhoto(null)
+              setShowFeedbackPanel(false)
+            }}
           >
             <X className="h-6 w-6" />
           </Button>
-          <div className="relative max-w-5xl w-full aspect-video">
-            <Image
-              src={selectedPhoto}
-              alt="Full size photo"
-              fill
-              className="object-contain"
-            />
+
+          {/* Feedback toggle button (for managers) */}
+          {canGiveFeedback && (
+            <Button
+              variant={showFeedbackPanel ? "default" : "ghost"}
+              size="sm"
+              className={`absolute top-4 left-4 z-10 ${
+                showFeedbackPanel 
+                  ? 'bg-orange-500 hover:bg-orange-600 text-white' 
+                  : 'text-white hover:bg-white/20'
+              }`}
+              onClick={() => setShowFeedbackPanel(!showFeedbackPanel)}
+            >
+              <MessageSquare className="h-4 w-4 mr-2" />
+              {showFeedbackPanel ? 'Hide Feedback' : 'Give Feedback'}
+            </Button>
+          )}
+
+          {/* Image container */}
+          <div className={`flex-1 flex items-center justify-center p-4 transition-all duration-300 ${
+            showFeedbackPanel ? 'pr-[380px]' : ''
+          }`}>
+            <div className="relative max-w-5xl w-full aspect-video">
+              <Image
+                src={selectedPhoto}
+                alt="Full size photo"
+                fill
+                className="object-contain"
+              />
+            </div>
+          </div>
+
+          {/* Feedback Panel (slide-in from right) */}
+          <div 
+            className={`absolute top-0 right-0 h-full w-[360px] bg-white shadow-2xl transform transition-transform duration-300 ease-out ${
+              showFeedbackPanel ? 'translate-x-0' : 'translate-x-full'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="h-full flex flex-col">
+              {/* Panel Header */}
+              <div className="p-4 border-b bg-gradient-to-r from-orange-50 to-amber-50">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-lg flex items-center gap-2 text-orange-900">
+                    <MessageSquare className="h-5 w-5" />
+                    Feedback
+                  </h3>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setShowFeedbackPanel(false)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+                {submission && (
+                  <p className="text-sm text-orange-700 mt-1">
+                    For: {submission.productName}
+                  </p>
+                )}
+              </div>
+
+              {/* Previous Feedback */}
+              <div className="flex-1 overflow-y-auto p-4">
+                {feedbackLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin text-orange-500" />
+                  </div>
+                ) : feedback.length > 0 ? (
+                  <div className="space-y-3">
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+                      Previous Feedback ({feedback.length})
+                    </p>
+                    {feedback.map((fb) => (
+                      <div 
+                        key={fb.id} 
+                        className="p-3 bg-gray-50 rounded-lg border border-gray-200"
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="h-6 w-6 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center text-white text-xs font-bold">
+                            {fb.feedbackByName.charAt(0)}
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-xs font-medium">{fb.feedbackByName}</p>
+                            <p className="text-[10px] text-gray-500">{formatRelativeTime(fb.createdAt)}</p>
+                          </div>
+                          {fb.isRead && (
+                            <CheckCheck className="h-4 w-4 text-green-500" />
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-700">{fb.feedbackText}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <MessageSquare className="h-10 w-10 mx-auto mb-2 opacity-30" />
+                    <p className="text-sm">No feedback yet</p>
+                    <p className="text-xs mt-1">Be the first to provide feedback</p>
+                  </div>
+                )}
+              </div>
+
+              {/* New Feedback Input */}
+              <div className="p-4 border-t bg-gray-50">
+                {feedbackSuccess && (
+                  <div className="mb-3 p-2 bg-green-100 border border-green-300 rounded-lg text-green-800 text-sm flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4" />
+                    Feedback sent to {submission?.submitterName}!
+                  </div>
+                )}
+                <div className="space-y-3">
+                  <p className="text-xs font-medium text-gray-600">
+                    Send feedback to {submission?.submitterName}
+                  </p>
+                  <textarea
+                    value={feedbackText}
+                    onChange={(e) => setFeedbackText(e.target.value)}
+                    placeholder="Share improvement suggestions..."
+                    className="w-full p-3 border rounded-lg text-sm resize-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
+                    rows={3}
+                    maxLength={2000}
+                  />
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-400">
+                      {feedbackText.length}/2000
+                    </span>
+                    <Button
+                      onClick={handleSendFeedback}
+                      disabled={!feedbackText.trim() || sendingFeedback}
+                      className="bg-orange-500 hover:bg-orange-600"
+                    >
+                      {sendingFeedback ? (
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      ) : (
+                        <Send className="h-4 w-4 mr-2" />
+                      )}
+                      Send Feedback
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
     </div>
   )
 }
-

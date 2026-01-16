@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { RoleSidebar } from '@/components/RoleSidebar'
 import { BranchCard } from '@/components/BranchCard'
+import { BranchMapWidget } from '@/components/BranchMapWidget'
 import { Footer } from '@/components/Footer'
 import { filterBranches, type Branch } from '@/lib/data'
 import { Card } from '@/components/ui/card'
@@ -50,6 +51,11 @@ export default function HomePage() {
               Select a branch to see all tasks, guides, and daily actions
             </p>
           </div>
+
+          {/* Interactive Map Widget */}
+          {!loading && allBranches.length > 0 && (
+            <BranchMapWidget branches={allBranches} />
+          )}
 
           {/* Search and Filter */}
           <div className="mb-4 xs:mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 xs:gap-4">

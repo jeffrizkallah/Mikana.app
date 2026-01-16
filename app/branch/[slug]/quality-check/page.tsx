@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { RoleSidebar } from '@/components/RoleSidebar'
 import { Footer } from '@/components/Footer'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { QualityCheckFormQuick } from '@/components/QualityCheckFormQuick'
+import { QualityCheckDetailModal } from '@/components/QualityCheckDetailModal'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -18,7 +19,8 @@ import {
   Clock,
   ArrowLeft,
   Coffee,
-  Sun
+  Sun,
+  Eye
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -41,6 +43,7 @@ interface QualityCheck {
 export default function QualityCheckPage() {
   const params = useParams()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const slug = params.slug as string
   
   const { user, loading: authLoading } = useAuth({ 
@@ -52,6 +55,20 @@ export default function QualityCheckPage() {
   const [todayChecks, setTodayChecks] = useState<QualityCheck[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
+  const [selectedSubmissionId, setSelectedSubmissionId] = useState<number | null>(null)
+
+  // Handle viewCheck query parameter to open the modal
+  useEffect(() => {
+    const viewCheckId = searchParams.get('viewCheck')
+    if (viewCheckId) {
+      const checkId = parseInt(viewCheckId)
+      if (!isNaN(checkId)) {
+        setSelectedSubmissionId(checkId)
+      }
+      // Remove the query parameter from the URL after processing
+      router.replace(`/branch/${slug}/quality-check`, { scroll: false })
+    }
+  }, [searchParams, slug, router])
 
   useEffect(() => {
     if (user) {
@@ -280,6 +297,14 @@ export default function QualityCheckPage() {
                             <Badge variant="outline" className="text-blue-600 border-blue-200 bg-blue-50 text-[10px] xs:text-xs px-1.5 xs:px-2">
                               Look: {check.appearanceScore}/5
                             </Badge>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setSelectedSubmissionId(check.id)}
+                              className="h-7 w-7 p-0"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
                           </div>
                         </div>
                       ))}
@@ -310,6 +335,12 @@ export default function QualityCheckPage() {
         </div>
         <Footer />
       </main>
+
+      {/* Quality Check Detail Modal */}
+      <QualityCheckDetailModal
+        submissionId={selectedSubmissionId}
+        onClose={() => setSelectedSubmissionId(null)}
+      />
     </div>
   )
 }

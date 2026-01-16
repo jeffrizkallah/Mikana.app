@@ -9,9 +9,6 @@ import { RoleSidebar } from '@/components/RoleSidebar'
 import { Footer } from '@/components/Footer'
 import {
   Building2,
-  BarChart3,
-  Package,
-  ArrowRight,
   TrendingUp,
   TrendingDown,
   DollarSign,
@@ -19,22 +16,18 @@ import {
   MapPin,
   Truck,
   CheckCircle2,
-  Calendar,
   AlertTriangle,
   ClipboardCheck,
   Coffee,
   Sun,
-  PackageOpen,
   ChevronRight,
   Flame,
   ChevronDown,
-  Star,
   Eye,
   Clock
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
-import { Sparkline } from '@/components/Sparkline'
 
 interface Branch {
   id: string
@@ -76,20 +69,6 @@ interface QualityCompliance {
   lunchSubmitted: boolean
 }
 
-interface YesterdayBranchData {
-  branch: string
-  revenue: number
-  units: number
-  orders: number
-}
-
-interface BranchHistoryData {
-  branch: string
-  history: { date: string; revenue: number; units: number; orders: number }[]
-  totalRevenue: number
-  totalOrders: number
-  avgRevenue: number
-}
 
 export default function BranchManagerDashboard() {
   const { user, loading: authLoading } = useAuth({ 
@@ -108,8 +87,6 @@ export default function BranchManagerDashboard() {
   const [qualityCompliance, setQualityCompliance] = useState<QualityCompliance[]>([])
   const [sortBy, setSortBy] = useState<'revenue' | 'name' | 'hygiene'>('revenue')
   const [dispatchesExpanded, setDispatchesExpanded] = useState(false)
-  const [yesterdayBranches, setYesterdayBranches] = useState<YesterdayBranchData[]>([])
-  const [branchHistory, setBranchHistory] = useState<BranchHistoryData[]>([])
 
   useEffect(() => {
     if (user) {
@@ -211,28 +188,6 @@ export default function BranchManagerDashboard() {
         setQualityCompliance(qualityData.todayCompliance || [])
       } catch (e) {
         console.error('Error fetching quality compliance:', e)
-      }
-
-      // Fetch branch history data for admin role (for Yesterday's Branch Performance widget)
-      if (user?.role === 'admin') {
-        try {
-          const [yesterdayRes, historyRes] = await Promise.all([
-            fetch('/api/analytics/branches/yesterday'),
-            fetch('/api/analytics/branches/history?days=7'),
-          ])
-
-          if (yesterdayRes.ok) {
-            const yesterdayData = await yesterdayRes.json()
-            setYesterdayBranches(yesterdayData.branches || [])
-          }
-
-          if (historyRes.ok) {
-            const historyData = await historyRes.json()
-            setBranchHistory(historyData.branches || [])
-          }
-        } catch (e) {
-          console.error('Error fetching branch history:', e)
-        }
       }
 
     } catch (error) {
@@ -463,162 +418,6 @@ export default function BranchManagerDashboard() {
             </Link>
 
           </div>
-
-          {/* Yesterday's Branch Performance - Admin Only */}
-          {user?.role === 'admin' && branchHistory.length > 0 && (
-            <Card className="mb-4 xs:mb-6 border-l-4 border-l-emerald-500">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <BarChart3 className="h-4 w-4 text-emerald-600" />
-                    Yesterday's Branch Performance
-                  </CardTitle>
-                  <Link href="/analytics">
-                    <Button variant="ghost" size="sm" className="text-xs gap-1 h-7">
-                      View Full Analytics
-                      <ChevronRight className="h-3 w-3" />
-                    </Button>
-                  </Link>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {branchHistory.slice(0, 6).map((branch, idx) => {
-                    // Get yesterday's data (last item in history)
-                    const yesterdayData = branch.history[branch.history.length - 1]
-                    const yesterdayRevenue = yesterdayData?.revenue || 0
-                    const yesterdayOrders = yesterdayData?.orders || 1
-                    const aov = yesterdayOrders > 0 ? Math.round(yesterdayRevenue / yesterdayOrders) : 0
-                    
-                    // Calculate trend from history
-                    const revenues = branch.history.map(h => h.revenue)
-                    const firstHalf = revenues.slice(0, Math.floor(revenues.length / 2))
-                    const secondHalf = revenues.slice(Math.floor(revenues.length / 2))
-                    const firstAvg = firstHalf.length > 0 ? firstHalf.reduce((a, b) => a + b, 0) / firstHalf.length : 0
-                    const secondAvg = secondHalf.length > 0 ? secondHalf.reduce((a, b) => a + b, 0) / secondHalf.length : 0
-                    const trendPct = firstAvg > 0 ? Math.round(((secondAvg - firstAvg) / firstAvg) * 100) : 0
-                    
-                    // Determine status
-                    let status: 'top' | 'rising' | 'steady' | 'declining' | 'attention'
-                    let statusLabel: string
-                    let statusColor: string
-                    
-                    if (idx === 0) {
-                      status = 'top'
-                      statusLabel = 'Top Performer'
-                      statusColor = 'text-amber-600 bg-amber-50'
-                    } else if (trendPct >= 10) {
-                      status = 'rising'
-                      statusLabel = 'Rising'
-                      statusColor = 'text-green-600 bg-green-50'
-                    } else if (trendPct <= -10) {
-                      if (trendPct <= -20) {
-                        status = 'attention'
-                        statusLabel = 'Needs Attention'
-                        statusColor = 'text-red-600 bg-red-50'
-                      } else {
-                        status = 'declining'
-                        statusLabel = 'Declining'
-                        statusColor = 'text-orange-600 bg-orange-50'
-                      }
-                    } else {
-                      status = 'steady'
-                      statusLabel = 'Steady'
-                      statusColor = 'text-slate-600 bg-slate-50'
-                    }
-                    
-                    return (
-                      <div key={branch.branch} className="flex items-center gap-3 py-1">
-                        {/* Rank - hidden on mobile */}
-                        <span className={cn(
-                          "w-6 h-6 rounded-full items-center justify-center text-xs font-bold shrink-0 hidden xs:flex",
-                          idx === 0 ? "bg-yellow-100 text-yellow-700" :
-                          idx === 1 ? "bg-gray-100 text-gray-600" :
-                          idx === 2 ? "bg-amber-100 text-amber-700" :
-                          "bg-slate-50 text-slate-500"
-                        )}>
-                          {idx + 1}
-                        </span>
-                        
-                        {/* Branch name and status */}
-                        <div className="flex-1 min-w-0">
-                          {/* Mobile: show only last part of branch name */}
-                          <span className="text-sm font-medium block truncate xs:hidden">
-                            {branch.branch.replace(/_/g, ' ').split(' ').pop()}
-                          </span>
-                          {/* Desktop: show full branch name */}
-                          <span className="text-sm font-medium hidden xs:block truncate">
-                            {branch.branch.replace(/_/g, ' ')}
-                          </span>
-                          <span className={cn(
-                            "text-[10px] px-1.5 py-0.5 rounded-full inline-flex items-center gap-1",
-                            statusColor
-                          )}>
-                            {status === 'top' && '⭐'}
-                            {status === 'rising' && '▲'}
-                            {status === 'declining' && '▼'}
-                            {status === 'attention' && '⚠'}
-                            {status === 'steady' && '━'}
-                            {statusLabel}
-                          </span>
-                        </div>
-                        
-                        {/* Sparkline - weekday bar chart */}
-                        <div className="shrink-0 hidden xs:block">
-                          <Sparkline 
-                            data={revenues}
-                            dates={branch.history.map(h => h.date)} 
-                            width={110} 
-                            height={44}
-                            showDayLabels={true}
-                            excludeWeekends={true}
-                            trend={
-                              status === 'top' || status === 'rising' ? 'up' :
-                              status === 'declining' || status === 'attention' ? 'down' :
-                              'neutral'
-                            }
-                          />
-                        </div>
-                        
-                        {/* Revenue and AOV */}
-                        <div className="text-right shrink-0 min-w-[80px] xs:min-w-[90px]">
-                          <p className="text-sm font-bold">{formatCurrency(yesterdayRevenue)}</p>
-                          <p className="text-[10px] text-muted-foreground">
-                            AOV {formatCurrency(aov)}
-                          </p>
-                        </div>
-                      </div>
-                    )
-                  })}
-                  {branchHistory.length > 6 && (
-                    <Link href="/analytics" className="block text-center text-sm text-primary hover:underline pt-2">
-                      View all {branchHistory.length} branches
-                    </Link>
-                  )}
-                  
-                  {/* Color Legend */}
-                  <div className="flex items-center justify-center gap-4 pt-4 mt-3 border-t border-slate-100">
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-2.5 h-2.5 rounded-sm bg-emerald-400"></div>
-                      <span className="text-[10px] text-muted-foreground">Rising</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-2.5 h-2.5 rounded-sm bg-blue-400"></div>
-                      <span className="text-[10px] text-muted-foreground">Steady</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-2.5 h-2.5 rounded-sm bg-red-400"></div>
-                      <span className="text-[10px] text-muted-foreground">Declining</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-2.5 h-2.5 rounded-sm bg-slate-200"></div>
-                      <span className="text-[10px] text-muted-foreground">No data</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
 
           {/* Main Content Grid */}
           <div className="grid fold:grid-cols-1 lg:grid-cols-3 gap-4 xs:gap-6">

@@ -1,7 +1,8 @@
 'use client'
 
 import { useRef, useEffect, useState } from 'react'
-import { Sparkles, CheckCircle, AlertTriangle, Info, AlertCircle, ChevronDown, X, UserPlus } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Sparkles, CheckCircle, AlertTriangle, Info, AlertCircle, ChevronDown, X, UserPlus, ClipboardCheck } from 'lucide-react'
 import { Notification, formatRelativeTime, getNotificationTypeConfig } from '@/lib/notifications'
 import { Button } from '@/components/ui/button'
 
@@ -110,11 +111,16 @@ function renderContent(content: string) {
 }
 
 export function NotificationItem({ notification, isExpanded, onToggle, onMarkAsRead }: NotificationItemProps) {
+  const router = useRouter()
   const config = getNotificationTypeConfig(notification.type)
   const Icon = typeIcons[notification.type] || Info
   const isUnread = !notification.is_read
   const contentRef = useRef<HTMLDivElement>(null)
   const [contentHeight, setContentHeight] = useState(0)
+  
+  // Check if this is a quality feedback notification
+  const metadata = notification.metadata as { qualityCheckId?: number; branchSlug?: string } | null
+  const isQualityFeedback = metadata?.qualityCheckId !== undefined
 
   // Measure content height for smooth animation
   useEffect(() => {
@@ -228,6 +234,24 @@ export function NotificationItem({ notification, isExpanded, onToggle, onMarkAsR
                 <UserPlus className="h-3.5 w-3.5" />
                 Review in Admin Panel
               </a>
+            </div>
+          )}
+
+          {/* Action Button for quality feedback notifications */}
+          {isQualityFeedback && (
+            <div className="mt-4 pl-11">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  // Navigate to the branch quality check page with a query param to open the modal
+                  const branchSlug = metadata?.branchSlug || ''
+                  router.push(`/branch/${branchSlug}/quality-check?viewCheck=${metadata?.qualityCheckId}`)
+                }}
+                className="inline-flex items-center gap-2 px-3 py-2 bg-orange-500 text-white text-xs font-medium rounded-md hover:bg-orange-600 transition-colors"
+              >
+                <ClipboardCheck className="h-3.5 w-3.5" />
+                View Quality Check & Acknowledge
+              </button>
             </div>
           )}
 
