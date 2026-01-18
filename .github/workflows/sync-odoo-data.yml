@@ -59,6 +59,11 @@ jobs:
           SYNC_FILES: ${{ github.event.inputs.files || 'sales,inventory,manufacturing,purchase,recipe,transfer,waste' }}
         run: node scripts/sync-all-sharepoint.js
       
+      - name: Process recipe types
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: node scripts/process-recipe-types.js
+      
       - name: Report success
         if: success()
         run: |
